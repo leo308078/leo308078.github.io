@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0,viewport-fit=cover">
+<meta name="theme-color" content="#3f5f45">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="京都 5日">
+<meta name="application-name" content="京都 5日">
+<title>京都五日｜媽媽＆妹妹的京都旅遊書</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%233f5f45' rx='96'/><path d='M256 92 L196 150 H316 Z M206 160 H306 V176 H206 Z M176 196 L256 156 L336 196 Z M196 206 H316 V222 H196 Z M160 246 L256 200 L352 246 Z M184 256 H328 V272 H184 Z M146 300 L256 248 L366 300 Z M176 310 H336 V380 H176 Z' fill='%23fff'/><text x='256' y='452' font-size='64' font-weight='bold' text-anchor='middle' fill='%23f4d9a8'>2026.10 京都</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%233f5f45' rx='96'/><path d='M256 92 L196 150 H316 Z M206 160 H306 V176 H206 Z M176 196 L256 156 L336 196 Z M196 206 H316 V222 H196 Z M160 246 L256 200 L352 246 Z M184 256 H328 V272 H184 Z M146 300 L256 248 L366 300 Z M176 310 H336 V380 H176 Z' fill='%23fff'/><text x='256' y='452' font-size='64' font-weight='bold' text-anchor='middle' fill='%23f4d9a8'>2026.10 京都</text></svg>">
+<link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"京都五日","short_name":"京都 5日","start_url":".","display":"standalone","background_color":"%23f6f4ee","theme_color":"%233f5f45","orientation":"portrait","icons":[{"src":"data:image/svg%2bxml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27><rect width=%27512%27 height=%27512%27 fill=%27%233f5f45%27 rx=%2796%27/><path d=%27M256 92 L146 300 H366 Z%27 fill=%27%23fff%27/></svg>","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'>
+<style>
+:root{
+  --navy:#3f5f45; --navy-soft:#6f8f63; --cream:#f6f4ee; --cream-2:#ece8dc;
+  --ink:#2b2a26; --ink-soft:#6b675c; --line:#e2ddcf;
+  --green:#3f7a55; --gold:#b8894f; --rose:#c0453f; --time:#b8894f; --sage:#8fa08a;
+  --shadow:0 2px 14px rgba(60,70,50,.08);
+  --shadow-2:0 6px 24px rgba(40,50,30,.20);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;scroll-padding-top:60px}
+body{
+  margin:0;font-family:-apple-system,"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+  background:var(--cream);color:var(--ink);line-height:1.7;font-size:16px;
+  -webkit-text-size-adjust:100%;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);
+}
+img{max-width:100%;display:block;border-radius:10px}
+a{color:var(--navy);text-decoration:none}
+a:active{opacity:.7}
+
+.topnav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(246,244,238,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  display:flex;gap:6px;overflow-x:auto;
+  padding:calc(8px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) 8px calc(12px + env(safe-area-inset-left, 0px));
+  scrollbar-width:none;
+}
+.topnav::-webkit-scrollbar{display:none}
+.topnav a{flex:0 0 auto;padding:7px 13px;border-radius:20px;background:#fff;border:1px solid var(--line);color:var(--ink-soft);font-size:14px;font-weight:600;white-space:nowrap}
+.topnav a.hot{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 14px 88px}
+
+.cover{position:relative;border-radius:18px;overflow:hidden;margin:14px 0 18px;box-shadow:var(--shadow-2)}
+.cover img{width:100%;display:block;border-radius:0}
+.cover .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,transparent,rgba(20,24,16,.9));color:#fff;padding:58px 18px 18px}
+.cover h1{margin:0 0 6px;font-size:26px;letter-spacing:1px;text-shadow:0 2px 8px rgba(0,0,0,.85);font-weight:800}
+.cover .sub{font-size:14px;opacity:.96;text-shadow:0 1px 5px rgba(0,0,0,.9);line-height:1.6}
+
+.section-title{font-size:14.5px;color:var(--navy);font-weight:700;letter-spacing:2px;margin:30px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:"";width:24px;height:2px;background:var(--navy)}
+.section-title::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:10px 0;box-shadow:var(--shadow)}
+.card.tight{padding:10px 12px}
+.card h3{margin:0 0 6px;color:var(--navy);font-size:16px}
+
+/* ===== 每日卡（參考時間軸排版）===== */
+.day-card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:16px 0;box-shadow:var(--shadow)}
+.day-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+.dh-l{font-size:24px;font-weight:800;color:var(--sage);letter-spacing:.5px}
+.dh-r{font-size:14.5px;font-weight:700;color:var(--ink-soft)}
+.day-intro{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 16px 6px;background:var(--cream);scrollbar-width:none}
+.day-intro::-webkit-scrollbar{display:none}
+.day-intro .loc{flex:0 0 86%;scroll-snap-align:start;margin:0}
+.day-intro.one .loc{flex-basis:100%}
+.day-intro .loc img{width:100%;height:auto;max-height:300px;object-fit:contain;border-radius:12px;margin-bottom:8px;background:#e6e2d6}
+.day-intro .loc figcaption{font-size:14px;line-height:1.65;color:var(--ink-soft)}
+.day-intro .loc figcaption .ttl{display:block;font-size:15.5px;font-weight:800;color:var(--navy);margin-bottom:2px}
+.day-intro .loc figcaption .ttl .en{color:var(--ink-soft);font-weight:500;font-size:12.5px;margin-left:4px;font-style:italic}
+.swipe-hint{background:var(--cream);text-align:center;font-size:11.5px;color:#a39d8c;padding:0 0 8px}
+.day-body{padding:12px 16px 16px}
+
+/* 時間軸 */
+.tl2{position:relative;margin:16px 0 6px 2px;padding-left:26px}
+.tl2::before{content:"";position:absolute;left:6px;top:10px;bottom:18px;width:2px;background:#dcdfd2}
+.ti{position:relative;padding:0 0 22px}
+.ti:last-child{padding-bottom:6px}
+.ti::before{content:"";position:absolute;left:-25px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--sage);box-shadow:0 0 0 3px #fff}
+.ti.move::before{background:#fff;border:2px solid var(--sage);width:9px;height:9px}
+.ti.food::before{background:#d0875a}
+.ti.cafe::before{background:var(--gold)}
+.ti.shop::before{background:#8a73a8}
+.ti.hotel::before{background:#5b6fa3}
+.ti .tt{font-size:14px;font-weight:800;color:var(--time);letter-spacing:.5px;line-height:1.3}
+.ti .th{font-size:16.5px;font-weight:800;color:var(--ink);line-height:1.45;margin:3px 0 4px}
+.ti .chip{display:inline-block;font-size:12.5px;font-weight:600;color:#4f5d48;background:#eef1e8;border-radius:7px;padding:3px 9px;margin:1px 0 5px;line-height:1.5}
+.ti .tx{font-size:14px;color:#5e5a50;line-height:1.65}
+.ti .warn{font-size:13.5px;color:#a33a2e;font-weight:700;margin-top:3px;line-height:1.55}
+.ti .pins{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.ti .map-btn,.opt .map-btn{display:inline-block;font-size:12.5px;padding:4px 11px;border-radius:7px;border:1.3px solid #a9b39e;color:#3f4a38;font-weight:700;background:#fff;white-space:nowrap}
+/* 重點站：大紅點＋紅字標題 */
+.ti.star::before{left:-28px;top:3px;width:17px;height:17px;background:var(--rose);box-shadow:0 0 0 3px #fff,0 0 0 5.5px #f0c8be}
+.ti.star .th{color:#a8362a;font-size:18px}
+.ti .stb{display:inline-block;vertical-align:2px;margin-left:6px;font-size:11px;font-weight:800;color:#fff;background:var(--rose);border-radius:6px;padding:1px 7px;letter-spacing:1px}
+.ti .tg{display:inline-block;vertical-align:2px;margin-left:5px;font-size:11px;font-weight:800;border-radius:6px;padding:1px 7px}
+.tg.cash{background:#fff1d6;color:#8a5a14;border:1px solid #ecc982}
+.tg.rsv{background:#e3efe6;color:#2f6a45;border:1px solid #a9d3b6}
+.tg.opt{background:#eeeeee;color:#666;border:1px solid #d6d6d6}
+.tg.ng{background:#fde4e1;color:#a33a2e;border:1px solid #efb2aa}
+/* 收折：餐廳/咖啡備選、補充說明 */
+details.alts{margin:8px 0 0;background:#faf8f2;border:1px dashed #d8d2bf;border-radius:9px;padding:3px 11px}
+details.alts[open]{background:#fff}
+details.alts summary{font-size:13.5px;font-weight:700;color:#7a6440;padding:5px 0}
+details.alts .gbody{font-size:13.5px}
+
+.tipbox{margin:10px 0 0;background:#eef5ef;border:1px solid #bcd9c4;border-radius:12px;padding:9px 13px}
+.tipbox .tip-h{font-size:14px;font-weight:800;color:#2f6a45;margin-bottom:2px}
+.tipbox ul{margin:2px 0 0;padding-left:19px;font-size:13.5px;line-height:1.7;color:#2c4636}
+
+.opt{display:flex;gap:9px;padding:9px 0;border-bottom:1px dashed var(--line);align-items:flex-start}
+.opt:last-child{border-bottom:none}
+.opt .on{flex:0 0 21px;height:21px;border-radius:50%;background:#d0875a;color:#fff;font-weight:800;font-size:11.5px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.opt.save .on{background:var(--green)}
+.opt .d{flex:1;font-size:14px;line-height:1.55}
+.opt .d .pr{color:var(--rose);font-weight:700;font-size:12.5px;margin-left:4px}
+.opt .pins{margin-top:5px}
+.seg-note{font-size:12.5px;color:var(--ink-soft);margin:6px 0 4px;line-height:1.6}
+
+.gbody{font-size:14px;line-height:1.7;padding:4px 2px 2px}
+.gbody p{margin:6px 0}
+
+.alert{background:#f1f4ec;border:1px solid #cdd8c2;border-radius:10px;padding:10px 13px;margin:6px 0 10px;font-size:14px;color:#33402c;line-height:1.65}
+.alert b{color:#1f2a1a}
+.alert.warn{background:#fdeaea;border-color:#e8a8a4;color:#7a1f1a}
+.alert.warn b{color:#400}
+.alert.sun{background:#fff3e3;border-color:#f0cf9a;color:#7a4810}
+
+.kv{display:flex;font-size:14.5px;padding:7px 0;gap:10px;border-bottom:1px dotted var(--line);line-height:1.6}
+.kv:last-child{border:none}
+.kv .k{flex:0 0 72px;color:var(--ink-soft);font-weight:600}
+.kv .v{flex:1}
+
+details{background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0}
+details[open]{background:#fff}
+summary{cursor:pointer;font-weight:700;font-size:15px;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center;padding:3px 0;gap:8px}
+summary::after{content:"▾";color:var(--navy);transition:transform .2s}
+details[open]>summary::after{transform:rotate(180deg)}
+summary::-webkit-details-marker{display:none}
+
+.ptab{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+.ptab th,.ptab td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.ptab th{background:var(--cream-2);color:var(--ink-soft);font-size:12.5px;font-weight:700}
+.ptab td.r,.ptab th.r{text-align:right;white-space:nowrap}
+
+.phrase{background:#f6f4ee;border:1px solid var(--line);border-radius:10px;padding:8px 13px;margin:6px 0;font-size:14.5px;line-height:1.6}
+.phrase .it{color:var(--navy);font-weight:700;font-size:15px}
+.phrase .pn{color:var(--ink-soft);font-size:12.5px;margin-left:4px}
+
+small{color:var(--ink-soft);font-size:13px}
+.muted{color:var(--ink-soft);font-size:13.5px}
+.center{text-align:center}
+
+.sos{position:fixed;right:calc(14px + env(safe-area-inset-right, 0px));bottom:calc(64px + env(safe-area-inset-bottom, 0px));z-index:60;background:var(--rose);color:#fff;border:none;width:46px;height:46px;border-radius:50%;font-size:18px;font-weight:700;box-shadow:0 4px 14px rgba(192,69,63,.45);display:flex;align-items:center;justify-content:center}
+
+/* 地圖 */
+.mlabel{font-size:13px;color:var(--navy);font-weight:700;letter-spacing:.5px;margin:8px 0 6px}
+.city-map-wrap{margin:4px 0 8px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;position:relative;isolation:isolate;z-index:1}
+.city-map-leaflet{height:320px;width:100%;background:#e6e2d6}
+.city-map-list{font-size:12.5px;padding:8px 12px;background:var(--cream);border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:5px 8px}
+.city-map-list a{display:inline-flex;align-items:center;gap:5px;padding:2px 9px 2px 5px;border-radius:14px;background:#fff;border:1px solid var(--line);color:var(--ink)}
+.city-map-list .num{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:11px}
+.city-map-list .num.food{background:#d0875a}.city-map-list .num.cafe{background:var(--gold)}.city-map-list .num.shop{background:#8a73a8}.city-map-list .num.hotel{background:#5b6fa3}
+.cmap-pin{background:transparent !important;border:none !important}
+.cmap-pin .pin{width:30px;height:30px;border-radius:50% 50% 50% 0;background:var(--navy);transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(0,0,0,.3);border:2.5px solid #fff}
+.cmap-pin .pin .num{transform:rotate(45deg);color:#fff;font-weight:800;font-size:12.5px;line-height:1}
+.cmap-pin.food .pin{background:#d0875a}.cmap-pin.cafe .pin{background:var(--gold)}.cmap-pin.shop .pin{background:#8a73a8}.cmap-pin.hotel .pin{background:#5b6fa3}
+.move-ic{background:transparent!important;border:none!important}
+.move-ic .mv-pill{width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid var(--navy);display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.leaflet-popup-content{font-family:inherit;font-size:13.5px;line-height:1.5;margin:10px 14px}
+.leaflet-popup-content b{color:var(--navy);font-size:14px}
+.leaflet-popup-content a{display:inline-block;margin-top:8px;color:var(--navy);font-weight:700;border:1px solid var(--navy);border-radius:12px;padding:3px 10px;font-size:12px}
+.legend{font-size:11.5px;color:var(--ink-soft);margin:0 0 4px;line-height:1.7}.legend b,.legend span{white-space:nowrap}
+
+/* 天氣 */
+.wx-box{display:flex;gap:8px;align-items:stretch;overflow-x:auto;padding:4px 0 8px}
+.wx-now{flex:0 0 auto;background:linear-gradient(135deg,#3f5f45,#6f8f63);border-radius:14px;padding:12px 15px;min-width:120px;color:#fff;display:flex;flex-direction:column;justify-content:center}
+.wx-now .e{font-size:26px;line-height:1}.wx-now .t{font-size:30px;font-weight:800;line-height:1.1}.wx-now .d{font-size:11px;opacity:.92;margin-top:4px;line-height:1.4}
+.wx-day{flex:0 0 auto;background:#f6f4ee;border:1px solid var(--line);border-radius:12px;padding:8px 10px;min-width:72px;text-align:center}
+.wx-day.trip{background:#fff5e6;border-color:#e8a23f;box-shadow:0 0 0 1.5px #e8a23f inset}
+.wx-day .wd{font-weight:700;color:var(--navy);font-size:12px}.wx-day .we{font-size:22px;margin:2px 0}
+.wx-day .wt{font-size:13px;font-weight:700}.wx-day .wt b{color:var(--rose)}.wx-day .wt small{color:#2e8a5a;font-weight:700}
+.wx-day .wr{font-size:11px;color:#2a7abf;margin-top:2px}.wx-day .wr.hi{color:var(--rose);font-weight:800}
+.wx-day .wl{font-size:10px;color:#888;margin-top:1px}
+.wx-loading{color:#888;font-size:13px;padding:10px}
+
+/* 待辦表、總表 */
+.btab{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+.btab th,.btab td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.btab th{background:var(--cream-2);color:var(--navy);font-size:12px}
+.btab td.g{color:#2e8a5a;font-weight:700;white-space:nowrap}.btab td.y{color:#b07a2a;font-weight:700;white-space:nowrap}.btab td.r{color:var(--rose);font-weight:800;white-space:nowrap}
+.ptbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+.ptbl{border-collapse:collapse;font-size:12px;min-width:760px;width:100%}
+.ptbl th,.ptbl td{border:1px solid #ebe7db;padding:6px 7px;vertical-align:top;line-height:1.5}
+.ptbl thead th{color:#fff;font-size:12.5px;text-align:center;white-space:nowrap;background:var(--navy)}
+.ptbl th.rl{position:sticky;left:0;background:#2f4733;color:#fff;font-size:11px;white-space:nowrap;z-index:2;text-align:center}
+.ptbl td{background:#fdfcf8}
+.ptbl .st{color:#c0453f;font-weight:800}
+
+.dayjump{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;overflow-x:auto;gap:6px;padding:8px calc(8px + env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) calc(8px + env(safe-area-inset-left, 0px));scrollbar-width:none}
+.dayjump::-webkit-scrollbar{display:none}
+.dayjump a{flex:1 1 0;min-width:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 6px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:11px;color:var(--ink-soft);font-weight:600}
+.dayjump a b{font-size:15px;color:var(--navy);line-height:1.2}
+.dayjump a.now{background:var(--navy);color:#fff;border-color:var(--navy)}
+.dayjump a.now b{color:#fff}
+
+@media (min-width:720px){.city-map-leaflet{height:340px}.day-intro .loc{flex-basis:70%}}
+@media print{.topnav,.dayjump,.sos{display:none}.day-card,.card{break-inside:avoid}}
+</style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="#cover" class="hot">📖 封面</a>
+  <a href="#info">✈️ 航班住宿</a>
+  <a href="#weather">🌤️ 天氣</a>
+  <a href="#booking">📋 出發前</a>
+  <a href="#planner">📅 總表</a>
+  <a href="#map">🗺️ 地圖</a>
+  <a href="#days">📍 每日</a>
+  <a href="#matcha">🍵 抹茶</a>
+  <a href="#shop">🛍️ 購物</a>
+  <a href="#tips">💡 實用</a>
+  <a href="#emerg">🆘 緊急</a>
+</nav>
+
+<a class="sos" href="#emerg" title="緊急聯絡">🆘</a>
+
+<div class="wrap">
+
+<section id="cover">
+<div class="cover">
+  <img src="hero/cover.jpg" alt="京都東山 八坂の塔">
+  <div class="cap">
+    <h1>京都五日 🍵</h1>
+    <div class="sub">二條城 · 錦市場 · 嵐山小火車 · 清水寺 · 祇園 · 抹茶巡禮</div>
+    <div class="sub">2026 / 10 / 25 (日) — 10 / 29 (四)　媽媽 ＆ 妹妹的京都之旅</div>
+  </div>
+</div>
+</section>
+
+<section id="info" class="card">
+  <div class="section-title" style="margin-top:0">航班與住宿</div>
+  
+<div class="kv"><div class="k">去程</div><div class="v"><b>10/25 (日) 09:40 桃園 T1 → 13:10 關西機場 第 2 航廈</b>｜樂桃航空<br><small>樂桃櫃台在桃園第一航廈 1 樓，自己去報到（沒有送機人員）。電子機票最晚出發前一天才給。</small></div></div>
+<div class="kv"><div class="k">回程</div><div class="v"><b>10/29 (四) 15:25 關西機場 第 2 航廈 → 17:55 桃園</b><br><small>報到 12:55 開始、<b>14:35 截止</b>；國際線不能用 App 報到。</small></div></div>
+<div class="kv"><div class="k">行李</div><div class="v">托運 20kg × 1 件／人；<b>手提 2 件合計 7kg</b>（會抽秤，回程伴手禮最容易超）</div></div>
+<div class="kv"><div class="k">住宿</div><div class="v"><b>OMO3 京都東寺 by 星野集團</b>（4 晚・雙床房）<br>京都市南区西九条蔵王町 11-6｜近鐵「東寺」站 2 分、JR 京都駅八条口走 13 分<br><small>15:00 入住／11:00 退房・不含早餐（頂樓 OMO FOOD &amp; DRINK STATION 24 小時）<br><b style="color:#a33a2e">館內完全不收現金</b>：住宿稅、早餐都要刷卡。住宿稅每人每晚 ¥200–1,000（依房價），兩人 4 晚約 ¥1,600–3,200。</small></div></div>
+<div class="kv"><div class="k">同行</div><div class="v">媽媽＋妹妹兩人。<small>雄獅團體自由行，不派領隊。</small></div></div>
+<div class="kv"><div class="k">基本</div><div class="v">日本比台灣快 1 小時｜電壓 100V，插頭跟台灣一樣｜出發前填好 <b>Visit Japan Web</b></div></div>
+
+  <div id="countdownBox" class="alert" style="margin-top:10px">⏳ 倒數計算中…</div>
+</section>
+
+<section id="weather" class="card">
+  <div class="section-title" style="margin-top:0">🌤️ 京都天氣（打開自動更新）</div>
+  <div id="wxKyoto" class="wx-box"><div class="wx-loading">天氣載入中…（需連網）</div></div>
+  <small class="muted">來源 Open-Meteo。<span style="background:#fff5e6;border:1px solid #e8a23f;border-radius:4px;padding:0 4px">橘框★</span>＝行程日、💧≥50% 標紅。10 月底京都早晚約 10–13°C、白天 18–22°C → <b>洋蔥式穿法＋薄外套</b>。</small>
+</section>
+
+<section id="booking" class="card">
+  <div class="section-title" style="margin-top:0">📋 出發前要做的事</div>
+  
+<table class="btab">
+<tr><th>要做的事</th><th>期限</th><th>怎麼弄</th></tr>
+<tr><td>🚆 <b>HARUKA 優惠票 ×4</b><br>兩人去回</td><td class="r">🔴 出發前</td><td>KKday／Klook 搜「WEST QR はるか片道きっぷ」，¥2,200／張。<b>到日本就買不到</b>（JR 官網寫明）。要用手機出示 QR（截圖無效），帶護照</td></tr>
+<tr><td>🥩 <b>力山 訂位</b><br>10/25 18:00</td><td class="y">🟡 10/24 前</td><td>AutoReserve 或食べログ線上訂（只收到前一天）。每人 ¥11,000 起</td></tr>
+<tr><td>🍱 <b>かね正 訂位</b><br>10/28 晚餐</td><td class="y">🟡 越早越好</td><td>電話 075-532-5830（日語）。只有 14 席、只收現金</td></tr>
+<tr><td>🍲 湯豆腐 嵯峨野<br>10/27 午餐（想吃的話）</td><td class="y">🟡 10/25 前</td><td>官網連到 TakeMe／一休／Hot Pepper 訂。只收現金或 PayPay</td></tr>
+<tr><td>🏮 先斗町 すいしん<br>10/26 晚餐（想吃的話）</td><td class="y">🟡 出發前</td><td>食べログ或ぐるなび訂「<b>先斗町 本店</b>」（不是京都駅前店）。天天天不能訂</td></tr>
+<tr><td>🥩 燒肉 弘<br>10/27 晚餐</td><td class="r">❓ 確認</td><td>訂的是哪一家？<b>八条口店</b>（近飯店，TORETA 或 075-662-1129）還是<b>京都駅前店</b>？</td></tr>
+<tr><td>🚂 嵯峨野小火車票<br>10/27 11:30 亀岡→嵐山</td><td class="g">✅ 已買</td><td>手機出示 QR 直接進站，不用取票。當天不能改、不能退</td></tr>
+<tr><td>🐟 いとおかし<br>10/28 午餐</td><td class="g">✅ 已訂</td><td>看 TableCheck 確認信上的時間。早到不能先坐、遲到 15 分會被取消、限 50 分鐘</td></tr>
+<tr><td>📱 Visit Japan Web</td><td class="y">🟡 出發前</td><td>入境審查、海關申報兩個 QR，各截圖存相簿</td></tr>
+<tr><td>💴 現金 每人 ¥20,000–30,000</td><td class="y">🟡 出發前</td><td>麵屋優光、湯豆腐 嵯峨野、かね正、フランソア 只收現金；飯店反而<b>不收現金</b></td></tr>
+<tr><td>💳 手機交通卡</td><td class="y">🟡 出發前</td><td>iPhone 錢包加 Suica 或 ICOCA，JR、地鐵、近鐵、公車都能刷</td></tr>
+</table>
+<small class="muted">🔴 不做會沒票沒位子　🟡 要動手　❓ 要問她們　✅ 已搞定</small>
+
+</section>
+
+<section id="planner">
+<div class="section-title">📅 一眼行程總表</div>
+<div class="card tight">
+  <div class="ptbl-wrap"><table class="ptbl">
+<thead><tr><th class="rl">　</th><th>10/25 日</th><th>10/26 一</th><th>10/27 二</th><th>10/28 三</th><th>10/29 四</th></tr></thead>
+<tbody>
+<tr><th class="rl">主題</th><td>抵達・京都駅</td><td>二條城・錦市場・先斗町</td><td><b>嵐山</b>・小火車</td><td><b>清水寺</b>・百貨・祇園</td><td>京都駅採買・回程</td></tr>
+<tr><th class="rl">上午</th><td>09:40 桃園起飛<br>13:10 抵關西 T2</td><td>Blue Bottle・六角堂<br><span class="st">二條城</span></td><td>JR 到馬堀<br><span class="st">嵯峨野小火車</span></td><td><span class="st">清水寺</span>・三年坂<br>八坂庚申堂・二年坂</td><td>退房寄行李<br>東本願寺・開化堂</td></tr>
+<tr><th class="rl">午餐</th><td>—</td><td>麵屋優光 <small>💴現金</small></td><td>湯豆腐 嵯峨野／よしむら</td><td>Ito Okashi <small>✅已訂</small></td><td>京都駅</td></tr>
+<tr><th class="rl">下午</th><td>HARUKA→京都<br>check-in・Yodobashi</td><td>丸久小山園・ななや<br>一保堂・<span class="st">錦市場</span>・新京極</td><td>大河內山莊・常寂光寺<br><span class="st">竹林</span>・天龍寺・渡月橋</td><td>大丸・Hands・高島屋<br><span class="st">高台寺</span>（17:00 點燈）</td><td>茶の菓・よーじや<br><b>11:00</b> 回飯店拿行李<br>11:30 HARUKA→機場</td></tr>
+<tr><th class="rl">晚上</th><td>力山（要訂位）<br>中村藤吉</td><td><span class="st">先斗町</span>晚餐<br>河原町購物</td><td>AEON MALL<br>壽司／燒肉</td><td>かね正 <small>💴現金</small><br><span class="st">白川・花見小路</span>・フランソア</td><td>15:25 起飛<br>17:55 抵桃園</td></tr>
+<tr><th class="rl">住</th><td colspan="4" style="text-align:center">OMO3 京都東寺（4 晚）</td><td>—</td></tr>
+</tbody></table></div>
+<small class="muted">紅字＝當天重點。橫向可滑。細節看下面每日行程。</small>
+</div>
+</section>
+
+<section id="map">
+<div class="section-title">🗺️ 全程地圖</div>
+<div class="card tight">
+  <div class="mlabel">🗺️ 全程：亀岡・嵐山 ↔ 市區（看距離感）</div>
+  <div class="city-map-wrap"><div class="city-map-leaflet" id="overviewMap"></div><div class="city-map-list" id="overviewList"></div></div>
+  <div class="mlabel" style="margin-top:12px">🗺️ 市區放大（京都駅・烏丸・河原町・祇園・東山）</div>
+  <div class="city-map-wrap"><div class="city-map-leaflet" id="cityMap"></div><div class="city-map-list" id="cityList"></div></div>
+  <small class="muted">點 pin 開 Google Maps。關西機場在南邊約 100 km 外，不在圖上。</small>
+</div>
+</section>
+
+<section id="days">
+<div class="section-title">每日行程</div>
+<div class="legend"><span>圓點：</span><b style="color:#c0453f">● 必去</b> <b style="color:#8fa08a">● 景點</b> <b style="color:#d0875a">● 吃飯</b> <b style="color:#b8894f">● 咖啡甜點</b> <b style="color:#8a73a8">● 購物</b> <b style="color:#8fa08a">○ 移動</b><br><span><b>▾ 虛線框</b>＝收起來的備選，點開才看</span></div>
+
+<!-- ===================== DAY 1 ===================== -->
+<div class="day-card" id="d1">
+<div class="day-head"><div class="dh-l">Day 1</div><div class="dh-r">10/25 (日)　關西機場 ➜ 京都駅</div></div>
+<div class="day-intro"><figure class="loc"><img src="photos/kyoto_station.jpg" alt="京都車站" loading="lazy"><figcaption><span class="ttl">京都車站 <span class="en">Kyoto Station</span></span>玻璃鋼骨大廳加上 171 階大階梯。HARUKA、近鐵、地鐵都在這裡轉。</figcaption></figure><figure class="loc"><img src="photos/toji_pagoda.jpg" alt="東寺五重塔" loading="lazy"><figcaption><span class="ttl">東寺五重塔 <span class="en">Tō-ji Pagoda</span></span>日本最高的木造塔（約 55 公尺），世界遺產，就在飯店隔壁。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
+<div class="day-body">
+  <div class="alert"><b>📋 今日重點：</b>落地 → HARUKA → 飯店 → Yodobashi 買拍立得 → 力山壽喜燒 → 中村藤吉，全在京都駅一帶。</div>
+  <div class="mlabel">🗺️ 今日動線（京都駅一帶，點 pin 開 Google Maps）</div><div class="day-leaflet" data-labels="" data-hotel="0"></div>
+  <div class="tl2"><div class="ti move"><div class="tt">09:40</div><div class="th">桃園機場 T1 起飛</div><div class="chip">✈️ 樂桃航空（約 2.5 小時）</div><div class="tx">手提 2 件合計 7kg 會被秤。</div></div><div class="ti move"><div class="tt">13:10</div><div class="th">抵達 關西機場 第 2 航廈</div><div class="chip">🚌 免費接駁巴士 → 第 1 航廈（7–9 分）</div><div class="tx">入境（出示 Visit Japan Web QR）→ 領行李 → 搭「ターミナル間連絡バス（航廈接駁巴士）」到エアロプラザ，走 3–5 分到 JR 站。</div><div class="warn">⚠️ 第 2 航廈沒有車站，一定要先搭接駁巴士</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16044730494170798307" data-lat="34.438423" data-lng="135.231830" data-emoji="📍" data-kind="poi" data-label="関西国際空港 第2ターミナル" data-name="第 2 航廈" data-far="1">📍 第 2 航廈</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1307738611132439389" data-lat="34.435889" data-lng="135.243459" data-emoji="📍" data-kind="poi" data-label="関西空港駅" data-name="JR 關西空港站" data-far="1">📍 JR 關西空港站</a></div></div><div class="ti move"><div class="tt">14:14</div><div class="th">HARUKA 往京都<span class="tg rsv">🎫 台灣先買票</span></div><div class="chip">🚆 JR 特急 HARUKA（優惠票 ¥2,200／約 80 分）</div><div class="tx">手機打開 WEST QR 刷閘門。趕不上就搭 14:44（16:04 到），優惠票當天哪班都能坐。</div></div><div class="ti move"><div class="tt">15:34</div><div class="th">京都駅 → 計程車到飯店</div><div class="chip">🚕 八条口計程車站（約 ¥600–800／5 分）</div><div class="tx">HARUKA 停 30 號月台（車站西側），跟著「八条口」指標走 5–8 分。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8069914204768375038" data-lat="34.984384" data-lng="135.757697" data-emoji="📍" data-kind="poi" data-label="京都駅 八条口" data-name="八条口計程車站">📍 八条口計程車站</a></div></div><div class="ti hotel"><div class="tt">16:00</div><div class="th">OMO3 京都東寺 check-in</div><div class="chip">15:00 後可入住</div><div class="tx">館內完全不收現金。順便問櫃台：最後一天退房後，行李能放到幾點。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1034891808857204813" data-lat="34.980259" data-lng="135.753542" data-emoji="🏨" data-kind="hotel" data-label="OMO3京都東寺" data-name="飯店">📍 飯店</a></div></div><div class="ti shop"><div class="tt">16:30</div><div class="th">Yodobashi 買拍立得 mini<span class="tg rsv">🛂 帶護照</span></div><div class="chip">🚃 近鐵 東寺→京都 1 站（¥180）＋走 8–10 分</div><div class="tx">免稅：同店同天滿 ¥5,000（未稅）＋護照正本。同棟有 UNIQLO（到 22:00）——第 2 天河原町那家在整修，要買在這裡買。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8569850376735576795" data-lat="34.988109" data-lng="135.759398" data-emoji="🛍️" data-kind="shop" data-label="ヨドバシカメラ マルチメディア京都" data-name="Yodobashi">📍 Yodobashi</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=686651589313630538" data-lat="34.988078" data-lng="135.759465" data-emoji="🛍️" data-kind="shop" data-label="ユニクロ 京都ヨドバシ店" data-name="同棟 UNIQLO">📍 同棟 UNIQLO</a></div></div><div class="ti food"><div class="tt">18:00</div><div class="th">晚餐：京都力山（和牛壽喜燒）<span class="tg rsv">📞 要先訂位</span></div><div class="chip">🚶 Yodobashi 走 3–5 分</div><div class="tx">店員桌邊幫煮。套餐每人 ¥11,000 起，習慣沾生蛋，不吃生的先講。</div><div class="warn">⚠️ 網路訂位只收到前一天 → 10/24 前要訂好</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16463647913847485229" data-lat="34.989172" data-lng="135.760707" data-emoji="🍴" data-kind="food" data-label="和牛すき焼き 京都力山 京都駅前店" data-name="力山">📍 力山</a></div><details class="alts"><summary>🍴 沒訂到／想吃便宜一點（2 家）</summary><div class="opt"><div class="on">1</div><div class="d"><b>モリタ屋 JR 京都伊勢丹店（11F）</b><span class="pr">約 ¥5,000</span><br>京都老肉舖的壽喜燒，看得到京都街景，就在車站裡。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=9480725183503435132" data-lat="34.986195" data-lng="135.757924" data-emoji="🍴" data-kind="food" data-label="モリタ屋 ジェイアール京都伊勢丹店" data-name="モリタ屋">📍 モリタ屋</a></div></div></div><div class="opt save"><div class="on">2</div><div class="d"><b>京都勝牛（Yodobashi 6F）</b><span class="pr">約 ¥2,000–3,000</span><br>炸牛排定食，自己在小石板上加熱到喜歡的熟度。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=6653650215058409964" data-lat="34.988181" data-lng="135.759135" data-emoji="🍴" data-kind="food" data-label="牛カツ京都勝牛 京都ヨドバシ店" data-name="京都勝牛">📍 京都勝牛</a></div></div></div></details></div><div class="ti cafe"><div class="tt">19:30</div><div class="th">中村藤吉 京都駅店（抹茶甜點）<span class="tg opt">選配</span></div><div class="chip">🚶 走 8–10 分（JR 京都伊勢丹 3F）</div><div class="tx">招牌生茶ゼリイ（抹茶凍）。不能訂位，到了先抽號碼牌；最後點餐 21:00。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=10434647518710591211" data-lat="34.985124" data-lng="135.758005" data-emoji="🍵" data-kind="cafe" data-label="中村藤吉本店 京都駅店" data-name="中村藤吉">📍 中村藤吉</a></div></div><div class="ti move"><div class="tt">21:00</div><div class="th">回飯店</div><div class="chip">🚃 近鐵 京都→東寺（¥180／2 分）或計程車 ¥600–800</div><div class="tx">近鐵別上「特急」（不停東寺）。</div></div></div>
+  <div class="tipbox"><div class="tip-h">💡 今日提醒・雨備</div><ul><li>第一天落地到飯店約 3 小時，比想像中久，晚上別排太滿</li><li>Dior 彩妝香水在 JR 京都伊勢丹 2F（跟中村藤吉同一棟）</li><li>☔ 雨備：今天都在京都駅一帶的室內，下雨不影響</li></ul></div>
+</div>
+</div>
+<!-- ===================== DAY 2 ===================== -->
+<div class="day-card" id="d2">
+<div class="day-head"><div class="dh-l">Day 2</div><div class="dh-r">10/26 (一)　二條城 ➜ 錦市場 ➜ 先斗町</div></div>
+<div class="day-intro"><figure class="loc"><img src="photos/nijo_castle.jpg" alt="二條城" loading="lazy"><figcaption><span class="ttl">二條城 <span class="en">Nijō Castle</span></span>德川家康 1603 年蓋的將軍行館。照片是唐門，後面就是二之丸御殿。</figcaption></figure><figure class="loc"><img src="photos/nishiki_market.jpg" alt="錦市場" loading="lazy"><figcaption><span class="ttl">錦市場 <span class="en">Nishiki Market</span></span>「京都的廚房」，彩色屋頂下約 390 公尺、一百多家店。</figcaption></figure><figure class="loc"><img src="photos/pontocho.jpg" alt="先斗町" loading="lazy"><figcaption><span class="ttl">先斗町 <span class="en">Pontochō</span></span>鴨川旁 500 公尺的石板窄巷，晚上燈籠亮起最有味道。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
+<div class="day-body">
+  <div class="alert"><b>📋 今日重點：</b>六角堂 → 二條城 → 拉麵 → 抹茶三連發 → 錦市場 → 先斗町晚餐 → 河原町購物，走路＋地鐵。</div>
+  <div class="mlabel">🗺️ 今日動線（點 pin 開 Google Maps）</div><div class="day-leaflet" data-labels="" data-hotel="1"></div>
+  <div class="tl2"><div class="ti move"><div class="tt">08:50</div><div class="th">飯店出發</div><div class="chip">🚃 近鐵到京都 → 🚇 地鐵烏丸線到烏丸御池（約 ¥400／25 分）</div><div class="tx">兩人搭計程車約 ¥1,800–2,300、15 分，也可以。</div></div><div class="ti cafe"><div class="tt">09:15</div><div class="th">Blue Bottle 六角店＋六角堂</div><div class="chip">🚶 烏丸御池站走 5 分</div><div class="tx">只有 25 席。六角堂往南 2 分，免費參拜，鴿子籤 ¥500。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=17681310091796826644" data-lat="35.007436" data-lng="135.761188" data-emoji="🍵" data-kind="cafe" data-label="ブルーボトルコーヒー 京都六角カフェ" data-name="Blue Bottle">📍 Blue Bottle</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14220761468290684616" data-lat="35.007713" data-lng="135.760256" data-emoji="🍵" data-kind="cafe" data-label="六角堂（頂法寺）" data-name="六角堂">📍 六角堂</a></div></div><div class="ti poi star"><div class="tt">10:10</div><div class="th">二條城<span class="stb">必去</span></div><div class="chip">🚇 地鐵東西線 烏丸御池→二条城前（¥220／2 分）</div><div class="tx">入口在東大手門。入城＋二之丸御殿 ¥1,300；御殿走廊一踩就吱吱叫（鶯張り，防刺客的設計）。</div><div class="warn">⚠️ 二之丸御殿＋庭園要 60–90 分，排 1 小時偏趕</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1183188145859604271" data-lat="35.014038" data-lng="135.748426" data-emoji="📍" data-kind="poi" data-label="元離宮二条城（東大手門）" data-name="二條城">📍 二條城</a></div></div><div class="ti food"><div class="tt">11:10</div><div class="th">午餐：麵屋優光＋新風館<span class="tg cash">💴 只收現金</span></div><div class="chip">🚇 二条城前→烏丸御池（¥220）＋走 3 分</div><div class="tx">貝類高湯的清湯醬油拉麵，招牌「淡竹」約 ¥900。對面就是新風館（老電話局改的商場）。</div><div class="warn">⚠️ 午餐尖峰可能排 20–40 分</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14623616051134978570" data-lat="35.009781" data-lng="135.759350" data-emoji="🍴" data-kind="food" data-label="麺屋 優光" data-name="麵屋優光">📍 麵屋優光</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3387793206881035942" data-lat="35.009618" data-lng="135.759857" data-emoji="🍴" data-kind="food" data-label="新風館" data-name="新風館">📍 新風館</a></div><details class="alts"><summary>🍴 排太久的備案（2 家，都在新風館）</summary><div class="opt save"><div class="on">1</div><div class="d"><b>ぎょうざ処 亮昌（新風館 1F）</b><span class="pr">約 ¥900</span><br>京都在地生薑和風餃子定食，中午不休息。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=15368376187995687415" data-lat="35.009314" data-lng="135.760390" data-emoji="🍴" data-kind="food" data-label="ぎょうざ処 亮昌 新風館" data-name="亮昌">📍 亮昌</a></div></div></div><div class="opt"><div class="on">2</div><div class="d"><b>Kōsa（Ace Hotel 3F）</b><span class="pr">午間套餐 ¥3,000–3,800</span><br>可以坐著好好吃的在地食材餐廳。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=8994604055234668104" data-lat="35.009518" data-lng="135.759831" data-emoji="🍴" data-kind="food" data-label="KOSA エースホテル京都" data-name="Kōsa">📍 Kōsa</a></div></div></div></details></div><div class="ti cafe"><div class="tt">12:40</div><div class="th">丸久小山園 西洞院店</div><div class="chip">🚶 新風館往西走 6–7 分</div><div class="tx">宇治抹茶老舖的茶房「元庵」，點西洞院限定抹茶配和菓子。茶房只有 13 席。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=4676926122823779189" data-lat="35.010143" data-lng="135.755050" data-emoji="🍵" data-kind="cafe" data-label="丸久小山園 西洞院店" data-name="丸久小山園">📍 丸久小山園</a></div></div><div class="ti cafe"><div class="tt">13:45</div><div class="th">ななや 京都三条店</div><div class="chip">🚶 往東走 15 分（或計程車 ¥700–900）</div><div class="tx">抹茶冰淇淋分 7 種濃度，No.7 最濃；也買得到抹茶巧克力。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3423427345023611488" data-lat="35.009310" data-lng="135.764055" data-emoji="🍵" data-kind="cafe" data-label="ななや 京都三条店" data-name="ななや">📍 ななや</a></div></div><div class="ti shop"><div class="tt">14:45</div><div class="th">一保堂茶舗＋鳩居堂</div><div class="chip">🚶 走 8–10 分（寺町通）</div><div class="tx">一保堂喫茶室「嘉木」喝抹茶配和菓子（L.O. 16:30）。鳩居堂往南 3 分：線香、和紙、一筆箋（短信紙）。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=15086512250717214680" data-lat="35.014464" data-lng="135.767416" data-emoji="🛍️" data-kind="shop" data-label="一保堂茶舗 京都本店" data-name="一保堂">📍 一保堂</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=9802374437843048877" data-lat="35.009975" data-lng="135.767068" data-emoji="🛍️" data-kind="shop" data-label="鳩居堂 京都本店" data-name="鳩居堂">📍 鳩居堂</a></div></div><div class="ti poi star"><div class="tt">15:50</div><div class="th">錦市場<span class="stb">必去</span></div><div class="chip">🚶 寺町通往南走 8–10 分</div><div class="tx">先衝有次（老字號菜刀，16:30 停止新購買），再往西吃三木鶏卵（高湯玉子燒）、こんなもんじゃ（豆乳甜甜圈）。</div><div class="warn">⚠️ 市場禁止邊走邊吃，要在店門口吃完；多數店 17:00–18:00 關</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3174108436318539455" data-lat="35.005100" data-lng="135.766188" data-emoji="📍" data-kind="poi" data-label="有次（錦市場）" data-name="有次">📍 有次</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=2551357859586536674" data-lat="35.005046" data-lng="135.764707" data-emoji="📍" data-kind="poi" data-label="三木鶏卵（錦市場）" data-name="三木鶏卵">📍 三木鶏卵</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=5046655932045000696" data-lat="35.005064" data-lng="135.763193" data-emoji="📍" data-kind="poi" data-label="こんなもんじゃ（錦市場）" data-name="こんなもんじゃ">📍 こんなもんじゃ</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=13159134450370243740" data-lat="35.005026" data-lng="135.764723" data-emoji="📍" data-kind="poi" data-label="錦市場（西口・高倉通側）" data-name="錦市場">📍 錦市場</a></div></div><div class="ti shop"><div class="tt">16:45</div><div class="th">新京極＋SOU・SOU</div><div class="chip">🚶 錦市場東口往南 2–3 分</div><div class="tx">新京極四条上ル有 9 家 SOU・SOU（京都花紋布品牌）：足袋襪 ¥880、手巾、包。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=814891330499910548" data-lat="35.004376" data-lng="135.768144" data-emoji="🛍️" data-kind="shop" data-label="SOU・SOU 足袋（新京極）" data-name="SOU・SOU">📍 SOU・SOU</a></div></div><div class="ti food star"><div class="tt">18:00</div><div class="th">晚餐：先斗町 天天天／すいしん<span class="stb">必去</span></div><div class="chip">🚶 往東過河原町到先斗町北段，走 10–12 分</div><div class="tx">天天天＝平價天婦羅吧台（約 10 席、不能訂、可能要排）。すいしん＝町家京料理居酒屋，套餐 ¥4,400 起，可線上訂。兩家相距 1 分鐘。</div><div class="warn">⚠️ すいしん要訂「先斗町 本店」，不是京都駅前店</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=11120838419483107675" data-lat="35.007527" data-lng="135.771007" data-emoji="🍴" data-kind="food" data-label="京都天ぷら 天天天 先斗町店" data-name="天天天">📍 天天天</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=9738885665180989446" data-lat="35.007763" data-lng="135.770995" data-emoji="🍴" data-kind="food" data-label="先斗町 すいしん 本店" data-name="すいしん">📍 すいしん</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1185468636174064883" data-lat="35.006067" data-lng="135.771091" data-emoji="🍴" data-kind="food" data-label="先斗町（三条側入口）" data-name="先斗町">📍 先斗町</a></div><details class="alts"><summary>🍴 兩家都客滿的備案（2 家，都在附近）</summary><div class="opt save"><div class="on">1</div><div class="d"><b>てんぷらの店 玄（木屋町三條）</b><span class="pr">天丼 ¥1,600</span><br>12 席小店，招牌天丼。晚餐最後點餐 20:30、週三休。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=4719711247478245969" data-lat="35.008459" data-lng="135.771192" data-emoji="🍴" data-kind="food" data-label="てんぷらの店 玄" data-name="玄">📍 玄</a></div></div></div><div class="opt"><div class="on">2</div><div class="d"><b>農家野菜 ふたご家（先斗町）</b><span class="pr">約 ¥4,500</span><br>農家蔬菜為主的和食居酒屋：南蠻雞、手毬壽司。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=7370616066223905932" data-lat="35.007813" data-lng="135.771213" data-emoji="🍴" data-kind="food" data-label="農家野菜 ふたご家 京都先斗町" data-name="ふたご家">📍 ふたご家</a></div></div></div></details></div><div class="ti shop"><div class="tt">19:30</div><div class="th">mina 京都（LOFT）＋藥妝・唐吉訶德<span class="tg ng">⚠️ UNIQLO 整修中</span></div><div class="chip">🚶 先斗町往西走 5 分</div><div class="tx">mina 的 UNIQLO 10/4–11/5 整修沒開；LOFT 在 4–6F、GU 在 7F（到 21:00）。唐吉訶德開到凌晨 1 點。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=6344072235192974319" data-lat="35.007871" data-lng="135.768741" data-emoji="🛍️" data-kind="shop" data-label="mina京都" data-name="mina 京都">📍 mina 京都</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3372230331090428653" data-lat="35.005735" data-lng="135.769043" data-emoji="🛍️" data-kind="shop" data-label="ドン・キホーテ 京都四条河原町店" data-name="唐吉訶德">📍 唐吉訶德</a></div></div><div class="ti move"><div class="tt">21:00</div><div class="th">回飯店</div><div class="chip">🚕 計程車約 ¥2,500–3,000／20 分</div><div class="tx">或地鐵＋近鐵約 ¥440／25 分（京都市役所前→烏丸御池轉烏丸線→京都→東寺）。</div></div></div>
+  <div class="tipbox"><div class="tip-h">💡 今日提醒・雨備</div><ul><li>💴 今天要現金：麵屋優光只收現金</li><li>二條城想慢慢看，就把拉麵延後（優光午餐開到 15:00）</li><li>藥妝、食品辦免稅會封袋，在日本不能拆；要在日本用的別辦</li><li>☔ 雨備：錦市場、新京極、寺町都有屋頂；二條城御殿在室內</li></ul></div>
+</div>
+</div>
+<!-- ===================== DAY 3 ===================== -->
+<div class="day-card" id="d3">
+<div class="day-head"><div class="dh-l">Day 3</div><div class="dh-r">10/27 (二)　嵯峨野小火車 ➜ 嵐山 ➜ 京都駅</div></div>
+<div class="day-intro"><figure class="loc"><img src="photos/sagano_torokko.jpg" alt="嵯峨野觀光小火車" loading="lazy"><figcaption><span class="ttl">嵯峨野觀光小火車 <span class="en">Sagano Romantic Train</span></span>沿保津川峽谷開 20 分鐘。10 月底兩岸還是綠的。</figcaption></figure><figure class="loc"><img src="photos/bamboo_grove.jpg" alt="竹林小徑" loading="lazy"><figcaption><span class="ttl">竹林小徑 <span class="en">Arashiyama Bamboo Grove</span></span>野宮神社到大河內山莊之間的竹林步道，免費、全天開放。</figcaption></figure><figure class="loc"><img src="photos/togetsukyo.jpg" alt="渡月橋" loading="lazy"><figcaption><span class="ttl">渡月橋 <span class="en">Togetsukyō Bridge</span></span>嵐山的地標，橋上看出去是桂川和嵐山。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
+<div class="day-body">
+  <div class="alert"><b>📋 今日重點：</b>小火車 → 大河內山莊 → 竹林 → 湯豆腐 → 天龍寺 → 渡月橋 → 回京都逛 AEON。坡很多，穿好走的鞋。</div>
+  <div class="mlabel">🗺️ 嵐山散步（小火車下車後，點 pin 開 Google Maps）</div><div class="day-leaflet" data-labels="[&quot;トロッコ嵐山駅&quot;, &quot;大河内山荘&quot;, &quot;常寂光寺&quot;, &quot;竹林の小径&quot;, &quot;野宮神社&quot;, &quot;湯豆腐 嵯峨野&quot;, &quot;嵐山よしむら&quot;, &quot;天龍寺（曹源池庭園）&quot;, &quot;渡月橋&quot;, &quot;eX cafe 京都嵐山本店&quot;, &quot;JR 嵯峨嵐山駅&quot;]" data-hotel="0"></div><div class="mlabel">🗺️ 晚上：京都駅八条口一帶</div><div class="day-leaflet" data-labels="[&quot;イオンモール京都&quot;, &quot;寿しのむさし 京都駅八条口店&quot;, &quot;京の焼肉処 弘 八条口店&quot;, &quot;京の焼肉処 弘 京都駅前店&quot;]" data-hotel="1"></div>
+  <div class="tl2"><div class="ti move"><div class="tt">09:50</div><div class="th">飯店出發 → JR 京都駅</div><div class="chip">🚶 走到八条口 13 分＋站內 5–10 分</div><div class="tx">嵯峨野線月台是 31–33 番線，在車站西北角，跟著「嵯峨野線」指標走。</div></div><div class="ti move"><div class="tt">10:15</div><div class="th">JR 嵯峨野線 → 馬堀</div><div class="chip">🚆 JR 普通車（約 ¥330／25 分）</div><div class="warn">⚠️ 只搭往「亀岡」或「園部」的普通車：快速不停馬堀，有些普通車只到嵯峨嵐山</div></div><div class="ti move"><div class="tt">10:40</div><div class="th">馬堀站 → 走到トロッコ亀岡站</div><div class="chip">🚶 沿鐵道往東約 10 分</div><div class="tx">會早到約 40 分，車站有咖啡店和賣店可以坐。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14677823561114255200" data-lat="35.010602" data-lng="135.602323" data-emoji="📍" data-kind="poi" data-label="馬堀駅" data-name="馬堀站">📍 馬堀站</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16256005145770673307" data-lat="35.013166" data-lng="135.606763" data-emoji="📍" data-kind="poi" data-label="トロッコ亀岡駅" data-name="トロッコ亀岡站">📍 トロッコ亀岡站</a></div></div><div class="ti poi star"><div class="tt">11:30</div><div class="th">嵯峨野觀光小火車<span class="stb">必去</span><span class="tg rsv">✅ 已買票</span></div><div class="chip">🚂 トロッコ亀岡→トロッコ嵐山（約 20 分）</div><div class="tx">沿保津川峽谷的復古小火車。手機出示 QR 直接進站，不用取票。5 號車「リッチ号」沒有窗，下雨會淋濕。</div><div class="warn">⚠️ 票當天不能改、不能退，別錯過 11:30 這班</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=4570624016447028871" data-lat="35.017128" data-lng="135.670282" data-emoji="📍" data-kind="poi" data-label="トロッコ嵐山駅" data-name="トロッコ嵐山站">📍 トロッコ嵐山站</a></div></div><div class="ti poi"><div class="tt">11:55</div><div class="th">大河內山莊庭園</div><div class="chip">🚶 嵐山站下樓梯、沿竹林往西 5 分</div><div class="tx">時代劇明星的山坡庭園，遠眺嵐山和京都市區，門票約 ¥1,000。</div><div class="warn">⚠️ 站出口約 60 級樓梯（沒電梯）、園內一路爬坡；「附抹茶」2024 年起可能改自助飲料</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=5732695519134169791" data-lat="35.016715" data-lng="135.669923" data-emoji="📍" data-kind="poi" data-label="大河内山荘" data-name="大河內山莊">📍 大河內山莊</a></div></div><div class="ti poi"><div class="tt">12:45</div><div class="th">常寂光寺<span class="tg opt">累了可跳過</span></div><div class="chip">🚶 往北走約 10 分</div><div class="tx">小倉山腰的石階古寺，有多寶塔。¥600。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=4483251908468797352" data-lat="35.019810" data-lng="135.668641" data-emoji="📍" data-kind="poi" data-label="常寂光寺" data-name="常寂光寺">📍 常寂光寺</a></div></div><div class="ti poi star"><div class="tt">13:30</div><div class="th">竹林小徑・野宮神社<span class="stb">必去</span></div><div class="chip">🚶 往南回竹林，走約 15 分</div><div class="tx">免費、全天開放。野宮神社是求良緣的小神社（黑木鳥居），10–15 分就夠。不要碰或刻竹子。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=18131488233213033693" data-lat="35.016819" data-lng="135.671301" data-emoji="📍" data-kind="poi" data-label="竹林の小径" data-name="竹林小徑">📍 竹林小徑</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=9470303874232722384" data-lat="35.017733" data-lng="135.674147" data-emoji="📍" data-kind="poi" data-label="野宮神社" data-name="野宮神社">📍 野宮神社</a></div></div><div class="ti food"><div class="tt">14:00</div><div class="th">午餐：湯豆腐 嵯峨野／嵐山よしむら<span class="tg cash">💴 嵯峨野不收卡</span></div><div class="chip">🚶 野宮神社往南 5–10 分</div><div class="tx">嵯峨野：庭園座敷湯豆腐定食 ¥4,400（現金或 PayPay），可訂位。よしむら：渡月橋旁手打蕎麥，不收預約，秋季天ざる膳 ¥2,960。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3625464918259608956" data-lat="35.014439" data-lng="135.674474" data-emoji="🍴" data-kind="food" data-label="湯豆腐 嵯峨野" data-name="湯豆腐 嵯峨野">📍 湯豆腐 嵯峨野</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14941654592724285625" data-lat="35.013647" data-lng="135.677265" data-emoji="🍴" data-kind="food" data-label="嵐山よしむら" data-name="よしむら">📍 よしむら</a></div><details class="alts"><summary>🍴 よしむら排太久的備案</summary><div class="opt save"><div class="on">1</div><div class="d"><b>とうふと湯葉 松ヶ枝（よしむら同一棟）</b><span class="pr">¥2,200–3,380</span><br>湯豆腐＋天婦羅＋湯葉丼套餐，可以網路訂。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=12664856289804429370" data-lat="35.013785" data-lng="135.677158" data-emoji="🍴" data-kind="food" data-label="とうふと湯葉 松ヶ枝" data-name="松ヶ枝">📍 松ヶ枝</a></div></div></div></details></div><div class="ti poi"><div class="tt">15:15</div><div class="th">天龍寺 曹源池庭園</div><div class="chip">🚶 走 3–5 分</div><div class="tx">世界遺產，借嵐山當背景的池泉庭園。庭園 ¥500（進大方丈再＋¥300）。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14815785984447432896" data-lat="35.015838" data-lng="135.673765" data-emoji="📍" data-kind="poi" data-label="天龍寺（曹源池庭園）" data-name="天龍寺">📍 天龍寺</a></div></div><div class="ti poi star"><div class="tt">16:00</div><div class="th">嵐山主街・渡月橋＋eXcafe<span class="stb">必去</span></div><div class="chip">🚶 天龍寺沿長辻通往南 5 分</div><div class="tx">eXcafe 招牌是自己用小炭爐烤糰子（營業時間當天看 Google Maps）。</div><div class="warn">⚠️ 要趕 16:46 的 JR，16:30 前離開渡月橋；eXcafe 排隊就別等</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=17011495368415127613" data-lat="35.012877" data-lng="135.677775" data-emoji="📍" data-kind="poi" data-label="渡月橋" data-name="渡月橋">📍 渡月橋</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=18095266521044780645" data-lat="35.014639" data-lng="135.678079" data-emoji="📍" data-kind="poi" data-label="eX cafe 京都嵐山本店" data-name="eXcafe">📍 eXcafe</a></div></div><div class="ti move"><div class="tt">16:46</div><div class="th">JR 嵯峨嵐山 → 京都</div><div class="chip">🚆 JR 普通車（¥240／18 分）</div><div class="tx">錯過就搭 17:02。傍晚很擠，可能要站。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1322159657806852313" data-lat="35.018781" data-lng="135.681181" data-emoji="📍" data-kind="poi" data-label="JR 嵯峨嵐山駅" data-name="嵯峨嵐山站">📍 嵯峨嵐山站</a></div></div><div class="ti shop"><div class="tt">17:15</div><div class="th">AEON MALL KYOTO</div><div class="chip">🚶 八条口往西走 5 分</div><div class="tx">UNIQLO＝Sakura館 3F、無印＝Sakura館 2F、DAISO＝對面 Kaede館 4F（走連通橋），到 21:00。</div><div class="warn">⚠️ 導航打「イオンモールKYOTO」，打「京都」會跳到桂川或五条的分店</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8368963471129795092" data-lat="34.982728" data-lng="135.754455" data-emoji="🛍️" data-kind="shop" data-label="イオンモール京都" data-name="AEON MALL">📍 AEON MALL</a></div></div><div class="ti food"><div class="tt">19:15</div><div class="th">晚餐：壽司むさし／燒肉 弘</div><div class="chip">🚶 AEON 往東走約 10 分</div><div class="tx">むさし：京都老牌迴轉壽司，不能訂要排（一盤 ¥161 起）。弘：精肉店直營燒肉，建議先訂。</div><div class="warn">⚠️ 沒有「弘 京都駅店」：南邊是八条口店（近飯店）、北邊是京都駅前店，照訂的那家去</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14691386958873112013" data-lat="34.984669" data-lng="135.759419" data-emoji="🍴" data-kind="food" data-label="寿しのむさし 京都駅八条口店" data-name="むさし">📍 むさし</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=12390797147593232931" data-lat="34.981783" data-lng="135.761206" data-emoji="🍴" data-kind="food" data-label="京の焼肉処 弘 八条口店" data-name="弘 八条口店">📍 弘 八条口店</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8201296986190483087" data-lat="34.988736" data-lng="135.760904" data-emoji="🍴" data-kind="food" data-label="京の焼肉処 弘 京都駅前店" data-name="弘 京都駅前店">📍 弘 京都駅前店</a></div><details class="alts"><summary>🍴 むさし排太久（同一條走廊，2 家）</summary><div class="opt save"><div class="on">1</div><div class="d"><b>土井（灶炊白飯定食）</b><span class="pr">¥1,540–2,970</span><br>百年醃菜老店，醃菜吃到飽。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=1606648224901924442" data-lat="34.984706" data-lng="135.759333" data-emoji="🍴" data-kind="food" data-label="竈炊き立てごはん 土井 京都駅八条口店" data-name="土井">📍 土井</a></div></div></div><div class="opt"><div class="on">2</div><div class="d"><b>くらま（京風御膳）</b><span class="pr">¥1,880–2,780</span><br>湯葉、豆腐、天婦羅、西京燒。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=2585057184443611509" data-lat="34.984668" data-lng="135.759505" data-emoji="🍴" data-kind="food" data-label="くらま アスティ京都店" data-name="くらま">📍 くらま</a></div></div></div></details></div><div class="ti move"><div class="tt">20:45</div><div class="th">走回飯店</div><div class="chip">🚶 八条口走 13 分</div></div></div>
+  <div class="tipbox"><div class="tip-h">💡 今日提醒・雨備</div><ul><li>🥾 坡很多：トロッコ嵐山站 60 級樓梯、大河內山莊、常寂光寺都是石階 → 媽媽累了就跳過常寂光寺</li><li>🍁 嵐山這時還是綠的（紅葉要 11 月中），別期待滿山紅</li><li>💴 湯豆腐 嵯峨野不收信用卡</li><li>☔ 雨備：小火車 1–4 號車有窗照開；竹林、常寂光寺縮短，多待天龍寺室內（大方丈）和 AEON</li></ul></div>
+</div>
+</div>
+<!-- ===================== DAY 4 ===================== -->
+<div class="day-card" id="d4">
+<div class="day-head"><div class="dh-l">Day 4</div><div class="dh-r">10/28 (三)　清水寺 ➜ 四條百貨 ➜ 祇園</div></div>
+<div class="day-intro"><figure class="loc"><img src="photos/kiyomizu.jpg" alt="清水寺" loading="lazy"><figcaption><span class="ttl">清水寺 <span class="en">Kiyomizu-dera</span></span>懸在山崖上的「清水舞台」，世界遺產。</figcaption></figure><figure class="loc"><img src="photos/yasaka_koshindo.jpg" alt="八坂庚申堂" loading="lazy"><figcaption><span class="ttl">八坂庚申堂 <span class="en">Yasaka Kōshin-dō</span></span>掛滿彩色「くくり猿」（綁住的猴子），寫上願望掛起來。</figcaption></figure><figure class="loc"><img src="photos/shirakawa_gion.jpg" alt="祇園白川" loading="lazy"><figcaption><span class="ttl">祇園白川 <span class="en">Gion Shirakawa</span></span>巽橋一帶的小溪和茶屋，晚上點燈最美。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
+<div class="day-body">
+  <div class="alert"><b>📋 今日重點：</b>清水寺 → 三年坂・二年坂 → いとおかし → 四條百貨 → 高台寺點燈 → かね正 → 祇園夜景。</div>
+  <div class="mlabel">🗺️ 今日動線（點 pin 開 Google Maps）</div><div class="day-leaflet" data-labels="" data-hotel="1"></div>
+  <div class="tl2"><div class="ti move"><div class="tt">09:00</div><div class="th">計程車 → 清水寺</div><div class="chip">🚕 約 ¥2,000–2,600／15–20 分</div><div class="tx">在「五条坂」下車，往上走 5–10 分到仁王門。東寺站前計程車少，用 GO 叫車。</div></div><div class="ti poi star"><div class="tt">09:15</div><div class="th">清水寺<span class="stb">必去</span></div><div class="chip">🚶 五条坂往上走 5–10 分</div><div class="tx">懸空的「清水舞台」，用 18 根櫸木柱撐起、沒用一根釘子。門票 ¥500。</div><div class="warn">⚠️ 境內禁止邊走邊吃；10 點後修學旅行團變多</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=7111013964196361402" data-lat="34.994666" data-lng="135.784661" data-emoji="📍" data-kind="poi" data-label="清水寺（仁王門）" data-name="清水寺">📍 清水寺</a></div></div><div class="ti poi"><div class="tt">10:30</div><div class="th">三年坂＋八坂庚申堂</div><div class="chip">🚶 清水坂往下 5 分 → 八坂通 3–5 分</div><div class="tx">三年坂石階又陡又擠，穿好走的鞋。庚申堂寫願望掛くくり猿 ¥500。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=10971881891922379477" data-lat="34.996952" data-lng="135.781029" data-emoji="📍" data-kind="poi" data-label="産寧坂（三年坂）" data-name="三年坂">📍 三年坂</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=10967929664870763770" data-lat="34.998324" data-lng="135.778730" data-emoji="📍" data-kind="poi" data-label="八坂庚申堂" data-name="八坂庚申堂">📍 八坂庚申堂</a></div></div><div class="ti poi"><div class="tt">11:00</div><div class="th">二年坂</div><div class="chip">🚶 走回坂底 3–5 分</div><div class="tx">連著三年坂的石階老街，有町家星巴克。和紙店「和詩倶楽部」不在這裡，在高台寺對面（下午順路）。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=9821973418547218811" data-lat="34.998604" data-lng="135.780822" data-emoji="📍" data-kind="poi" data-label="二寧坂（二年坂）" data-name="二年坂">📍 二年坂</a></div></div><div class="ti move"><div class="tt">11:40</div><div class="th">計程車 → いとおかし</div><div class="chip">🚕 約 ¥1,700–2,200／15–25 分</div><div class="tx">二年坂車子進不來，走到東大路「東山安井」攔車（5 分）或用 GO 叫車。</div><div class="warn">⚠️ 這家早到不能先坐：11:40 出發約 12:05 就到，可以晚 10–15 分再叫車</div></div><div class="ti food"><div class="tt">12:30</div><div class="th">午餐：京都 いとおかし<span class="tg rsv">✅ 已訂位</span></div><div class="tx">150 年町家吃炭烤厚切銀鮭＋土鍋飯定食（¥2,500 起），座位限 50 分鐘。</div><div class="warn">⚠️ 先看 TableCheck 確認信的時間（舊資料最後一場是 11:45）；「ごまさば」是生鯖魚</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=6183819244277642300" data-lat="35.000028" data-lng="135.753902" data-emoji="🍴" data-kind="food" data-label="京都 いとおかし" data-name="いとおかし">📍 いとおかし</a></div></div><div class="ti shop"><div class="tt">14:00</div><div class="th">大丸京都店（1F SHIRO、2F DIOR）</div><div class="chip">🚶 走 18 分，或地鐵四條站地下道直通</div><div class="tx">2F 的 DIOR 是服飾和包；彩妝香水在 JR 京都伊勢丹 2F。免稅櫃台到服務台問。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14347198462434924127" data-lat="35.004309" data-lng="135.762111" data-emoji="🛍️" data-kind="shop" data-label="大丸京都店" data-name="大丸">📍 大丸</a></div></div><div class="ti shop"><div class="tt">15:00</div><div class="th">Hands 京都店（取代藤井大丸）<span class="tg ng">⚠️ 藤井大丸已停業</span></div><div class="chip">🚶 大丸往西 2–3 分</div><div class="tx">藤井大丸 2026/5 起整棟停業改建（2030 年才重開）→ 改逛 Hands：雜貨、文具、美妝。Hands 也不在高島屋，在這裡。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3589066238475847464" data-lat="35.003318" data-lng="135.760725" data-emoji="🛍️" data-kind="shop" data-label="ハンズ 京都店" data-name="Hands">📍 Hands</a></div></div><div class="ti shop"><div class="tt">15:25</div><div class="th">京都高島屋 S.C.（2F DIOR）</div><div class="chip">🚶 沿四條通往東 10–13 分</div><div class="tx">免稅櫃台在 7F。</div><div class="warn">⚠️ DIOR 有一說週三公休，去之前打 075-252-7922 確認</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=10566598288161134014" data-lat="35.003100" data-lng="135.768496" data-emoji="🛍️" data-kind="shop" data-label="京都高島屋S.C." data-name="高島屋">📍 高島屋</a></div></div><div class="ti poi star"><div class="tt">16:10</div><div class="th">高台寺＋和詩倶楽部<span class="stb">必去</span></div><div class="chip">🚕 計程車 ¥1,000–1,300（傍晚四條通塞），或走 25 分</div><div class="tx">10/23 起秋季夜間點燈，開到 21:30、17:00 點燈，不用趕 16:30。門票 ¥800。正對面「洛市ねね」裡的和詩倶楽部（和紙小物）17:00 關，先買。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=2616919559259342976" data-lat="35.000769" data-lng="135.781272" data-emoji="📍" data-kind="poi" data-label="高台寺" data-name="高台寺">📍 高台寺</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16727803263097675995" data-lat="35.000682" data-lng="135.779757" data-emoji="📍" data-kind="poi" data-label="和詩倶楽部 高台寺店" data-name="和詩倶楽部">📍 和詩倶楽部</a></div></div><div class="ti food"><div class="tt">17:15</div><div class="th">晚餐：かね正（鰻魚錦絲蛋飯）<span class="tg cash">💴 只收現金</span><span class="tg rsv">📞 建議訂位</span></div><div class="chip">🚶 經八坂神社、四條通到縄手通，走約 17 分</div><div class="tx">招牌「きんし丼」：鰻魚上鋪滿錦絲蛋，約 ¥2,400–2,700。17:30 開、只有 14 席。</div><div class="warn">⚠️ 店在巷子深處、招牌小；想看高台寺點燈就 17:00 後再走，晚餐順延（開到 21:00）</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16448353697598890051" data-lat="35.004607" data-lng="135.772745" data-emoji="🍴" data-kind="food" data-label="かね正（祇園 鰻）" data-name="かね正">📍 かね正</a></div><details class="alts"><summary>🍴 客滿的備案（2 家，都在祇園）</summary><div class="opt save"><div class="on">1</div><div class="d"><b>祇園 権兵衛（烏龍麵・親子丼）</b><span class="pr">¥950–1,600</span><br>藝妓也愛去的老店，豆皮烏龍、親子丼。只收現金、晚上到 20:00。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=6032617932279016189" data-lat="35.004141" data-lng="135.774308" data-emoji="🍴" data-kind="food" data-label="権兵衛 祇園" data-name="権兵衛">📍 権兵衛</a></div></div></div><div class="opt"><div class="on">2</div><div class="d"><b>京都祇園 おかる（咖哩烏龍麵）</b><span class="pr">約 ¥1,000–1,500</span><br>鰹魚高湯咖哩烏龍麵名店，開到深夜。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=7681177503997776132" data-lat="35.004320" data-lng="135.774106" data-emoji="🍴" data-kind="food" data-label="おかる 祇園" data-name="おかる">📍 おかる</a></div></div></div></details></div><div class="ti poi star"><div class="tt">18:30</div><div class="th">白川巽橋・花見小路・八坂神社<span class="stb">必去</span></div><div class="chip">🚶 かね正走 3 分到巽橋</div><div class="tx">巽橋＝祇園最經典的石橋柳樹茶屋。花見小路主街可以拍；八坂神社晚上燈籠全亮。</div><div class="warn">⚠️ 花見小路兩旁私人小巷禁止進入、拍照；八坂神社御守窗口 17:00 就關</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=15543831626725695784" data-lat="35.005575" data-lng="135.774513" data-emoji="📍" data-kind="poi" data-label="巽橋（祇園白川）" data-name="巽橋">📍 巽橋</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=17005749363295018432" data-lat="35.005493" data-lng="135.775240" data-emoji="📍" data-kind="poi" data-label="花見小路通（四条側）" data-name="花見小路">📍 花見小路</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=14374021738854095593" data-lat="35.003656" data-lng="135.778553" data-emoji="📍" data-kind="poi" data-label="八坂神社（西楼門）" data-name="八坂神社">📍 八坂神社</a></div></div><div class="ti cafe"><div class="tt">19:15</div><div class="th">フランソア喫茶室<span class="tg cash">💴 只收現金</span></div><div class="chip">🚶 八坂神社沿四條通往西過鴨川，走 15 分</div><div class="tx">1934 年開的歐風老咖啡廳（國家登錄文化財）。蛋糕套餐 ¥1,450、布丁 ¥950，不能訂位。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=18118152212597146212" data-lat="35.003292" data-lng="135.770213" data-emoji="🍵" data-kind="cafe" data-label="フランソア喫茶室" data-name="フランソア">📍 フランソア</a></div></div><div class="ti move"><div class="tt">20:30</div><div class="th">回飯店</div><div class="chip">🚕 計程車約 ¥2,000–2,500／15 分</div></div></div>
+  <div class="tipbox"><div class="tip-h">💡 今日提醒・雨備</div><ul><li>💴 今天現金要帶夠：かね正、フランソア只收現金，加兩三趟計程車</li><li>🛂 免稅要帶護照正本</li><li>🍁 清水寺、高台寺還是綠葉為主；高台寺 17:00 點燈值得等</li><li>☔ 雨備：上午石階坡道下雨很滑，慢慢走；下午百貨都在室內</li></ul></div>
+</div>
+</div>
+<!-- ===================== DAY 5 ===================== -->
+<div class="day-card" id="d5">
+<div class="day-head"><div class="dh-l">Day 5</div><div class="dh-r">10/29 (四)　東本願寺 ➜ 京都駅 ➜ 回家</div></div>
+<div class="day-intro one"><figure class="loc"><img src="photos/higashi_honganji.jpg" alt="東本願寺" loading="lazy"><figcaption><span class="ttl">東本願寺 <span class="en">Higashi Hongan-ji</span></span>京都駅走路 7 分，免費參拜。御影堂是世界最大級的木造建築之一。</figcaption></figure></div>
+<div class="day-body">
+  <div class="alert"><b>📋 今日重點：</b>退房寄行李 → 東本願寺 → 開化堂 → 京都駅伴手禮 → 11:00 回飯店拿行李 → HARUKA。</div>
+  <div class="mlabel">🗺️ 今日動線（點 pin 開 Google Maps）</div><div class="day-leaflet" data-labels="" data-hotel="0"></div>
+  <div class="tl2"><div class="ti hotel"><div class="tt">08:50</div><div class="th">退房、寄放行李</div><div class="chip">11:00 前退房</div><div class="tx">行李放飯店自助行李區（check-in 時先問能放到幾點）。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1034891808857204813" data-lat="34.980259" data-lng="135.753542" data-emoji="🏨" data-kind="hotel" data-label="OMO3京都東寺" data-name="飯店">📍 飯店</a></div></div><div class="ti poi star"><div class="tt">09:15</div><div class="th">東本願寺<span class="stb">必去</span></div><div class="chip">🚃 近鐵 東寺→京都（¥180）＋走 7 分，或計程車 ¥900–1,100</div><div class="tx">免費參拜，御影堂是世界最大級的木造建築之一。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=3310036006664063322" data-lat="34.990446" data-lng="135.759560" data-emoji="📍" data-kind="poi" data-label="東本願寺（御影堂門）" data-name="東本願寺">📍 東本願寺</a></div></div><div class="ti cafe"><div class="tt">09:50</div><div class="th">開化堂咖啡<span class="tg opt">選配</span></div><div class="chip">🚶 沿七条通往東走 15 分（或計程車 ¥700–900）</div><div class="tx">百年茶筒老舖開的咖啡廳，老市電建築改的。</div><div class="warn">⚠️ 週四可能只開咖啡吧台（外帶）→ 前一晚看 IG @kaikadocafe</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=9101787143700910819" data-lat="34.989902" data-lng="135.764399" data-emoji="🍵" data-kind="cafe" data-label="開化堂カフェ" data-name="開化堂咖啡">📍 開化堂咖啡</a></div></div><div class="ti shop"><div class="tt">10:30</div><div class="th">京都駅採買（茶の菓、よーじや）</div><div class="chip">🚶 走 15 分到八条口（或計程車 ¥700–900）</div><div class="tx">茶の菓＝京都限定濃茶貓舌餅（5 枚 ¥951），在八条口近鐵名店街；よーじや（吸油面紙）在旁邊 2–3 分。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=17679035668936811605" data-lat="34.984726" data-lng="135.757545" data-emoji="🛍️" data-kind="shop" data-label="マールブランシュ 京都駅八条口店" data-name="茶の菓">📍 茶の菓</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=15637717705093399937" data-lat="34.984654" data-lng="135.758998" data-emoji="🛍️" data-kind="shop" data-label="よーじや 京都駅八条口店" data-name="よーじや">📍 よーじや</a></div></div><div class="ti hotel"><div class="tt">11:00</div><div class="th">回飯店拿行李 → 計程車到京都駅<span class="tg ng">⏰ 比原訂早 15 分</span></div><div class="chip">🚶 八条口走 13 分 → 🚕 計程車回京都駅（¥600–800）</div><div class="tx">原排 11:15 回飯店、11:30 上車趕不上：帶行李到 30 號月台要 15–20 分。</div><div class="warn">⚠️ 11:00 一定要從八条口往飯店走</div></div><div class="ti move"><div class="tt">11:30</div><div class="th">HARUKA 往關西機場</div><div class="chip">🚆 HARUKA 23 號（30 號月台，12:50 到）</div><div class="tx">趕不上就搭 12:00 的 25 號（13:20 到），但離 14:35 報到截止只剩約 1 小時。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=13121875705491233800" data-lat="34.985849" data-lng="135.758767" data-emoji="📍" data-kind="poi" data-label="京都駅" data-name="京都駅">📍 京都駅</a></div></div><div class="ti move"><div class="tt">12:50</div><div class="th">關西空港駅 → 接駁巴士到第 2 航廈</div><div class="chip">🚌 走 3–5 分到エアロプラザ → 免費接駁巴士 7–9 分</div><div class="tx">樂桃報到 12:55 開始、14:35 截止；國際線不能用 App，用自助報到機或櫃台。</div><div class="warn">⚠️ 手提 2 件合計 7kg，伴手禮最容易超重（安檢後買的也算）</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=4694169152220281058" data-lat="34.435994" data-lng="135.242040" data-emoji="📍" data-kind="poi" data-label="第2ターミナル行き連絡バス乗り場" data-name="接駁巴士站" data-far="1">📍 接駁巴士站</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16044730494170798307" data-lat="34.438423" data-lng="135.231830" data-emoji="📍" data-kind="poi" data-label="関西国際空港 第2ターミナル" data-name="第 2 航廈" data-far="1">📍 第 2 航廈</a></div></div><div class="ti move"><div class="tt">15:25</div><div class="th">起飛 → 17:55 抵達桃園</div><div class="chip">✈️ 樂桃（約 3.5 小時）</div><div class="tx">歡迎回家 🍵</div></div></div>
+  <div class="tipbox"><div class="tip-h">💡 今日提醒・雨備</div><ul><li>🧳 前一晚把行李整理好、伴手禮先秤一下（手提 7kg）</li><li>⏰ 今天最重要的兩個時間：11:00 離開八条口、14:35 報到截止</li><li>☔ 雨備：東本願寺、京都駅都不怕雨；開化堂改搭計程車</li></ul></div>
+</div>
+</div>
+</section>
+
+<section id="matcha">
+<div class="section-title">🍵 抹茶巡禮（這趟的主題）</div>
+
+<div class="card">
+<table class="ptab">
+<tr><th>哪天</th><th>店</th><th>點什麼／買什麼</th></tr>
+<tr><td>D1 晚</td><td><b>中村藤吉</b> 京都駅店</td><td>生茶ゼリイ（抹茶凍）、抹茶聖代</td></tr>
+<tr><td>D2</td><td><b>丸久小山園</b> 西洞院店</td><td>茶房「元庵」西洞院限定抹茶配和菓子 ¥1,595–2,035</td></tr>
+<tr><td>D2</td><td><b>ななや</b> 京都三条店</td><td>抹茶冰淇淋 7 種濃度（No.7 最濃）；抹茶巧克力</td></tr>
+<tr><td>D2</td><td><b>一保堂</b> 京都本店</td><td>喫茶室「嘉木」抹茶配和菓子；帶ほうじ茶（焙茶）回家</td></tr>
+<tr><td>D3</td><td>大河內山莊</td><td>門票原本附抹茶，2024 年起可能改成自助飲料</td></tr>
+<tr><td>D5</td><td><b>開化堂</b>咖啡</td><td>百年茶筒老舖開的咖啡廳</td></tr>
+<tr><td>D5</td><td>京都駅 八条口</td><td><b>茶の菓</b>（濃茶貓舌餅，5 枚 ¥951）：最好帶的伴手禮</td></tr>
+</table>
+</div>
+<details><summary>🍵 抹茶小知識（買之前看）</summary><div class="gbody">
+<p><b>薄茶／濃茶</b>：一般喝的是薄茶；濃茶用量多一倍、很稠，茶道裡才喝得到。</p>
+<p><b>抹茶粉帶回家</b>：開封後放冰箱、一個月內喝完；小罐（20–40g）比大包划算。丸久小山園說明大量購買可能被拒（防代購）。</p>
+<p><b>免稅</b>：食品算消耗品，會封袋、在日本不能拆 → 要在日本吃的別辦免稅。</p>
+</div></details>
+
+</section>
+
+<section id="shop">
+<div class="section-title">🛍️ 購物・退稅</div>
+
+<div class="card">
+<h3>🧾 免稅（10/31 前的舊制，她們適用）</h3>
+<small class="muted">同一店同一天滿 <b>¥5,000（未稅）</b>＋<b>護照正本</b>，結帳直接扣稅。藥妝、食品會封袋，在日本不能拆。11/1 起全日本改成先付稅、出境退（她們回國前不受影響）。</small>
+</div>
+<div class="card">
+<h3>🛍️ 這趟買東西的地方</h3>
+<div class="kv"><div class="k">DIOR</div><div class="v">大丸 2F、高島屋 2F 是<b>服飾和包</b>。<b>彩妝香水在 JR 京都伊勢丹 2F</b>（京都駅，D1／D5 經過）。高島屋 DIOR 有一說週三公休，先打 075-252-7922</div></div>
+<div class="kv"><div class="k">SHIRO</div><div class="v">大丸京都店 1F</div></div>
+<div class="kv"><div class="k">UNIQLO</div><div class="v">河原町 mina 那家整修到 11/5 → 改去 <b>Yodobashi 同棟</b>（D1，到 22:00）或 <b>AEON MALL Sakura館 3F</b>（D3）</div></div>
+<div class="kv"><div class="k">Hands</div><div class="v">大丸隔壁（四條烏丸），不在高島屋</div></div>
+<div class="kv"><div class="k">百貨免稅</div><div class="v">高島屋在 7F 免稅櫃台；大丸到服務台問</div></div>
+<div class="kv"><div class="k">藥妝</div><div class="v">唐吉訶德 四條河原町店（到凌晨 1 點）、AEON 1F ダックス</div></div>
+<div class="kv"><div class="k">伴手禮</div><div class="v">茶の菓（京都駅八条口）、よーじや 吸油面紙、鳩居堂 一筆箋／線香、SOU・SOU 足袋襪 ¥880、一保堂 茶葉</div></div>
+</div>
+
+</section>
+
+<section id="tips">
+<div class="section-title">💡 實用資訊</div>
+
+<details open><summary>🚇 交通怎麼搭</summary><div class="gbody">
+<p><b>手機交通卡</b>（Suica／ICOCA）在京都 JR、地鐵、近鐵、公車都能刷。</p>
+<p><b>計程車</b>：2025/8 起 起跳 ¥500（0.9km），之後每 255m ＋¥100。兩人坐常常跟搭車差不多價。叫車用 <b>GO</b> App。</p>
+<p><b>近鐵 東寺↔京都</b>：1 站 ¥180、2 分，<b>別上「特急」</b>（不停東寺、還要另買特急券）。</p>
+<p><b>JR 嵯峨野線</b>：去馬堀只搭往「亀岡／園部」的<b>普通</b>車。</p>
+</div></details>
+<details><summary>💴 錢</summary><div class="gbody">
+<p><b>只收現金</b>：麵屋優光、湯豆腐 嵯峨野（也收 PayPay）、かね正、フランソア。</p>
+<p><b>不收現金</b>：OMO3 飯店（住宿稅、早餐都刷卡）。</p>
+<p>領錢用 <b>7-11 ATM</b>（有中文、台灣卡大多能領）。</p>
+</div></details>
+<details><summary>📱 手機要有的 App</summary><div class="gbody">
+<p><b>Google Maps</b>（書裡每個 📍 都直接開到那家店）／<b>GO</b>（叫計程車）／<b>WEST QR</b>（HARUKA 票）／<b>Visit Japan Web</b>／<b>Google 翻譯</b>（相機對著菜單翻）</p>
+</div></details>
+<details><summary>🗣️ 救命日文</summary><div class="gbody">
+<div class="phrase"><span class="it">すみません</span><span class="pn">su-mi-ma-sen</span>　不好意思／請問</div>
+<div class="phrase"><span class="it">これ、ください</span><span class="pn">ko-re ku-da-sai</span>　我要這個（指菜單）</div>
+<div class="phrase"><span class="it">予約しています</span><span class="pn">yo-ya-ku shi-te i-ma-su</span>　我有訂位</div>
+<div class="phrase"><span class="it">カードで払えますか</span><span class="pn">ka-do de ha-ra-e-ma-su ka</span>　可以刷卡嗎</div>
+<div class="phrase"><span class="it">免税できますか</span><span class="pn">men-zei de-ki-ma-su ka</span>　可以免稅嗎</div>
+<div class="phrase"><span class="it">トイレはどこですか</span><span class="pn">toi-re wa do-ko de-su ka</span>　廁所在哪裡</div>
+</div></details>
+<details><summary>🍁 10 月底的京都（先講清楚）</summary><div class="gbody">
+<p>10/21 日本氣象協會實況：嵐山、清水寺、高台寺都還是<b>綠葉</b>。今年預測嵐山紅葉最美是 11/13 以後。這趟看到的是<b>初秋綠意＋零星轉色</b>，不是滿山紅葉。</p>
+<p>天氣：早晚約 10–13°C、白天 18–22°C → 薄外套＋好走的鞋。</p>
+</div></details>
+<details><summary>🙏 會被唸的事</summary><div class="gbody">
+<p>錦市場、清水寺<b>禁止邊走邊吃</b>（在店門口吃完）。花見小路兩旁私人小巷<b>禁止進入、禁止拍照</b>。不要追拍藝妓。竹林不要碰、不要刻竹子。</p>
+</div></details>
+
+</section>
+
+<section id="emerg">
+<div class="section-title">🆘 緊急聯絡</div>
+<div class="card">
+  <h3 style="color:var(--rose)">🚨 日本緊急電話</h3>
+  <div class="kv"><div class="k">警察</div><div class="v"><a href="tel:110">📞 110</a></div></div>
+  <div class="kv"><div class="k">救護車</div><div class="v"><a href="tel:119">📞 119</a>（火災也是）</div></div>
+  <div class="kv"><div class="k">觀光熱線</div><div class="v"><a href="tel:0503816-2787">📞 050-3816-2787</a>（日本觀光局 JNTO，24 小時，有中文）</div></div>
+</div>
+<div class="card">
+  <h3>🏨 住宿</h3>
+  <div class="kv"><div class="k">飯店</div><div class="v"><b>OMO3京都東寺 by 星野集團</b><br>京都市南区西九条蔵王町 11-6<br><small>迷路時把這行地址給計程車司機看就好</small></div></div>
+</div>
+<div class="card">
+  <h3>🇹🇼 台灣駐大阪辦事處（管京都）</h3>
+  <div class="kv"><div class="k">辦事處</div><div class="v">台北駐大阪經濟文化辦事處<br>大阪市北區中之島 2-3-18 中之島フェスティバルタワー 17F<br><a href="tel:0662278623">📞 06-6227-8623</a>（上班時間，護照等領務）</div></div>
+  <div class="kv"><div class="k">24h 急難</div><div class="v"><a href="tel:09087944568">📞 090-8794-4568</a><br><small>只限生命安全等緊急狀況</small></div></div>
+  <div class="kv"><div class="k">外交部</div><div class="v">海外撥 <b>+886-800-085-095</b>（旅外急難）</div></div>
+  <small class="muted">⚠️ 電話號碼出發前再上外交部領事事務局官網確認一次（會異動）。</small>
+</div>
+<div class="card">
+  <h3>💳 卡片、護照弄丟</h3>
+  <small class="muted">
+  <b>卡片</b>：出發前把自己銀行的海外掛失電話存手機＋寫紙上。<br>
+  <b>護照</b>：① 附近派出所（交番）報案拿遺失證明 ② 帶證明＋大頭照去大阪辦事處辦入國證明書。<b>出發前護照拍照存雲端</b>，會快很多。
+  </small>
+</div>
+</section>
+
+<div class="muted center" style="margin:30px 0 10px;font-size:12px">
+  🍵 京都五日 · 2026/10/25–10/29 · 媽媽 ＆ 妹妹<br>
+  行程：她們自己排的 Google 試算表；機加酒：雄獅「OMO3 京都東寺自由行 5 日」<br>
+  <span style="font-size:11px;opacity:.7">iPhone Safari → 分享 → 加入主畫面，就變成 App（可離線看）</span>
+  <details style="text-align:left;margin:10px 0"><summary style="font-size:13px">📷 照片來源（Wikimedia Commons）</summary><ul style="font-size:11.5px;line-height:1.6;padding-left:18px;margin:6px 0"><li>hero/cover.jpg：Domenico Convertini（from Zurich, Schweiz），CC BY-SA 2.0，<a href="https://commons.wikimedia.org/wiki/File:Gion_-_Nineizaka_(Ninenzaka),_Kyoto,_Japan_(48923805641).jpg" target="_blank">Commons</a></li><li>photos/kyoto_station.jpg：xiquinhosilva，CC BY 4.0，<a href="https://commons.wikimedia.org/wiki/File:Kyoto_Station_-_55369540473.jpg" target="_blank">Commons</a></li><li>photos/toji_pagoda.jpg：Simone Urbinati，CC BY-SA 3.0，<a href="https://commons.wikimedia.org/wiki/File:Japan_2006_-_Kyoto_-_Toji_Pagoda.JPG" target="_blank">Commons</a></li><li>photos/nijo_castle.jpg：inunami，CC BY 2.0，<a href="https://commons.wikimedia.org/wiki/File:Kyoto_20220528133433_(52269050082).jpg" target="_blank">Commons</a></li><li>photos/nishiki_market.jpg：Nesnad，CC BY 4.0，<a href="https://commons.wikimedia.org/wiki/File:Nishiki_market_-_Kyoto_-_2022_Dec_30_various_11_28_54_110000.jpeg" target="_blank">Commons</a></li><li>photos/pontocho.jpg：Sergiy Galyonkin（from Raleigh, USA），CC BY-SA 2.0，<a href="https://commons.wikimedia.org/wiki/File:Friday_evening_in_Pontocho_Alley,_Kyoto_(52270424607).jpg" target="_blank">Commons</a></li><li>photos/sagano_torokko.jpg：pang yu liu（from Taoyuan, TW），CC BY-SA 2.0，<a href="https://commons.wikimedia.org/wiki/File:Sagano_Scenic_Railway_Hozu_River_2016-08-26.jpg" target="_blank">Commons</a></li><li>photos/bamboo_grove.jpg：Naokijp，CC BY-SA 4.0，<a href="https://commons.wikimedia.org/wiki/File:2021_Sagano_Bamboo_forest_in_Arashiyama,_Kyoto,_Japan.jpg" target="_blank">Commons</a></li><li>photos/togetsukyo.jpg：Ian G Shingler，CC BY-SA 4.0，<a href="https://commons.wikimedia.org/wiki/File:Togetsuky%C5%8D_Bridge.jpg" target="_blank">Commons</a></li><li>photos/kiyomizu.jpg：Reginald Pentinio，CC BY 2.0，<a href="https://commons.wikimedia.org/wiki/File:Kiyomizu-dera_(18199680391).jpg" target="_blank">Commons</a></li><li>photos/yasaka_koshindo.jpg：Basile Morin，CC BY-SA 4.0，<a href="https://commons.wikimedia.org/wiki/File:Multi-coloured_kukuri-zaru_talismans_at_Kongoji_Yasaka_K%C5%8Dshin-d%C5%8D_temple,_Kyoto,_Japan.jpg" target="_blank">Commons</a></li><li>photos/shirakawa_gion.jpg：gorian21，CC BY 3.0，<a href="https://commons.wikimedia.org/wiki/File:%E8%BE%B0%E5%B7%B3%E6%A9%8B_-_panoramio.jpg" target="_blank">Commons</a></li><li>photos/higashi_honganji.jpg：663highland，CC BY-SA 4.0，<a href="https://commons.wikimedia.org/wiki/File:170216_Higashi_Honganji_Kyoto_Japan01s4.jpg" target="_blank">Commons</a></li></ul></details>
+</div>
+
+</div><!-- /.wrap -->
+
+<nav class="dayjump" id="dayjump"><a href="#d1"><b>1</b>10/25</a><a href="#d2"><b>2</b>10/26</a><a href="#d3"><b>3</b>10/27</a><a href="#d4"><b>4</b>10/28</a><a href="#d5"><b>5</b>10/29</a></nav>
+
+<script>
+// ===== 天氣（Open-Meteo，京都市）=====
+(function(){
+  var TS='2026-10-25',TE='2026-10-29',WD=['日','一','二','三','四','五','六'];
+  function wmo(c){
+    if(c===0)return['☀️','晴'];if(c===1)return['🌤️','大致晴'];if(c===2)return['⛅','多雲'];if(c===3)return['☁️','陰'];
+    if(c===45||c===48)return['🌫️','霧'];if(c>=51&&c<=57)return['🌦️','毛毛雨'];if(c>=61&&c<=67)return['🌧️','下雨'];
+    if(c>=71&&c<=77)return['🌨️','雪'];if(c>=80&&c<=82)return['🌧️','陣雨'];if(c>=95)return['⛈️','雷雨'];return['🌡️','—'];
+  }
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=34.985&longitude=135.758&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current=temperature_2m,weather_code&timezone=Asia%2FTokyo&forecast_days=14')
+    .then(function(r){return r.json();}).then(function(d){
+      var cur=d.current,day=d.daily,cw=wmo(cur.weather_code);
+      var h='<div class="wx-now"><div class="e">'+cw[0]+'</div><div class="t">'+Math.round(cur.temperature_2m)+'°</div><div class="d">'+cw[1]+'<br>'+cur.time.slice(5,16).replace('T',' ')+' 更新</div></div>';
+      for(var i=0;i<day.time.length;i++){
+        var dt=day.time[i],w=wmo(day.weather_code[i]),rp=day.precipitation_probability_max[i],dd=new Date(dt+'T12:00:00'),trip=(dt>=TS&&dt<=TE);
+        h+='<div class="wx-day'+(trip?' trip':'')+'"><div class="wd">'+(dd.getMonth()+1)+'/'+dd.getDate()+'·'+WD[dd.getDay()]+(trip?'★':'')+'</div><div class="we">'+w[0]+'</div><div class="wt"><b>'+Math.round(day.temperature_2m_max[i])+'°</b> <small>'+Math.round(day.temperature_2m_min[i])+'°</small></div><div class="wr'+(rp>=50?' hi':'')+'">💧'+rp+'%</div><div class="wl">'+w[1]+'</div></div>';
+      }
+      document.getElementById('wxKyoto').innerHTML=h;
+    }).catch(function(){document.getElementById('wxKyoto').innerHTML='<div class="wx-loading">⚠️ 載入失敗（檢查網路）。改看 <a href="https://tenki.jp/forecast/6/29/6110/26100/" target="_blank">tenki.jp 京都市</a>。</div>';});
+})();
+
+// ===== 地圖引擎：每天 1–2 張，pin 依 data-label 連動線 =====
+const DAY_ROUTES = {"d1": [["関西国際空港 第2ターミナル", "walk", "関西国際空港 第2ターミナル"], ["京都駅 八条口", "walk", "京都駅 八条口"], ["OMO3京都東寺", "taxi", "OMO3京都東寺"], ["ヨドバシカメラ マルチメディア京都", "subway", "ヨドバシカメラ マルチメディア京都"], ["和牛すき焼き 京都力山 京都駅前店", "walk", "和牛すき焼き 京都力山 京都駅前店"], ["中村藤吉本店 京都駅店", "walk", "中村藤吉本店 京都駅店"]], "d2": [["ブルーボトルコーヒー 京都六角カフェ", "subway", "ブルーボトルコーヒー 京都六角カフェ"], ["元離宮二条城（東大手門）", "subway", "元離宮二条城（東大手門）"], ["麺屋 優光", "subway", "麺屋 優光"], ["丸久小山園 西洞院店", "walk", "丸久小山園 西洞院店"], ["ななや 京都三条店", "walk", "ななや 京都三条店"], ["一保堂茶舗 京都本店", "walk", "一保堂茶舗 京都本店"], ["有次（錦市場）", "walk", "有次（錦市場）"], ["SOU・SOU 足袋（新京極）", "walk", "SOU・SOU 足袋（新京極）"], ["京都天ぷら 天天天 先斗町店", "walk", "京都天ぷら 天天天 先斗町店"], ["mina京都", "walk", "mina京都"]], "d3": [["馬堀駅", "walk", "馬堀駅"], ["トロッコ嵐山駅", "torokko", "トロッコ嵐山駅"], ["大河内山荘", "walk", "大河内山荘"], ["常寂光寺", "walk", "常寂光寺"], ["竹林の小径", "walk", "竹林の小径"], ["湯豆腐 嵯峨野", "walk", "湯豆腐 嵯峨野"], ["天龍寺（曹源池庭園）", "walk", "天龍寺（曹源池庭園）"], ["渡月橋", "walk", "渡月橋"], ["JR 嵯峨嵐山駅", "walk", "JR 嵯峨嵐山駅"], ["イオンモール京都", "train", "イオンモール京都"], ["寿しのむさし 京都駅八条口店", "walk", "寿しのむさし 京都駅八条口店"]], "d4": [["清水寺（仁王門）", "taxi", "清水寺（仁王門）"], ["産寧坂（三年坂）", "walk", "産寧坂（三年坂）"], ["二寧坂（二年坂）", "walk", "二寧坂（二年坂）"], ["京都 いとおかし", "taxi", "京都 いとおかし"], ["大丸京都店", "walk", "大丸京都店"], ["ハンズ 京都店", "walk", "ハンズ 京都店"], ["京都高島屋S.C.", "walk", "京都高島屋S.C."], ["高台寺", "taxi", "高台寺"], ["かね正（祇園 鰻）", "walk", "かね正（祇園 鰻）"], ["巽橋（祇園白川）", "walk", "巽橋（祇園白川）"], ["フランソア喫茶室", "walk", "フランソア喫茶室"]], "d5": [["OMO3京都東寺", "walk", "OMO3京都東寺"], ["東本願寺（御影堂門）", "subway", "東本願寺（御影堂門）"], ["開化堂カフェ", "walk", "開化堂カフェ"], ["マールブランシュ 京都駅八条口店", "walk", "マールブランシュ 京都駅八条口店"], ["OMO3京都東寺", "walk", "OMO3京都東寺"], ["京都駅", "taxi", "京都駅"], ["第2ターミナル行き連絡バス乗り場", "walk", "第2ターミナル行き連絡バス乗り場"]]};
+const HOTEL = {"lat": 34.980259, "lng": 135.753542, "name": "OMO3 京都東寺（飯店）", "mode": "walk"};
+const OVERVIEW = [["🏨", "飯店 OMO3", 34.980259, 135.753542, "https://maps.google.com/?cid=1034891808857204813"], ["🚂", "小火車 亀岡站 D3", 35.013166, 135.606763, "https://maps.google.com/?cid=16256005145770673307"], ["🎋", "嵐山 竹林 D3", 35.016819, 135.671301, "https://maps.google.com/?cid=18131488233213033693"], ["🏯", "二條城 D2", 35.014038, 135.748426, "https://maps.google.com/?cid=1183188145859604271"], ["⛩️", "清水寺 D4", 34.994666, 135.784661, "https://maps.google.com/?cid=7111013964196361402"]];
+const OVERVIEW2 = [["🏨", "飯店 OMO3", 34.980259, 135.753542, "https://maps.google.com/?cid=1034891808857204813"], ["🚉", "京都駅", 34.985849, 135.758767, "https://maps.google.com/?cid=13121875705491233800"], ["🙏", "東本願寺 D5", 34.990446, 135.75956, "https://maps.google.com/?cid=3310036006664063322"], ["🏯", "二條城 D2", 35.014038, 135.748426, "https://maps.google.com/?cid=1183188145859604271"], ["🛍️", "錦市場 D2", 35.005026, 135.764723, "https://maps.google.com/?cid=13159134450370243740"], ["🏮", "先斗町 D2", 35.006067, 135.771091, "https://maps.google.com/?cid=1185468636174064883"], ["🛍️", "大丸 D4", 35.004309, 135.762111, "https://maps.google.com/?cid=14347198462434924127"], ["⛩️", "清水寺 D4", 34.994666, 135.784661, "https://maps.google.com/?cid=7111013964196361402"], ["🏯", "高台寺 D4", 35.000769, 135.781272, "https://maps.google.com/?cid=2616919559259342976"], ["🏮", "祇園白川 D4", 35.005575, 135.774513, "https://maps.google.com/?cid=15543831626725695784"]];
+const MOVE={walk:{c:'#3f5f45',d:'3,7',e:'🚶'},subway:{c:'#5b6fa3',d:null,e:'🚇'},bus:{c:'#3f7a55',d:null,e:'🚌'},taxi:{c:'#e8954a',d:null,e:'🚕'},train:{c:'#c0453f',d:null,e:'🚆'},torokko:{c:'#8a5a32',d:null,e:'🚂'}};
+// 底圖：Esri 街道圖（免金鑰、日英雙語站名）；載入失敗自動換 OSM。
+// ⚠️ 2026-10 實測：CARTO voyager 現在要金鑰（整片「API KEY REQUIRED」）→ 不要再用
+function tiles(map){
+  const att=L.control.attribution({prefix:false,position:'bottomright'}).addTo(map);
+  const esri=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:19});
+  let errs=0, swapped=false;
+  esri.on('tileerror',()=>{ if(swapped || ++errs<4) return; swapped=true; map.removeLayer(esri); att.removeAttribution('Tiles © Esri');
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map); att.addAttribution('© <a href="https://www.openstreetmap.org/copyright">OSM</a>'); });
+  esri.addTo(map); att.addAttribution('Tiles © Esri');
+}
+function pinIcon(kind,txt){return L.divIcon({className:'cmap-pin '+kind,html:`<div class="pin"><div class="num">${txt}</div></div>`,iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-26]});}
+function moveIcon(m){return L.divIcon({className:'move-ic',html:`<div class="mv-pill" style="border-color:${m.c}">${m.e}</div>`,iconSize:[22,22],iconAnchor:[11,11]});}
+function buildMap(slot, btns, route, useHotel, idx){
+  const pois=[], seen=new Set();
+  btns.forEach(b=>{const lb=b.dataset.label; if(seen.has(lb))return; seen.add(lb);
+    pois.push({lat:+b.dataset.lat,lng:+b.dataset.lng,zh:lb,name:b.dataset.name||lb,href:b.href,emoji:b.dataset.emoji||'',kind:b.dataset.kind||'poi'});});
+  if(!pois.length) return;
+  const id='dmap_'+idx, wrap=document.createElement('div');
+  wrap.className='city-map-wrap';
+  wrap.innerHTML=`<div class="city-map-leaflet" id="${id}"></div><div class="city-map-list">${pois.map((p,i)=>`<a href="${p.href}" target="_blank"><span class="num ${p.kind}">${i+1}</span>${p.name}</a>`).join('')}</div>`;
+  slot.appendChild(wrap);
+  const map=L.map(id,{scrollWheelZoom:false,attributionControl:false,zoomSnap:0.25}); tiles(map);
+  const pts=[];
+  pois.forEach((p,i)=>{L.marker([p.lat,p.lng],{icon:pinIcon(p.kind,i+1)}).addTo(map).bindPopup(`<b>${i+1}. ${p.emoji} ${p.name}</b><br><small>${p.zh}</small><br><a href="${p.href}" target="_blank">在 Google Maps 開啟 →</a>`); pts.push([p.lat,p.lng]);});
+  const R=route.map(r=>{const p=pois.find(x=>x.zh===r[0]); return p?[p.lat,p.lng]:null;});
+  if(useHotel && R.find(Boolean)){
+    const f=R.find(Boolean);
+    L.marker([HOTEL.lat,HOTEL.lng],{icon:pinIcon('hotel','🏨')}).addTo(map).bindPopup(`<b>🏨 ${HOTEL.name}</b>`);
+    L.polyline([[HOTEL.lat,HOTEL.lng],f],{color:'#5b6fa3',weight:3,opacity:.6,dashArray:'2,8'}).addTo(map);
+    // 飯店不算進畫面範圍：算進去會把整張圖拉遠（10/22 截圖抓到 D2、D4 縮到整個京都盆地）
+  }
+  for(let i=1;i<R.length;i++){
+    if(!R[i-1]||!R[i]) continue;
+    const m=MOVE[route[i][1]]||MOVE.walk;
+    L.polyline([R[i-1],R[i]],{color:m.c,weight:4,opacity:.85,dashArray:m.d,lineCap:'round'}).addTo(map);
+    L.marker([(R[i-1][0]+R[i][0])/2,(R[i-1][1]+R[i][1])/2],{interactive:false,keyboard:false,zIndexOffset:500,icon:moveIcon(m)}).addTo(map);
+  }
+  if(pts.length===1) map.setView(pts[0],16); else map.fitBounds(pts,{paddingTopLeft:[48,52],paddingBottomRight:[30,24],maxZoom:16});
+}
+function initMaps(){
+  if(typeof L==='undefined'){setTimeout(initMaps,100);return;}
+  let idx=0;
+  document.querySelectorAll('.day-card').forEach(card=>{
+    const all=[...card.querySelectorAll('.tl2 .map-btn[data-lat]:not(.alt):not([data-far])')];
+    card.querySelectorAll('.day-leaflet').forEach(slot=>{
+      const labels=slot.dataset.labels?JSON.parse(slot.dataset.labels):null;
+      const btns=labels?all.filter(b=>labels.includes(b.dataset.label)):all;
+      const route=(DAY_ROUTES[card.id]||[]).filter(r=>!labels||labels.includes(r[0]));
+      buildMap(slot,btns,route,slot.dataset.hotel==='1',idx++);
+    });
+  });
+  drawOverview('overviewMap','overviewList',OVERVIEW,13);
+  drawOverview('cityMap','cityList',OVERVIEW2,15);
+}
+function drawOverview(mapId,listId,PTS,mz){
+  if(document.getElementById(mapId)){
+    const map=L.map(mapId,{scrollWheelZoom:false,attributionControl:false,zoomSnap:0.25}); tiles(map);
+    const list=document.getElementById(listId), b=[];
+    PTS.forEach((p,i)=>{
+      const g=p[4];
+      const cls=(p[0]==='🏨')?'hotel':((p[0]==='🛍️')?'shop':'poi');
+      L.marker([p[2],p[3]],{icon:pinIcon(cls,i+1)}).addTo(map).bindPopup(`<b>${p[0]} ${p[1]}</b><br><a href="${g}" target="_blank">在 Google Maps 開啟 →</a>`);
+      b.push([p[2],p[3]]);
+      const a=document.createElement('a'); a.href=g; a.target='_blank'; a.innerHTML=`<span class="num ${cls}">${i+1}</span>${p[0]} ${p[1]}`; list.appendChild(a);
+    });
+    map.fitBounds(b,{paddingTopLeft:[48,52],paddingBottomRight:[30,24],maxZoom:mz});
+  }
+}
+window.addEventListener('load',initMaps);
+
+// ===== 倒數：10/25 09:40 桃園起飛（台灣時間）=====
+function tick(){
+  const box=document.getElementById('countdownBox'); if(!box) return;
+  const now=Date.now(), diff=new Date('2026-10-25T09:40:00+08:00').getTime()-now;
+  if(diff>0){
+    const d=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),m=Math.floor(diff%3600000/60000);
+    box.innerHTML='⏳ 距離出發還有 <b>'+d+' 天 '+h+' 小時 '+m+' 分</b>';
+  } else {
+    const s=new Date('2026-10-25T00:00:00+09:00').getTime(), e=new Date('2026-10-30T00:00:00+09:00').getTime();
+    if(now<e){
+      const n=Math.min(5,Math.floor((now-s)/86400000)+1);
+      box.innerHTML='🛫 旅程進行中 — 今天是 <b>Day '+n+'</b>，跳到 <a href="#d'+n+'">今日行程</a>';
+      const a=document.querySelector('.dayjump a[href="#d'+n+'"]'); if(a) a.classList.add('now');
+    } else box.innerHTML='✅ 旅程結束，歡迎回家 🍵';
+  }
+}
+tick();setInterval(tick,60000);
+
+// ===== 兩條 nav 跟著捲動亮起＋置中 =====
+(function(){
+  let suppressUntil=0; const evaluators=[]; let stopT;
+  window.addEventListener('scroll',()=>{clearTimeout(stopT);stopT=setTimeout(()=>{suppressUntil=0;evaluators.forEach(fn=>fn());},150);},{passive:true});
+  document.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]'))suppressUntil=Date.now()+2500;},true);
+  function setup(sel,cls,opts){
+    const nav=document.querySelector(sel); if(!nav) return;
+    const links=[...nav.querySelectorAll('a[href^="#"]')], secs=[];
+    links.forEach(a=>{const s=document.getElementById(a.getAttribute('href').slice(1)); if(s) secs.push(s);});
+    function setActive(id){
+      links.forEach(a=>a.classList.toggle(cls,a.getAttribute('href')==='#'+id));
+      const act=nav.querySelector('a.'+cls);
+      if(act){
+        const nr=nav.getBoundingClientRect(), br=act.getBoundingClientRect();
+        const delta=(br.left-nr.left)-(nav.clientWidth-br.width)/2;
+        const to=Math.max(0,Math.min(nav.scrollLeft+delta,nav.scrollWidth-nav.clientWidth));
+        if(Math.abs(to-nav.scrollLeft)>4) nav.scrollTo({left:to,behavior:'smooth'});
+      }
+    }
+    links.forEach(a=>a.addEventListener('click',()=>setActive(a.getAttribute('href').slice(1))));
+    const inView=new Set();
+    function evaluate(){
+      if(Date.now()<suppressUntil) return;
+      if(!inView.size){ if(opts.clearWhenNone) links.forEach(a=>a.classList.remove(cls)); return; }
+      const arr=[...inView].sort((a,b)=>a.getBoundingClientRect().top-b.getBoundingClientRect().top);
+      setActive(arr[0].id);
+    }
+    evaluators.push(evaluate);
+    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)inView.add(e.target);else inView.delete(e.target);});evaluate();},{rootMargin:opts.rootMargin||'-80px 0px -65% 0px',threshold:0});
+    secs.forEach(s=>obs.observe(s));
+  }
+  setup('.topnav','hot',{});
+  setup('.dayjump','now',{clearWhenNone:true,rootMargin:'-100px 0px -55% 0px'});
+})();
+</script>
+</body>
+</html>
