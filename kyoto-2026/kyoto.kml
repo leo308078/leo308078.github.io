@@ -4,6 +4,7 @@
 <Folder><name>Day1 10/25 (日) 關西機場 ➜ 京都駅</name>
 <Placemark><name>📍 関西国際空港 第2ターミナル</name><description>https://maps.google.com/?cid=16044730494170798307</description><Point><coordinates>135.231830,34.438423,0</coordinates></Point></Placemark>
 <Placemark><name>📍 関西空港駅</name><description>https://maps.google.com/?cid=1307738611132439389</description><Point><coordinates>135.243459,34.435889,0</coordinates></Point></Placemark>
+<Placemark><name>📍 京都駅</name><description>https://maps.google.com/?cid=13121875705491233800</description><Point><coordinates>135.758767,34.985849,0</coordinates></Point></Placemark>
 <Placemark><name>📍 京都駅 八条口</name><description>https://maps.google.com/?cid=8069914204768375038</description><Point><coordinates>135.757697,34.984384,0</coordinates></Point></Placemark>
 <Placemark><name>🏨 OMO3京都東寺</name><description>https://maps.google.com/?cid=1034891808857204813</description><Point><coordinates>135.753542,34.980259,0</coordinates></Point></Placemark>
 <Placemark><name>🛍️ ヨドバシカメラ マルチメディア京都</name><description>https://maps.google.com/?cid=8569850376735576795</description><Point><coordinates>135.759398,34.988109,0</coordinates></Point></Placemark>
@@ -53,6 +54,7 @@
 <Placemark><name>📍 渡月橋</name><description>https://maps.google.com/?cid=17011495368415127613</description><Point><coordinates>135.677775,35.012877,0</coordinates></Point></Placemark>
 <Placemark><name>📍 eX cafe 京都嵐山本店</name><description>https://maps.google.com/?cid=18095266521044780645</description><Point><coordinates>135.678079,35.014639,0</coordinates></Point></Placemark>
 <Placemark><name>📍 JR 嵯峨嵐山駅</name><description>https://maps.google.com/?cid=1322159657806852313</description><Point><coordinates>135.681181,35.018781,0</coordinates></Point></Placemark>
+<Placemark><name>📍 京都駅</name><description>https://maps.google.com/?cid=13121875705491233800</description><Point><coordinates>135.758767,34.985849,0</coordinates></Point></Placemark>
 <Placemark><name>🛍️ イオンモール京都</name><description>https://maps.google.com/?cid=8368963471129795092</description><Point><coordinates>135.754455,34.982728,0</coordinates></Point></Placemark>
 <Placemark><name>🍴 寿しのむさし 京都駅八条口店</name><description>https://maps.google.com/?cid=14691386958873112013</description><Point><coordinates>135.759419,34.984669,0</coordinates></Point></Placemark>
 <Placemark><name>🍴 京の焼肉処 弘 八条口店</name><description>https://maps.google.com/?cid=12390797147593232931</description><Point><coordinates>135.761206,34.981783,0</coordinates></Point></Placemark>
