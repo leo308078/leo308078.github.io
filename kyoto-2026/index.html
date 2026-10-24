@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="d6cd46a7bf">
+<meta name="book-version" content="f1e2193f1a">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0,viewport-fit=cover">
 <meta name="theme-color" content="#3f5f45">
@@ -110,7 +110,7 @@ a:active{opacity:.7}
 .ti .nowtag{display:inline-block;vertical-align:2px;margin-left:6px;font-size:11px;font-weight:800;color:#fff;background:#e03131;border-radius:6px;padding:1px 7px}
 .ti .nextb{display:inline-block;margin-left:8px;font-size:11.5px;font-weight:800;color:#fff;background:#2f6fb5;border-radius:6px;padding:1px 7px;letter-spacing:0}
 /* 收折（2026-10-24 Leo：每天最上面的照片、今日重點＋動線要能收，一天的前面太長）：預設收起、每天各自開關、不記——同步打開會讓上面幾天變長、畫面往下跳 */
-details.dfold{margin:10px 0;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+details.dfold{margin:10px 0;padding:0;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}   /* padding:0 蓋掉通用 details 的 12px，不然地圖、照片會被擠窄 */
 details.dfold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 12px;font-size:14.5px;color:var(--navy);line-height:1.4}
 details.dfold>summary::-webkit-details-marker{display:none}
 details.dfold>summary b{flex:none}
@@ -119,11 +119,11 @@ details.dfold[open]>summary::after{content:"收起 ▴";transform:none}   /* 通
 details.dfold .fsum{min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-soft);font-weight:500;font-size:13.5px}
 details.dfold[open] .fsum{display:none}
 details.dfold.plan>.alert{margin:0 0 10px;border:0;border-top:1px solid var(--line);border-radius:0}
-details.dfold.plan>.fbody{padding:0 10px 10px}
+details.dfold.plan>.fbody{padding:0}
+details.dfold.plan .mlabel{padding:0 12px}
+details.dfold.plan .city-map-wrap{margin:0 0 6px;border-left:0;border-right:0;border-radius:0}
+details.dfold.plan .city-map-wrap:last-child{margin-bottom:0;border-bottom:0}
 details.dfold.photos>.day-intro{border-top:1px solid var(--line);padding-top:12px}
-details.dfold.list{margin:0;border:0;border-top:1px dashed var(--line);border-radius:0;background:var(--cream)}
-details.dfold.list>summary{font-size:13px;padding:8px 12px}
-details.dfold.list>.city-map-list{border-top:0}
 .adjbar{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;margin:14px 0 0}
 /* 調整行程（2026-10-24 Leo：行程晚了，這站改時間、後面的站自動往後）：大按鈕、長輩好按 */
 .adj-open{appearance:none;border:1.5px solid var(--sage);background:#fff;color:#3f4a38;font:inherit;font-size:15px;font-weight:800;padding:8px 14px;border-radius:10px;cursor:pointer}
@@ -587,7 +587,7 @@ function buildMap(slot, btns, route, idx, t0, t1){
   if(!pois.length) return;
   const id='dmap_'+idx, wrap=document.createElement('div');
   wrap.className='city-map-wrap';
-  wrap.innerHTML=`<div class="city-map-leaflet" id="${id}"></div><div class="map-modes"></div><details class="dfold list"><summary><b>📍 地點編號清單</b><span class="fsum">${pois.length} 個點，對照地圖上的數字</span></summary><div class="city-map-list">${pois.map((p,i)=>`<a href="${p.href}" target="_blank"><span class="num ${p.kind}">${i+1}</span>${p.name}</a>`).join('')}</div></details>`;
+  wrap.innerHTML=`<div class="city-map-leaflet" id="${id}"></div><div class="map-modes"></div><div class="city-map-list">${pois.map((p,i)=>`<a href="${p.href}" target="_blank"><span class="num ${p.kind}">${i+1}</span>${p.name}</a>`).join('')}</div>`;
   slot.appendChild(wrap);
   const map=L.map(id,{scrollWheelZoom:false,attributionControl:false,zoomSnap:0.25}); tiles(map);
   const pts=[];
