@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="1f545a32df">
+<meta name="book-version" content="4e45838306">
 <title>收藏地圖</title>
 <meta name="description" content="IG、Threads 收藏過的店和景點">
 <meta name="theme-color" content="#0e6b5c">
@@ -124,6 +124,8 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .02em; min-wi
 .chip[aria-pressed="false"] { border-color: var(--line); color: var(--ink-3); background: var(--surface-2); }
 .chip[aria-pressed="false"] .em { filter: grayscale(1); opacity: .55; }
 .chip[aria-pressed="false"] .ct { color: var(--ink-3); }
+.chip.all { --cc: var(--ink-3); border-color: var(--line); color: var(--ink); font-weight: 700; }
+.chip.all .em { font-size: 15px; font-weight: 800; color: var(--ink-2); }
 .legend { font-size: 14px; color: var(--ink-2); display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; margin: 0; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lg-star { width: 22px; height: 22px; border-radius: 50%; background: var(--marker-bg); border: 2px solid var(--ink-3); box-shadow: 0 0 0 3px var(--gold), var(--shadow-hot); box-sizing: border-box; }
@@ -466,18 +468,33 @@ function buildChips() {
   const cnt = {};
   PLACES.forEach(p => p.cats.forEach(c => cnt[c] = (cnt[c] || 0) + 1));
   const box = $("chips");
-  box.innerHTML = Object.entries(CATS).filter(([k]) => cnt[k]).map(([k, c]) =>
-    `<button class="chip" id="chip-${k}" data-cat="${k}" aria-pressed="true" style="--cc:var(${c.color})"><span class="em">${c.em}</span>${c.name}<span class="ct">${cnt[k]}</span></button>`
-  ).join("");
-  box.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
-    const k = b.dataset.cat;
-    if (hidden.has(k)) hidden.delete(k); else hidden.add(k);
-    b.setAttribute("aria-pressed", String(!hidden.has(k)));
+  const keys = Object.keys(CATS).filter(k => cnt[k]);
+  // 最前面一顆「清除全部／全部顯示」（Leo 2026-10-25：先全關，再點想看的那一類）
+  box.innerHTML = `<button class="chip all" id="chip-all" type="button"><span class="em">✕</span><span class="lb">清除全部</span></button>` +
+    keys.map(k => { const c = CATS[k];
+      return `<button class="chip" id="chip-${k}" data-cat="${k}" aria-pressed="true" style="--cc:var(${c.color})"><span class="em">${c.em}</span>${c.name}<span class="ct">${cnt[k]}</span></button>`; }
+    ).join("");
+  const allBtn = $("chip-all");
+  const refresh = () => {
+    box.querySelectorAll(".chip[data-cat]").forEach(b => b.setAttribute("aria-pressed", String(!hidden.has(b.dataset.cat))));
+    const none = keys.every(k => hidden.has(k));
+    allBtn.querySelector(".em").textContent = none ? "✓" : "✕";
+    allBtn.querySelector(".lb").textContent = none ? "全部顯示" : "清除全部";
     if (selected && !selected.cats.some(c => !hidden.has(c))) closeCard();
     const src = map.getSource("fm");
     if (src) src.setData(storesFC());
     const s2 = map.getSource("fm-sel");
     if (s2) s2.setData(selFC());
+  };
+  allBtn.addEventListener("click", () => {
+    const none = keys.every(k => hidden.has(k));
+    keys.forEach(k => none ? hidden.delete(k) : hidden.add(k));
+    refresh();
+  });
+  box.querySelectorAll(".chip[data-cat]").forEach(b => b.addEventListener("click", () => {
+    const k = b.dataset.cat;
+    if (hidden.has(k)) hidden.delete(k); else hidden.add(k);
+    refresh();
   }));
 }
 
