@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="c47add94f6">
+<meta name="book-version" content="8db8bc7bcf">
 <title>收藏地圖</title>
 <meta name="description" content="IG、Threads 收藏過的店和景點">
 <meta name="theme-color" content="#0e6b5c">
@@ -730,7 +730,7 @@ function openCard(p) {
       <div class="posts-h">當初收藏的貼文${posts.length > 1 ? `（${posts.length} 則）` : ""}</div>
       ${posts.map((q, i) => `<a class="go${i ? " alt" : ""}" href="${esc(q.u)}" target="_blank" rel="noopener"><span class="pt">${esc(q.t || `看當初收藏的貼文（${q.p}）`)}</span><span class="pp">${esc(q.p)} ↗</span></a>`).join("")}
     </div>` : ""}
-    ${p.maps ? `<a class="go alt" href="${esc(p.maps)}" target="_blank" rel="noopener"><span class="pt">在 Google 地圖打開（營業時間、評論、導航）</span><span class="pp">↗</span></a>` : ""}`;
+    ${p.maps ? `<a class="go alt gmap" href="${esc(p.maps)}" target="_blank" rel="noopener"><span class="pt">在 Google 地圖打開（營業時間、評論、導航）</span><span class="pp">↗</span></a>` : ""}`;
   card.hidden = false;
   card.scrollTop = 0;
   $("card-x").onclick = closeCard;
@@ -768,6 +768,23 @@ function toast(msg) {
   t.textContent = msg; t.hidden = false;
   clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 3500);
 }
+
+/* iPhone：從主畫面開的網頁 App 點外部連結，會開在 App 內的小瀏覽器，跳不進 Google 地圖 App、還被導去 App Store（Leo 2026-10-25 錄影）
+   → 直接用 Google 地圖 App 的網址（comgooglemapsurl://）開；畫面沒被切走（沒裝 App）就在 2.5 秒後改開網頁版 */
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+document.addEventListener("click", ev => {
+  const a = ev.target.closest && ev.target.closest("a.gmap");
+  if (!a || !IOS) return;
+  ev.preventDefault();
+  const web = a.href;
+  let left = false;
+  const gone = () => { left = true; };
+  window.addEventListener("pagehide", gone, { once: true });
+  window.addEventListener("blur", gone, { once: true });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) left = true; }, { once: true });
+  location.href = "comgooglemapsurl://" + web.replace(/^https?:\/\//, "");
+  setTimeout(() => { if (!left && !document.hidden) window.open(web, "_blank"); }, 2500);
+});
 
 /* ── 目前位置：一打開就跳過去；不允許就留在全台；右下角 📍 隨時跳回 ── */
 function showMe(pos) {
