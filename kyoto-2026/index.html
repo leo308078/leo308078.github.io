@@ -101,6 +101,14 @@ a:active{opacity:.7}
 .ti.star .th{color:#a8362a;font-size:18px}
 .ti .stb{display:inline-block;vertical-align:2px;margin-left:6px;font-size:11px;font-weight:800;color:#fff;background:var(--rose);border-radius:6px;padding:1px 7px;letter-spacing:1px}
 .ti .tg{display:inline-block;vertical-align:2px;margin-left:5px;font-size:11px;font-weight:800;border-radius:6px;padding:1px 7px}
+/* 現在時間標記：今天的時間軸上一條紅線＋「現在 HH:MM」、進行中那站加亮、下一站倒數（2026-10-24 Leo：一看就知道現在在哪） */
+.nowline{position:relative;height:0;margin:-11px 0 22px -26px;border-top:2.5px solid #e03131;z-index:2}
+.nowline::before{content:"";position:absolute;left:0;top:-8px;width:13px;height:13px;border-radius:50%;background:#e03131;box-shadow:0 0 0 4px rgba(224,49,49,.22)}
+.nowline span{position:absolute;right:0;top:-13px;background:#e03131;color:#fff;font-size:12.5px;font-weight:800;padding:2px 9px;border-radius:8px;white-space:nowrap}
+.ti.now-on .th{background:linear-gradient(transparent 58%,#ffe58a 58%)}
+.ti .nowtag{display:inline-block;vertical-align:2px;margin-left:6px;font-size:11px;font-weight:800;color:#fff;background:#e03131;border-radius:6px;padding:1px 7px}
+.ti .nextb{display:inline-block;margin-left:8px;font-size:11.5px;font-weight:800;color:#fff;background:#2f6fb5;border-radius:6px;padding:1px 7px;letter-spacing:0}
+.dh-today{display:inline-block;margin-left:8px;font-size:12px;font-weight:800;color:#fff;background:#e03131;border-radius:6px;padding:2px 8px;vertical-align:4px}
 .tg.cash{background:#fff1d6;color:#8a5a14;border:1px solid #ecc982}
 .tg.rsv{background:#e3efe6;color:#2f6a45;border:1px solid #a9d3b6}
 .tg.opt{background:#eeeeee;color:#666;border:1px solid #d6d6d6}
@@ -323,18 +331,18 @@ small{color:var(--ink-soft);font-size:13px}
 <div class="legend"><span>圓點：</span><b style="color:#c0453f">● 必去</b> <b style="color:#8fa08a">● 景點</b> <b style="color:#d0875a">● 吃飯</b> <b style="color:#b8894f">● 咖啡甜點</b> <b style="color:#8a73a8">● 購物</b> <b style="color:#8fa08a">○ 移動</b><br><span><b>▾ 虛線框</b>＝收起來的備選，點開才看</span></div>
 
 <!-- ===================== DAY 1 ===================== -->
-<div class="day-card" id="d1">
+<div class="day-card" id="d1" data-date="2026-10-25" data-tz="+09:00" data-tzlabel="日本時間">
 <div class="day-head"><div class="dh-l">Day 1</div><div class="dh-r">10/25 (日)　關西機場 ➜ 京都駅</div></div>
 <div class="day-intro"><figure class="loc"><img src="photos/kyoto_station.jpg" alt="京都車站" loading="lazy"><figcaption><span class="ttl">京都車站 <span class="en">Kyoto Station</span></span>玻璃鋼骨大廳加上 171 階大階梯。HARUKA、近鐵、地鐵都在這裡轉。</figcaption></figure><figure class="loc"><img src="photos/toji_pagoda.jpg" alt="東寺五重塔" loading="lazy"><figcaption><span class="ttl">東寺五重塔 <span class="en">Tō-ji Pagoda</span></span>日本最高的木造塔（約 55 公尺），世界遺產，就在飯店隔壁。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
 <div class="day-body">
   <div class="alert"><b>📋 今日重點：</b>落地 → HARUKA → 飯店 → Yodobashi 買拍立得 → 力山壽喜燒 → 中村藤吉，全在京都駅一帶。</div>
   <div class="mlabel">🗺️ 今日動線（京都駅一帶，點 pin 開 Google Maps）</div><div class="day-leaflet" data-labels="" data-t0="00:00" data-t1="99:99"></div>
-  <div class="tl2"><div class="ti move"><div class="tt">09:40</div><div class="th">桃園機場 T1 起飛</div><div class="chip">✈️ 樂桃航空（約 2.5 小時）</div><div class="tx">手提 2 件合計 7kg 會被秤。</div></div><div class="ti move"><div class="tt">13:10</div><div class="th">抵達 關西機場 第 2 航廈</div><div class="chip">🚌 免費接駁巴士 → 第 1 航廈（7–9 分）</div><div class="tx">入境（出示 Visit Japan Web QR）→ 領行李 → 搭「ターミナル間連絡バス（航廈接駁巴士）」到エアロプラザ，走 3–5 分到 JR 站。</div><div class="warn">⚠️ 第 2 航廈沒有車站，一定要先搭接駁巴士</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16044730494170798307" data-lat="34.438423" data-lng="135.231830" data-emoji="📍" data-kind="poi" data-label="関西国際空港 第2ターミナル" data-name="第 2 航廈" data-far="1">📍 第 2 航廈</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1307738611132439389" data-lat="34.435889" data-lng="135.243459" data-emoji="📍" data-kind="poi" data-label="関西空港駅" data-name="JR 關西空港站" data-far="1">📍 JR 關西空港站</a></div></div><div class="ti move"><div class="tt">14:14</div><div class="th">HARUKA 往京都<span class="tg rsv">🎫 台灣先買票</span></div><div class="chip">🚆 JR 特急 HARUKA（優惠票 ¥2,200／約 80 分）</div><div class="tx">手機打開 WEST QR 刷閘門。趕不上就搭 14:44（16:04 到），優惠票當天哪班都能坐。</div></div><div class="ti move"><div class="tt">15:34</div><div class="th">京都駅 → 計程車到飯店</div><div class="chip">🚕 八条口計程車站（約 ¥600–800／5 分）</div><div class="tx">HARUKA 停 30 號月台（車站西側），跟著「八条口」指標走 5–8 分。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=13121875705491233800" data-lat="34.985849" data-lng="135.758767" data-emoji="📍" data-kind="poi" data-label="京都駅" data-name="京都駅">📍 京都駅</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8069914204768375038" data-lat="34.984384" data-lng="135.757697" data-emoji="📍" data-kind="poi" data-label="京都駅 八条口" data-name="八条口計程車站">📍 八条口計程車站</a></div></div><div class="ti hotel"><div class="tt">16:00</div><div class="th">OMO3 京都東寺 check-in</div><div class="chip">15:00 後可入住</div><div class="tx">館內完全不收現金。順便問櫃台：最後一天退房後，行李能放到幾點。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1034891808857204813" data-lat="34.980259" data-lng="135.753542" data-emoji="🏨" data-kind="hotel" data-label="OMO3京都東寺" data-name="飯店">📍 飯店</a></div></div><div class="ti shop"><div class="tt">16:30</div><div class="th">Yodobashi 買拍立得 mini<span class="tg rsv">🛂 帶護照</span></div><div class="chip">🚃 近鐵 東寺→京都 1 站（¥180）＋走 8–10 分</div><div class="tx">免稅：同店同天滿 ¥5,000（未稅）＋護照正本。同棟有 UNIQLO（到 22:00）——第 2 天河原町那家在整修，要買在這裡買。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8569850376735576795" data-lat="34.988109" data-lng="135.759398" data-emoji="🛍️" data-kind="shop" data-label="ヨドバシカメラ マルチメディア京都" data-name="Yodobashi">📍 Yodobashi</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=686651589313630538" data-lat="34.988078" data-lng="135.759465" data-emoji="🛍️" data-kind="shop" data-label="ユニクロ 京都ヨドバシ店" data-name="同棟 UNIQLO">📍 同棟 UNIQLO</a></div></div><div class="ti food"><div class="tt">18:00</div><div class="th">晚餐：京都力山（和牛壽喜燒）<span class="tg rsv">📞 要先訂位</span></div><div class="chip">🚶 Yodobashi 走 3–5 分</div><div class="tx">店員桌邊幫煮。套餐每人 ¥11,000 起，習慣沾生蛋，不吃生的先講。</div><div class="warn">⚠️ 網路訂位只收到前一天 → 10/24 前要訂好</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16463647913847485229" data-lat="34.989172" data-lng="135.760707" data-emoji="🍴" data-kind="food" data-label="和牛すき焼き 京都力山 京都駅前店" data-name="力山">📍 力山</a></div><details class="alts"><summary>🍴 沒訂到／想吃便宜一點（2 家）</summary><div class="opt"><div class="on">1</div><div class="d"><b>モリタ屋 JR 京都伊勢丹店（11F）</b><span class="pr">約 ¥5,000</span><br>京都老肉舖的壽喜燒，看得到京都街景，就在車站裡。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=9480725183503435132" data-lat="34.986195" data-lng="135.757924" data-emoji="🍴" data-kind="food" data-label="モリタ屋 ジェイアール京都伊勢丹店" data-name="モリタ屋">📍 モリタ屋</a></div></div></div><div class="opt save"><div class="on">2</div><div class="d"><b>京都勝牛（Yodobashi 6F）</b><span class="pr">約 ¥2,000–3,000</span><br>炸牛排定食，自己在小石板上加熱到喜歡的熟度。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=6653650215058409964" data-lat="34.988181" data-lng="135.759135" data-emoji="🍴" data-kind="food" data-label="牛カツ京都勝牛 京都ヨドバシ店" data-name="京都勝牛">📍 京都勝牛</a></div></div></div></details></div><div class="ti cafe"><div class="tt">19:30</div><div class="th">中村藤吉 京都駅店（抹茶甜點）<span class="tg opt">選配</span></div><div class="chip">🚶 走 8–10 分（JR 京都伊勢丹 3F）</div><div class="tx">招牌生茶ゼリイ（抹茶凍）。不能訂位，到了先抽號碼牌；最後點餐 21:00。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=10434647518710591211" data-lat="34.985124" data-lng="135.758005" data-emoji="🍵" data-kind="cafe" data-label="中村藤吉本店 京都駅店" data-name="中村藤吉">📍 中村藤吉</a></div></div><div class="ti move"><div class="tt">21:00</div><div class="th">回飯店</div><div class="chip">🚃 近鐵 京都→東寺（¥180／2 分）或計程車 ¥600–800</div><div class="tx">近鐵別上「特急」（不停東寺）。</div></div></div>
+  <div class="tl2"><div class="ti move" data-tz="+08:00"><div class="tt">09:40</div><div class="th">桃園機場 T1 起飛</div><div class="chip">✈️ 樂桃航空（約 2.5 小時）</div><div class="tx">手提 2 件合計 7kg 會被秤。</div></div><div class="ti move"><div class="tt">13:10</div><div class="th">抵達 關西機場 第 2 航廈</div><div class="chip">🚌 免費接駁巴士 → 第 1 航廈（7–9 分）</div><div class="tx">入境（出示 Visit Japan Web QR）→ 領行李 → 搭「ターミナル間連絡バス（航廈接駁巴士）」到エアロプラザ，走 3–5 分到 JR 站。</div><div class="warn">⚠️ 第 2 航廈沒有車站，一定要先搭接駁巴士</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16044730494170798307" data-lat="34.438423" data-lng="135.231830" data-emoji="📍" data-kind="poi" data-label="関西国際空港 第2ターミナル" data-name="第 2 航廈" data-far="1">📍 第 2 航廈</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1307738611132439389" data-lat="34.435889" data-lng="135.243459" data-emoji="📍" data-kind="poi" data-label="関西空港駅" data-name="JR 關西空港站" data-far="1">📍 JR 關西空港站</a></div></div><div class="ti move"><div class="tt">14:14</div><div class="th">HARUKA 往京都<span class="tg rsv">🎫 台灣先買票</span></div><div class="chip">🚆 JR 特急 HARUKA（優惠票 ¥2,200／約 80 分）</div><div class="tx">手機打開 WEST QR 刷閘門。趕不上就搭 14:44（16:04 到），優惠票當天哪班都能坐。</div></div><div class="ti move"><div class="tt">15:34</div><div class="th">京都駅 → 計程車到飯店</div><div class="chip">🚕 八条口計程車站（約 ¥600–800／5 分）</div><div class="tx">HARUKA 停 30 號月台（車站西側），跟著「八条口」指標走 5–8 分。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=13121875705491233800" data-lat="34.985849" data-lng="135.758767" data-emoji="📍" data-kind="poi" data-label="京都駅" data-name="京都駅">📍 京都駅</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8069914204768375038" data-lat="34.984384" data-lng="135.757697" data-emoji="📍" data-kind="poi" data-label="京都駅 八条口" data-name="八条口計程車站">📍 八条口計程車站</a></div></div><div class="ti hotel"><div class="tt">16:00</div><div class="th">OMO3 京都東寺 check-in</div><div class="chip">15:00 後可入住</div><div class="tx">館內完全不收現金。順便問櫃台：最後一天退房後，行李能放到幾點。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=1034891808857204813" data-lat="34.980259" data-lng="135.753542" data-emoji="🏨" data-kind="hotel" data-label="OMO3京都東寺" data-name="飯店">📍 飯店</a></div></div><div class="ti shop"><div class="tt">16:30</div><div class="th">Yodobashi 買拍立得 mini<span class="tg rsv">🛂 帶護照</span></div><div class="chip">🚃 近鐵 東寺→京都 1 站（¥180）＋走 8–10 分</div><div class="tx">免稅：同店同天滿 ¥5,000（未稅）＋護照正本。同棟有 UNIQLO（到 22:00）——第 2 天河原町那家在整修，要買在這裡買。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=8569850376735576795" data-lat="34.988109" data-lng="135.759398" data-emoji="🛍️" data-kind="shop" data-label="ヨドバシカメラ マルチメディア京都" data-name="Yodobashi">📍 Yodobashi</a><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=686651589313630538" data-lat="34.988078" data-lng="135.759465" data-emoji="🛍️" data-kind="shop" data-label="ユニクロ 京都ヨドバシ店" data-name="同棟 UNIQLO">📍 同棟 UNIQLO</a></div></div><div class="ti food"><div class="tt">18:00</div><div class="th">晚餐：京都力山（和牛壽喜燒）<span class="tg rsv">📞 要先訂位</span></div><div class="chip">🚶 Yodobashi 走 3–5 分</div><div class="tx">店員桌邊幫煮。套餐每人 ¥11,000 起，習慣沾生蛋，不吃生的先講。</div><div class="warn">⚠️ 網路訂位只收到前一天 → 10/24 前要訂好</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=16463647913847485229" data-lat="34.989172" data-lng="135.760707" data-emoji="🍴" data-kind="food" data-label="和牛すき焼き 京都力山 京都駅前店" data-name="力山">📍 力山</a></div><details class="alts"><summary>🍴 沒訂到／想吃便宜一點（2 家）</summary><div class="opt"><div class="on">1</div><div class="d"><b>モリタ屋 JR 京都伊勢丹店（11F）</b><span class="pr">約 ¥5,000</span><br>京都老肉舖的壽喜燒，看得到京都街景，就在車站裡。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=9480725183503435132" data-lat="34.986195" data-lng="135.757924" data-emoji="🍴" data-kind="food" data-label="モリタ屋 ジェイアール京都伊勢丹店" data-name="モリタ屋">📍 モリタ屋</a></div></div></div><div class="opt save"><div class="on">2</div><div class="d"><b>京都勝牛（Yodobashi 6F）</b><span class="pr">約 ¥2,000–3,000</span><br>炸牛排定食，自己在小石板上加熱到喜歡的熟度。<div class=pins><a class="map-btn alt" target="_blank" href="https://maps.google.com/?cid=6653650215058409964" data-lat="34.988181" data-lng="135.759135" data-emoji="🍴" data-kind="food" data-label="牛カツ京都勝牛 京都ヨドバシ店" data-name="京都勝牛">📍 京都勝牛</a></div></div></div></details></div><div class="ti cafe"><div class="tt">19:30</div><div class="th">中村藤吉 京都駅店（抹茶甜點）<span class="tg opt">選配</span></div><div class="chip">🚶 走 8–10 分（JR 京都伊勢丹 3F）</div><div class="tx">招牌生茶ゼリイ（抹茶凍）。不能訂位，到了先抽號碼牌；最後點餐 21:00。</div><div class="pins"><a class="map-btn" target="_blank" href="https://maps.google.com/?cid=10434647518710591211" data-lat="34.985124" data-lng="135.758005" data-emoji="🍵" data-kind="cafe" data-label="中村藤吉本店 京都駅店" data-name="中村藤吉">📍 中村藤吉</a></div></div><div class="ti move"><div class="tt">21:00</div><div class="th">回飯店</div><div class="chip">🚃 近鐵 京都→東寺（¥180／2 分）或計程車 ¥600–800</div><div class="tx">近鐵別上「特急」（不停東寺）。</div></div></div>
   <div class="tipbox"><div class="tip-h">💡 今日提醒・雨備</div><ul><li>第一天落地到飯店約 3 小時，比想像中久，晚上別排太滿</li><li>Dior 彩妝香水在 JR 京都伊勢丹 2F（跟中村藤吉同一棟）</li><li>☔ 雨備：今天都在京都駅一帶的室內，下雨不影響</li></ul></div>
 </div>
 </div>
 <!-- ===================== DAY 2 ===================== -->
-<div class="day-card" id="d2">
+<div class="day-card" id="d2" data-date="2026-10-26" data-tz="+09:00" data-tzlabel="日本時間">
 <div class="day-head"><div class="dh-l">Day 2</div><div class="dh-r">10/26 (一)　二條城 ➜ 錦市場 ➜ 先斗町</div></div>
 <div class="day-intro"><figure class="loc"><img src="photos/nijo_castle.jpg" alt="二條城" loading="lazy"><figcaption><span class="ttl">二條城 <span class="en">Nijō Castle</span></span>德川家康 1603 年蓋的將軍行館。照片是唐門，後面就是二之丸御殿。</figcaption></figure><figure class="loc"><img src="photos/nishiki_market.jpg" alt="錦市場" loading="lazy"><figcaption><span class="ttl">錦市場 <span class="en">Nishiki Market</span></span>「京都的廚房」，彩色屋頂下約 390 公尺、一百多家店。</figcaption></figure><figure class="loc"><img src="photos/pontocho.jpg" alt="先斗町" loading="lazy"><figcaption><span class="ttl">先斗町 <span class="en">Pontochō</span></span>鴨川旁 500 公尺的石板窄巷，晚上燈籠亮起最有味道。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
 <div class="day-body">
@@ -345,7 +353,7 @@ small{color:var(--ink-soft);font-size:13px}
 </div>
 </div>
 <!-- ===================== DAY 3 ===================== -->
-<div class="day-card" id="d3">
+<div class="day-card" id="d3" data-date="2026-10-27" data-tz="+09:00" data-tzlabel="日本時間">
 <div class="day-head"><div class="dh-l">Day 3</div><div class="dh-r">10/27 (二)　嵯峨野小火車 ➜ 嵐山 ➜ 京都駅</div></div>
 <div class="day-intro"><figure class="loc"><img src="photos/sagano_torokko.jpg" alt="嵯峨野觀光小火車" loading="lazy"><figcaption><span class="ttl">嵯峨野觀光小火車 <span class="en">Sagano Romantic Train</span></span>沿保津川峽谷開 20 分鐘。10 月底兩岸還是綠的。</figcaption></figure><figure class="loc"><img src="photos/bamboo_grove.jpg" alt="竹林小徑" loading="lazy"><figcaption><span class="ttl">竹林小徑 <span class="en">Arashiyama Bamboo Grove</span></span>野宮神社到大河內山莊之間的竹林步道，免費、全天開放。</figcaption></figure><figure class="loc"><img src="photos/togetsukyo.jpg" alt="渡月橋" loading="lazy"><figcaption><span class="ttl">渡月橋 <span class="en">Togetsukyō Bridge</span></span>嵐山的地標，橋上看出去是桂川和嵐山。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
 <div class="day-body">
@@ -356,7 +364,7 @@ small{color:var(--ink-soft);font-size:13px}
 </div>
 </div>
 <!-- ===================== DAY 4 ===================== -->
-<div class="day-card" id="d4">
+<div class="day-card" id="d4" data-date="2026-10-28" data-tz="+09:00" data-tzlabel="日本時間">
 <div class="day-head"><div class="dh-l">Day 4</div><div class="dh-r">10/28 (三)　清水寺 ➜ 四條百貨 ➜ 祇園</div></div>
 <div class="day-intro"><figure class="loc"><img src="photos/kiyomizu.jpg" alt="清水寺" loading="lazy"><figcaption><span class="ttl">清水寺 <span class="en">Kiyomizu-dera</span></span>懸在山崖上的「清水舞台」，世界遺產。</figcaption></figure><figure class="loc"><img src="photos/yasaka_koshindo.jpg" alt="八坂庚申堂" loading="lazy"><figcaption><span class="ttl">八坂庚申堂 <span class="en">Yasaka Kōshin-dō</span></span>掛滿彩色「くくり猿」（綁住的猴子），寫上願望掛起來。</figcaption></figure><figure class="loc"><img src="photos/shirakawa_gion.jpg" alt="祇園白川" loading="lazy"><figcaption><span class="ttl">祇園白川 <span class="en">Gion Shirakawa</span></span>巽橋一帶的小溪和茶屋，晚上點燈最美。</figcaption></figure></div><div class="swipe-hint">← 左右滑看照片 →</div>
 <div class="day-body">
@@ -367,7 +375,7 @@ small{color:var(--ink-soft);font-size:13px}
 </div>
 </div>
 <!-- ===================== DAY 5 ===================== -->
-<div class="day-card" id="d5">
+<div class="day-card" id="d5" data-date="2026-10-29" data-tz="+09:00" data-tzlabel="日本時間">
 <div class="day-head"><div class="dh-l">Day 5</div><div class="dh-r">10/29 (四)　東本願寺 ➜ 京都駅 ➜ 回家</div></div>
 <div class="day-intro one"><figure class="loc"><img src="photos/higashi_honganji.jpg" alt="東本願寺" loading="lazy"><figcaption><span class="ttl">東本願寺 <span class="en">Higashi Hongan-ji</span></span>京都駅走路 7 分，免費參拜。御影堂是世界最大級的木造建築之一。</figcaption></figure></div>
 <div class="day-body">
@@ -610,10 +618,45 @@ function drawOverview(mapId,listId,PTS,mz){
 }
 window.addEventListener('load',initMaps);
 
+// ===== 現在時間（網址加 ?now=2026-10-26T14:30:00+09:00 可以假裝成那個時間，驗收用）=====
+const NOW_OVERRIDE=(()=>{try{const q=new URLSearchParams(location.search).get('now');if(!q)return null;const t=new Date(q).getTime();return isNaN(t)?null:t;}catch(e){return null;}})();
+function nowMs(){return NOW_OVERRIDE!=null?NOW_OVERRIDE:Date.now();}
+function tzMin(tz){const m=/^([+-])(\d{2}):(\d{2})$/.exec(tz||'');return m?(m[1]==='-'?-1:1)*(+m[2]*60+ +m[3]):0;}
+function hhmm(ms,tz){const d=new Date(ms+tzMin(tz)*60000);return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0');}
+
+// ===== 現在時間標記：今天的時間軸畫紅線、加亮進行中那站、下一站倒數；每分鐘更新 =====
+let nowScrolled=false;
+function nowMark(){
+  document.querySelectorAll('.nowline,.nextb,.nowtag,.dh-today').forEach(x=>x.remove());
+  document.querySelectorAll('.ti.now-on').forEach(x=>x.classList.remove('now-on'));
+  const now=nowMs();
+  for(const card of document.querySelectorAll('.day-card[data-date]')){
+    const date=card.dataset.date, tz=card.dataset.tz||'+09:00'; if(!date) continue;
+    const s=new Date(date+'T00:00:00'+tz).getTime();
+    if(now<s||now>=s+86400000) continue;                       // 不是今天
+    const dl=card.querySelector('.dh-l'); if(dl) dl.insertAdjacentHTML('beforeend','<span class="dh-today">今天</span>');
+    const items=[...card.querySelectorAll('.tl2 > .ti')].map(el=>{
+      const m=((el.querySelector('.tt')||{}).textContent||'').match(/(\d{1,2}):(\d{2})/);
+      return m?{el,t:new Date(date+'T'+m[1].padStart(2,'0')+':'+m[2]+':00'+(el.dataset.tz||tz)).getTime()}:null;
+    }).filter(Boolean);
+    if(!items.length) continue;
+    let cur=null,nxt=null;
+    for(const it of items){ if(it.t<=now) cur=it; else { nxt=it; break; } }
+    const line=document.createElement('div'); line.className='nowline';
+    line.innerHTML='<span>現在 '+hhmm(now,tz)+'・'+(card.dataset.tzlabel||'當地時間')+'</span>';
+    if(nxt) nxt.el.before(line); else card.querySelector('.tl2').append(line);
+    if(cur){ const th=cur.el.querySelector('.th'); cur.el.classList.add('now-on'); if(th) th.insertAdjacentHTML('beforeend','<span class="nowtag">'+(nxt?'進行中':'今天最後一站')+'</span>'); }
+    if(nxt){ const mins=Math.max(0,Math.round((nxt.t-now)/60000)); const tt=nxt.el.querySelector('.tt');
+      if(tt) tt.insertAdjacentHTML('beforeend','<span class="nextb">下一站・還有 '+(mins>=60?Math.floor(mins/60)+' 小時 '+(mins%60)+' 分':mins+' 分')+'</span>'); }
+    if(!nowScrolled&&!location.hash){ nowScrolled=true; setTimeout(()=>line.scrollIntoView({block:'center',behavior:'smooth'}),900); }
+  }
+}
+window.addEventListener('load',()=>{nowMark();setInterval(nowMark,60000);});
+
 // ===== 倒數：10/25 09:40 桃園起飛（台灣時間）=====
 function tick(){
   const box=document.getElementById('countdownBox'); if(!box) return;
-  const now=Date.now(), diff=new Date('2026-10-25T09:40:00+08:00').getTime()-now;
+  const now=nowMs(), diff=new Date('2026-10-25T09:40:00+08:00').getTime()-now;
   if(diff>0){
     const d=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),m=Math.floor(diff%3600000/60000);
     box.innerHTML='⏳ 距離出發還有 <b>'+d+' 天 '+h+' 小時 '+m+' 分</b>';
