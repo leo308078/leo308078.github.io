@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="4e45838306">
+<meta name="book-version" content="898ef5d134">
 <title>收藏地圖</title>
 <meta name="description" content="IG、Threads 收藏過的店和景點">
 <meta name="theme-color" content="#0e6b5c">
@@ -171,7 +171,10 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .02em; min-wi
 .ctl.loc { width: 48px; height: 48px; border-radius: 50%; font-size: 22px; padding: 0; }
 .ctl.loc.busy { animation: busy 1s ease-in-out infinite alternate; }
 @keyframes busy { from { box-shadow: var(--shadow); } to { box-shadow: 0 0 0 6px var(--me-soft), var(--shadow); } }
-.attrib { position: absolute; right: 0; bottom: 0; z-index: 3; font-size: 10.5px; color: var(--ink-2); background: color-mix(in srgb, var(--surface) 82%, transparent); padding: 2px max(8px, env(safe-area-inset-right, 0px)) calc(2px + env(safe-area-inset-bottom, 0px)) 8px; border-top-left-radius: 6px; max-width: 100%; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.attrib { position: absolute; left: max(8px, env(safe-area-inset-left, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 3; font-size: 11px; color: var(--ink-2); }
+.attrib > summary { list-style: none; cursor: pointer; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; background: color-mix(in srgb, var(--surface) 85%, transparent); box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.attrib > summary::-webkit-details-marker { display: none; }
+.attrib[open] > span { display: block; margin-top: 4px; max-width: 70vw; background: var(--surface); padding: 4px 8px; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.2); line-height: 1.5; }
 .attrib a { color: inherit; }
 .hint { position: absolute; left: max(12px, env(safe-area-inset-left, 0px)); bottom: 8px; z-index: 3; font-size: 13px; color: var(--ink); background: color-mix(in srgb, var(--surface) 90%, transparent); padding: 4px 10px; border-radius: 8px; box-shadow: var(--shadow-lo); max-width: calc(100% - 460px); }
 .toast { position: absolute; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 8; max-width: calc(100% - 40px); box-sizing: border-box;
@@ -271,12 +274,10 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .02em; min-wi
     <div class="ctls">
       <button class="ctl zm" id="zin" aria-label="放大">+</button>
       <button class="ctl zm" id="zout" aria-label="縮小">−</button>
-      <button class="ctl txt" id="zfit">全台</button>
-      <button class="ctl txt" id="zcity">新竹全市</button>
       <button class="ctl loc" id="locate" aria-label="跳到目前位置">📍</button>
     </div>
     <div class="hint" id="hint"></div>
-    <div class="attrib"><a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> 資料來自 <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap 貢獻者</a> · <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre</a></div>
+    <details class="attrib"><summary aria-label="地圖資料出處">ⓘ</summary><span><a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> 資料來自 <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap 貢獻者</a> · <a href="https://maplibre.org" target="_blank" rel="noopener">MapLibre</a></span></details>
     <div class="toast" id="toast" hidden role="status"></div>
     <section class="card" id="card" hidden aria-live="polite"></section>
   </main>
@@ -639,7 +640,7 @@ function addOverlay() {
 map.on("style.load", addOverlay);
 
 async function applyBaseStyle() {
-  const kind = isDark() ? "dark" : "light";
+  const kind = "light";   // Leo 2026-10-25：深色底圖太暗 → 不管手機深淺色都用淺色
   try {
     const st = await fetchStyle(kind);
     map.setStyle(st, { diff: false });
@@ -759,8 +760,6 @@ document.addEventListener("keydown", ev => { if (ev.key === "Escape") { closeCar
 /* ── 按鈕 ── */
 $("zin").onclick = () => map.zoomIn();
 $("zout").onclick = () => map.zoomOut();
-$("zfit").onclick = () => fitPlaces(TW_PLACES);
-$("zcity").onclick = () => map.fitBounds([[CITY.w, CITY.s], [CITY.e, CITY.n]], { padding: { ...fitPad(), left: 10, right: 10, bottom: 10 } });
 
 let toastT = 0;
 function toast(msg) {
