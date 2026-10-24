@@ -652,6 +652,19 @@ function drawOverview(mapId,listId,PTS,mz){
 }
 window.addEventListener('load',initMaps);
 
+// ===== 自動更新（2026-10-24）：GitHub Pages 讓手機快取 10 分鐘、主畫面 App 切回來也不重載，會一直看到舊版 →
+// 打開／切回來時比對網站上的 version.txt（deploy.py 寫的），不一樣就換到 ?v=新版 的網址（新網址不吃舊快取）
+function checkUpdate(){
+  const m=document.querySelector('meta[name="book-version"]'); if(!m||location.protocol==='file:') return;
+  fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(v=>{
+    v=(v||'').trim(); if(!v||v===m.content) return;
+    const q=new URLSearchParams(location.search); if(q.get('v')===v) return;   // 已經在新網址還是舊內容就不要一直跳
+    q.set('v',v); location.replace(location.pathname+'?'+q.toString()+location.hash);
+  }).catch(()=>{});
+}
+window.addEventListener('load',checkUpdate);
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') checkUpdate(); });
+
 // ===== 現在時間（網址加 ?now=2026-10-26T14:30:00+09:00 可以假裝成那個時間，驗收用）=====
 const NOW_OVERRIDE=(()=>{try{const q=new URLSearchParams(location.search).get('now');if(!q)return null;const t=new Date(q).getTime();return isNaN(t)?null:t;}catch(e){return null;}})();
 function nowMs(){return NOW_OVERRIDE!=null?NOW_OVERRIDE:Date.now();}
