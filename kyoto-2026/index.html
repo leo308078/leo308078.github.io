@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="f1e2193f1a">
+<meta name="book-version" content="64b644b680">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0,viewport-fit=cover">
 <meta name="theme-color" content="#3f5f45">
@@ -264,6 +264,76 @@ small{color:var(--ink-soft);font-size:13px}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+<script>
+/* 我在哪：每一張 Leaflet 地圖左上角加一顆 📍，按了用手機定位畫藍點＋誤差圈（2026-10-25 Leo：「把這個我在哪也加進一日行程、約會行程，還有旅遊書 skill」）。
+   用法：整段貼在 leaflet.js 那個 <script> 的「下一行」（inline，單檔也能用）；之後頁面上不管什麼時候建的 L.map 都會自動有這顆鈕。
+   - 只在按了按鈕才問定位；按過一次記在 localStorage，下次打開自動開（藍點自己出現，不拉動地圖）
+   - 人離這張圖 30 公里以上（例：還在台灣）只寫距離，不把地圖拉走
+   - 所有地圖共用同一個定位，走動時藍點跟著移 */
+(function(){
+  var KEY='book-loc', FAR=30000;
+  function install(){
+    if(!window.L||!('geolocation' in navigator)||L.Map._locHook) return;
+    L.Map._locHook=true;
+    var css=document.createElement('style');
+    css.textContent='.loc-btn{font-size:17px;line-height:30px!important;text-align:center;text-decoration:none}'+
+      '.loc-btn.on{background:#e8f0fd!important}'+
+      '.loc-msg{background:rgba(255,255,255,.95);border-radius:8px;padding:5px 9px;font:600 12.5px/1.5 system-ui,sans-serif;color:#2b2a26;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:230px}'+
+      '.me-ic{background:none;border:0}'+
+      '.me-dot{width:16px;height:16px;border-radius:50%;background:#2f80ed;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 4px rgba(0,0,0,.35);position:relative}'+
+      '.me-dot::after{content:"";position:absolute;inset:-8px;border-radius:50%;background:rgba(47,128,237,.35);animation:mepulse 2s ease-out infinite}'+
+      '@keyframes mepulse{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}'+
+      '@media (prefers-reduced-motion:reduce){.me-dot::after{animation:none}}';
+    document.head.appendChild(css);
+    var maps=[], last=null, watch=null;
+    function dist(d){return d<1000?Math.round(d)+' 公尺':(d/1000).toFixed(d<10000?1:0)+' 公里';}
+    function say(m,s){
+      if(!m._locMsg){var C=L.Control.extend({options:{position:'bottomleft'},onAdd:function(){var d=L.DomUtil.create('div','loc-msg');L.DomEvent.disableClickPropagation(d);return d;}}); m._locMsg=new C(); m.addControl(m._locMsg);}
+      var el=m._locMsg.getContainer(); el.textContent=s; el.style.display='';
+      clearTimeout(m._locT); m._locT=setTimeout(function(){el.style.display='none';},7000);
+    }
+    function draw(m,pos){
+      var ll=L.latLng(pos.coords.latitude,pos.coords.longitude), acc=Math.min(pos.coords.accuracy||0,500);
+      if(!m._meDot){
+        m._meRing=L.circle(ll,{radius:acc,color:'#2f80ed',weight:1,opacity:.5,fillColor:'#2f80ed',fillOpacity:.12,interactive:false}).addTo(m);
+        m._meDot=L.marker(ll,{icon:L.divIcon({className:'me-ic',html:'<div class="me-dot"></div>',iconSize:[16,16],iconAnchor:[8,8]}),zIndexOffset:1000,keyboard:false}).addTo(m).bindPopup('你在這裡');
+      }else{m._meDot.setLatLng(ll); m._meRing.setLatLng(ll).setRadius(acc);}
+      if(m._locFollow){
+        m._locFollow=false;
+        var far=m.getCenter().distanceTo(ll);
+        if(far>FAR) say(m,'你不在這張圖的範圍（離這裡約 '+dist(far)+'），到了就會出現藍點。');
+        else{m.setView(ll,Math.max(m.getZoom(),16)); say(m,'藍點是你（誤差約 '+dist(acc)+'）');}
+      }
+    }
+    function got(pos){last=pos; maps.forEach(function(m){m.whenReady(function(){draw(m,pos);});});}
+    function bad(e){
+      var s=e.code===1?'沒有允許定位。iPhone：設定 → 隱私權與安全性 → 定位服務 → Safari 網站 → 使用 App 期間，再重新整理。'
+                       :'暫時抓不到定位（室內或訊號差），走到外面會自己更新。';
+      maps.forEach(function(m){if(m._locFollow){m._locFollow=false; say(m,s);}});
+      if(e.code===1){try{localStorage.removeItem(KEY);}catch(x){} if(watch!==null)navigator.geolocation.clearWatch(watch); watch=null;
+        maps.forEach(function(m){if(m._locBtn)m._locBtn.classList.remove('on');});}
+    }
+    function start(){
+      if(watch!==null) return;
+      watch=navigator.geolocation.watchPosition(got,bad,{enableHighAccuracy:true,maximumAge:15000,timeout:20000});
+      maps.forEach(function(m){if(m._locBtn)m._locBtn.classList.add('on');});
+      try{localStorage.setItem(KEY,'1');}catch(x){}
+    }
+    L.Map.addInitHook(function(){
+      var m=this; maps.push(m);
+      var C=L.Control.extend({options:{position:'topleft'},onAdd:function(){
+        var bar=L.DomUtil.create('div','leaflet-bar'), a=L.DomUtil.create('a','loc-btn'+(watch!==null?' on':''),bar);
+        a.href='#'; a.title='我在哪'; a.setAttribute('role','button'); a.setAttribute('aria-label','我在哪'); a.textContent='📍';
+        L.DomEvent.on(a,'click',function(ev){L.DomEvent.stop(ev); m._locFollow=true; if(watch===null){say(m,'第一次按會問能不能用定位，按「允許」。'); start();} else if(last) draw(m,last);});
+        L.DomEvent.disableClickPropagation(bar); m._locBtn=a; return bar;}});
+      m.addControl(new C());
+      if(last) m.whenReady(function(){draw(m,last);});
+    });
+    try{if(localStorage.getItem(KEY)==='1') start();}catch(x){}
+  }
+  if(window.L) install(); else document.addEventListener('DOMContentLoaded',install);
+})();
+</script>
 </head>
 <body>
 
