@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="c907f1911a">
+<meta name="book-version" content="bba4bf5dca">
 <title>收藏地圖</title>
 <meta name="description" content="IG、Threads 收藏過的店和景點">
 <meta name="theme-color" content="#0e6b5c">
@@ -288,17 +288,30 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .02em; min-wi
 .sres button small { display: block; color: var(--ink-3); font-size: 12.5px; }
 .sres .empty { padding: 8px 10px; color: var(--ink-3); }
 @media (max-width: 640px) { .sres { max-height: 38vh; } .srch { background: var(--surface); border-radius: 26px; padding: 5px; box-shadow: 0 2px 8px rgba(0,0,0,.28); } .srch input { height: 38px; } .srch button { height: 38px; } }
+/* 搜尋框搬進 .bar（兩排版）：搜尋框吃掉剩下的寬度，地區、說明靠右 */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.bar { flex-wrap: nowrap; }
+.bar .srch { flex: 1 1 0; }
+#regbtn { margin-left: 0; }
+@media (max-width: 640px) {
+  .bar { padding: 5px; gap: 4px; }
+  .bar .srch { background: none; box-shadow: none; padding: 0; border-radius: 0; gap: 4px; }
+  .bar .srch input { padding: 0 10px; }
+  .bar .srch button { padding: 0 12px; }
+  .bar .fold { padding: 6px 8px; }
+}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top" id="top">
+    <!-- 2026-10-31 Leo：頁首三排太多，「收藏地圖」字樣不要 → 搜尋框跟地區、說明併成一排（標題留給螢幕閱讀器） -->
     <div class="bar">
-      <h1>收藏地圖</h1>
+      <h1 class="sr-only">收藏地圖</h1>
+      <form class="srch" id="srch" role="search" autocomplete="off"><input id="sq" type="search" size="1" placeholder="搜地點或店名" enterkeyhint="search" aria-label="搜尋地點或收藏的店"><button type="submit">搜尋</button></form>
       <button class="fold" id="regbtn" aria-expanded="false" aria-controls="regions"><span>🌏 地區</span><span class="fa" aria-hidden="true">▾</span></button>
       <button class="fold" id="fold" aria-expanded="true" aria-controls="more"><span>說明</span><span class="fa" aria-hidden="true">▾</span></button>
     </div>
-    <form class="srch" id="srch" role="search" autocomplete="off"><input id="sq" type="search" size="1" placeholder="搜地點或店名，例：巨城" enterkeyhint="search" aria-label="搜尋地點或收藏的店"><button type="submit">搜尋</button></form>
     <div class="sres" id="sres" hidden></div>
     <div class="regions" id="regions" hidden></div>
     <div class="more" id="more">
