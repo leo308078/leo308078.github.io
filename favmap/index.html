@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="book-version" content="db6427a1cc">
+<meta name="book-version" content="c907f1911a">
 <title>收藏地圖</title>
 <meta name="description" content="IG、Threads 收藏過的店和景點">
 <meta name="theme-color" content="#0e6b5c">
@@ -276,8 +276,10 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .02em; min-wi
   .ctl.zm { display: none; }
 }
 /* 搜尋（2026-10-31 Leo：「我搜巨城就會跳到那裏，就可以看到附近有啥好吃」）：先找收藏的店名，再查地名，點了飛過去＋列出附近 1 公里收藏 */
-.srch { display: flex; gap: 6px; }
-.srch input { flex: 1; min-width: 0; height: 40px; box-sizing: border-box; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }
+.top { grid-template-columns: minmax(0, 1fr); }   /* 2026-10-31：iPhone 中文字型寬，輸入框的預設寬度把整排頁首撐出螢幕（說明、搜尋鈕被切掉）→ 頁首不准被內容撐開 */
+.top > * { min-width: 0; }
+.srch { display: flex; gap: 6px; min-width: 0; }
+.srch input { flex: 1 1 0; width: 0; min-width: 0; height: 40px; box-sizing: border-box; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }
 .srch button { appearance: none; border: 0; border-radius: 999px; padding: 0 16px; height: 40px; background: var(--accent); color: #fff; font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; flex: none; }
 .sres { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,.22); max-height: 55vh; overflow: auto; padding: 6px; }
 .sres h4 { margin: 8px 8px 4px; font-size: 12.5px; color: var(--ink-3); font-weight: 700; }
@@ -296,7 +298,7 @@ h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: .02em; min-wi
       <button class="fold" id="regbtn" aria-expanded="false" aria-controls="regions"><span>🌏 地區</span><span class="fa" aria-hidden="true">▾</span></button>
       <button class="fold" id="fold" aria-expanded="true" aria-controls="more"><span>說明</span><span class="fa" aria-hidden="true">▾</span></button>
     </div>
-    <form class="srch" id="srch" role="search" autocomplete="off"><input id="sq" type="search" placeholder="搜地點或店名，例：巨城" enterkeyhint="search" aria-label="搜尋地點或收藏的店"><button type="submit">搜尋</button></form>
+    <form class="srch" id="srch" role="search" autocomplete="off"><input id="sq" type="search" size="1" placeholder="搜地點或店名，例：巨城" enterkeyhint="search" aria-label="搜尋地點或收藏的店"><button type="submit">搜尋</button></form>
     <div class="sres" id="sres" hidden></div>
     <div class="regions" id="regions" hidden></div>
     <div class="more" id="more">
