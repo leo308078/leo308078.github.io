@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta name="book-version" content="f5ba4a9d69">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fbf7ee">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>義大利＋巴塞隆納｜行事曆版</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='8' width='56' height='50' rx='12' fill='%23fffdf8' stroke='%23262421' stroke-width='5'/%3E%3Crect x='4' y='8' width='56' height='16' rx='8' fill='%23f2c862' stroke='%23262421' stroke-width='5'/%3E%3Ccircle cx='22' cy='40' r='5' fill='%239fd08a'/%3E%3Ccircle cx='42' cy='40' r='5' fill='%23e06a5c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>/* 我在哪：每一張 Leaflet 地圖左上角加一顆 📍，按了用手機定位畫藍點＋誤差圈＋面向的扇形（2026-10-25 Leo：「把這個我在哪也加進一日行程、約會行程，還有旅遊書 skill」）。
+   用法：整段貼在 leaflet.js 那個 <script> 的「下一行」（inline，單檔也能用）；之後頁面上不管什麼時候建的 L.map 都會自動有這顆鈕。
+   - 只在按了按鈕才問定位；按過一次記在 localStorage，下次打開自動開（藍點自己出現，不拉動地圖）
+   - 人離這張圖 30 公里以上（例：還在台灣）只寫距離，不把地圖拉走
+   - 所有地圖共用同一個定位，走動時藍點跟著移
+   2026-11-07 Leo：「現在位置沒有跟著我移動而更新，也沒有朝向我的面向」→
+   - 按 📍 之後進入「跟著我」：每次更新地圖都把你置中；自己拖地圖就停止跟隨，再按 📍 恢復（按鈕變深藍＝跟隨中）
+   - 不收 15 秒前的舊位置（maximumAge 3 秒）；手機鎖螢幕／切 App 回來會重開定位；20 秒沒更新就主動再要一次
+   - 面向：手機指南針（iPhone 要在按 📍 時允許「動作與方向」），沒有指南針就用走路的移動方向；藍點旁的扇形指向你面對的方向 */
+(function(){
+  var KEY='book-loc', FAR=30000;
+  function install(){
+    if(!window.L||!('geolocation' in navigator)||L.Map._locHook) return;
+    L.Map._locHook=true;
+    var css=document.createElement('style');
+    css.textContent='.loc-btn{font-size:17px;line-height:30px!important;text-align:center;text-decoration:none}'+
+      '.loc-btn.on{background:#e8f0fd!important}'+
+      '.loc-btn.follow{background:#2f80ed!important}'+
+      '.loc-msg{background:rgba(255,255,255,.95);border-radius:8px;padding:5px 9px;font:600 12.5px/1.5 system-ui,sans-serif;color:#2b2a26;box-shadow:0 1px 4px rgba(0,0,0,.25);max-width:230px}'+
+      '.me-ic{background:none;border:0}'+
+      '.me-wrap{position:relative;width:64px;height:64px;pointer-events:auto}'+
+      '.me-wrap .me-cone{position:absolute;inset:0;border-radius:50%;display:none;'+
+        'background:conic-gradient(from -30deg,rgba(47,128,237,.75) 0deg 60deg,transparent 60deg 360deg);'+
+        '-webkit-mask:radial-gradient(circle,#000 0,#000 22%,rgba(0,0,0,.5) 45%,transparent 70%);mask:radial-gradient(circle,#000 0,#000 22%,rgba(0,0,0,.5) 45%,transparent 70%)}'+
+      '.me-wrap .me-dot{position:absolute;left:23px;top:23px;width:18px;height:18px;box-sizing:border-box;border-radius:50%;background:#2f80ed;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 4px rgba(0,0,0,.35)}'+
+      '.me-wrap .me-dot::after{content:"";position:absolute;inset:-9px;border-radius:50%;background:rgba(47,128,237,.35);animation:mepulse 2s ease-out infinite}'+
+      '@keyframes mepulse{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}'+
+      '@media (prefers-reduced-motion:reduce){.me-wrap .me-dot::after{animation:none}}';
+    document.head.appendChild(css);
+    var maps=[], last=null, lastT=0, watch=null, head=null, compass=false, oriOn=false;
+    var OPT={enableHighAccuracy:true,maximumAge:3000,timeout:20000};
+    function dist(d){return d<1000?Math.round(d)+' 公尺':(d/1000).toFixed(d<10000?1:0)+' 公里';}
+    function say(m,s){
+      if(!m._locMsg){var C=L.Control.extend({options:{position:'bottomleft'},onAdd:function(){var d=L.DomUtil.create('div','loc-msg');L.DomEvent.disableClickPropagation(d);return d;}}); m._locMsg=new C(); m.addControl(m._locMsg);}
+      var el=m._locMsg.getContainer(); el.textContent=s; el.style.display='';
+      clearTimeout(m._locT); m._locT=setTimeout(function(){el.style.display='none';},7000);
+    }
+    function paintHead(m){
+      if(!m._meDot) return; var el=m._meDot.getElement(); if(!el) return;
+      var c=el.querySelector('.me-cone'); if(!c) return;
+      if(head===null){c.style.display='none';return;}
+      c.style.display='block'; c.style.transform='rotate('+head+'deg)';
+    }
+    function setHead(h){
+      h=((h%360)+360)%360;
+      if(head!==null){var d=Math.abs(h-head); if(d>180) d=360-d; if(d<3) return;}
+      head=h; maps.forEach(paintHead);
+    }
+    function setFollow(m,on){m._follow=on; if(m._locBtn) m._locBtn.classList.toggle('follow',!!on);}
+    function draw(m,pos){
+      var ll=L.latLng(pos.coords.latitude,pos.coords.longitude), acc=Math.min(pos.coords.accuracy||0,500);
+      if(!m._meDot){
+        m._meRing=L.circle(ll,{radius:acc,color:'#2f80ed',weight:1,opacity:.5,fillColor:'#2f80ed',fillOpacity:.12,interactive:false}).addTo(m);
+        m._meDot=L.marker(ll,{icon:L.divIcon({className:'me-ic',html:'<div class="me-wrap"><div class="me-cone"></div><div class="me-dot"></div></div>',iconSize:[64,64],iconAnchor:[32,32],popupAnchor:[0,-12]}),zIndexOffset:1000,keyboard:false}).addTo(m).bindPopup('你在這裡');
+        paintHead(m);
+      }else{m._meDot.setLatLng(ll); m._meRing.setLatLng(ll).setRadius(acc);}
+      var far=m.getCenter().distanceTo(ll);
+      if(m._locFollow){
+        m._locFollow=false;
+        if(far>FAR){setFollow(m,false); say(m,'你不在這張圖的範圍（離這裡約 '+dist(far)+'），到了就會出現藍點。');}
+        else{m._panning=true; m.setView(ll,Math.max(m.getZoom(),17)); m._panning=false; say(m,'藍點是你（誤差約 '+dist(acc)+'）；地圖會跟著你走，拖地圖就停，再按 📍 恢復'+(compass?'':'。扇形＝你面對的方向（沒出現就是沒允許指南針，或站著不動）'));}
+      }else if(m._follow&&far<FAR){m._panning=true; m.panTo(ll,{animate:true,duration:.5}); m._panning=false;}
+    }
+    function got(pos){
+      last=pos; lastT=Date.now();
+      var c=pos.coords;
+      if(!compass&&c.heading!=null&&!isNaN(c.heading)&&(c.speed||0)>0.6) setHead(c.heading);
+      maps.forEach(function(m){m.whenReady(function(){draw(m,pos);});});
+    }
+    function bad(e){
+      var s=e.code===1?'沒有允許定位。iPhone：設定 → 隱私權與安全性 → 定位服務 → Safari 網站 → 使用 App 期間，再重新整理。'
+                       :'暫時抓不到定位（室內或訊號差），走到外面會自己更新。';
+      maps.forEach(function(m){if(m._locFollow){m._locFollow=false; say(m,s);}});
+      if(e.code===1){try{localStorage.removeItem(KEY);}catch(x){} stopWatch();
+        maps.forEach(function(m){if(m._locBtn)m._locBtn.classList.remove('on'); setFollow(m,false);});}
+    }
+    function stopWatch(){if(watch!==null) navigator.geolocation.clearWatch(watch); watch=null;}
+    function startWatch(){stopWatch(); watch=navigator.geolocation.watchPosition(got,bad,OPT);}
+    function onOri(e){
+      var h=null;
+      if(typeof e.webkitCompassHeading==='number'&&!isNaN(e.webkitCompassHeading)) h=e.webkitCompassHeading;
+      else if(e.absolute&&typeof e.alpha==='number') h=360-e.alpha;
+      if(h===null) return;
+      var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(window.orientation||0);
+      compass=true; setHead(h+a);
+    }
+    function startOri(){
+      if(oriOn) return;
+      var go=function(){oriOn=true; window.addEventListener('deviceorientationabsolute',onOri,true); window.addEventListener('deviceorientation',onOri,true);};
+      try{
+        if(window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function'){
+          DeviceOrientationEvent.requestPermission().then(function(r){if(r==='granted') go();}).catch(function(){});
+        }else go();
+      }catch(x){}
+    }
+    function start(){
+      if(watch!==null) return;
+      startWatch();
+      maps.forEach(function(m){if(m._locBtn)m._locBtn.classList.add('on');});
+      try{localStorage.setItem(KEY,'1');}catch(x){}
+    }
+    // 手機鎖螢幕／切走再回來：iPhone 的 watchPosition 常常就停了，重開一次
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&watch!==null){startWatch(); navigator.geolocation.getCurrentPosition(got,function(){},{enableHighAccuracy:true,maximumAge:0,timeout:15000});}});
+    // 20 秒沒有新位置就主動要一次
+    setInterval(function(){if(watch!==null&&document.visibilityState==='visible'&&Date.now()-lastT>20000) navigator.geolocation.getCurrentPosition(got,function(){},{enableHighAccuracy:true,maximumAge:0,timeout:15000});},10000);
+    L.Map.addInitHook(function(){
+      var m=this; maps.push(m);
+      m.on('dragstart',function(){if(!m._panning) setFollow(m,false);});
+      var C=L.Control.extend({options:{position:'topleft'},onAdd:function(){
+        var bar=L.DomUtil.create('div','leaflet-bar'), a=L.DomUtil.create('a','loc-btn'+(watch!==null?' on':''),bar);
+        a.href='#'; a.title='我在哪'; a.setAttribute('role','button'); a.setAttribute('aria-label','我在哪'); a.textContent='📍';
+        L.DomEvent.on(a,'click',function(ev){L.DomEvent.stop(ev); startOri(); m._locFollow=true; setFollow(m,true);
+          if(watch===null){say(m,'第一次按會問能不能用定位（還有指南針），都按「允許」。'); start();}
+          else{if(last) draw(m,last); navigator.geolocation.getCurrentPosition(got,function(){},{enableHighAccuracy:true,maximumAge:0,timeout:15000});}});
+        L.DomEvent.disableClickPropagation(bar); m._locBtn=a; return bar;}});
+      m.addControl(new C());
+      if(last) m.whenReady(function(){draw(m,last);});
+    });
+    window._locStart=function(m){ if(m&&m._locBtn) m._locBtn.click(); };
+    try{if(localStorage.getItem(KEY)==='1') start();}catch(x){}
+  }
+  if(window.L) install(); else document.addEventListener('DOMContentLoaded',install);
+})();
+</script>
+<style>
+:root{color-scheme:light;--bg:#fbf7ee;--ink:#262421;--mut:#857f73;--line:#262421;--card:#fffdf8;--yel:#f2c862;--blue:#acd5ec;--grn:#a6d590;--grnd:#4f8f3c;--red:#e04436;--rule:#e6dfcf;
+  --bodyH:clamp(380px,calc(100svh - 300px),600px)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 'Noto Sans TC',system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;-webkit-text-size-adjust:100%}
+button{font-family:inherit;color:inherit;cursor:pointer}
+a{color:#2f6db5}
+.wrap{max-width:560px;margin:0 auto;padding:14px 16px calc(40px + env(safe-area-inset-bottom))}
+/* 頁首 */
+.hd{display:flex;align-items:flex-end;gap:10px}
+.hd-l{flex:1;min-width:0}
+.kick{font:800 10.5px/1.4 Nunito,sans-serif;letter-spacing:.18em;color:var(--mut)}
+h1{font:900 clamp(22px,6.6vw,29px)/1.15 'Noto Sans TC',sans-serif;margin:4px 0 3px;letter-spacing:.03em;white-space:nowrap}
+.cities{font-size:12.5px;color:var(--mut)}
+.hd-art{font-size:22px;line-height:1;letter-spacing:-4px;padding-bottom:6px}
+.stats{display:flex;margin:12px 0 0;border:2px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.stat{flex:1;padding:7px 4px 6px;text-align:center;border-right:1.5px dashed #d8d0bf}
+.stat:last-child{border-right:0}
+.stat b{display:block;font:900 21px/1.1 Nunito,sans-serif}
+.stat span{font-size:11px;color:var(--mut)}
+.stat.cd b{color:var(--red)}
+/* 分頁 */
+.tabs{display:flex;gap:6px;margin:14px 0 12px}
+.tabs button{flex:1;border:2px solid transparent;background:none;border-radius:999px;padding:7px 0;font-weight:700;font-size:14px;color:var(--mut)}
+.tabs button.on{background:var(--grn);border-color:var(--line);color:var(--ink)}
+.tab{display:none}.tab.on{display:block}
+/* 卡片框 */
+.box{background:var(--card);border:2.5px solid var(--line);border-radius:22px;overflow:hidden;margin-bottom:16px}
+.box-h{background:var(--yel);padding:9px 12px 9px 14px;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--line)}
+.box-h .t{font-weight:900;font-size:18px;line-height:1.2}
+.box-h .s{font:800 10.5px Nunito,sans-serif;letter-spacing:.08em;color:#6b5a2a;display:block}
+.seg{margin-left:auto;display:flex;background:#fff4cf;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+.seg button{border:0;background:none;padding:6px 9px;font-size:12.5px;font-weight:700;color:#6b5a2a}
+.seg button.on{background:#5a4513;color:#fff}
+/* 日期列（捷運路線） */
+.strip{overflow-x:auto;scrollbar-width:none;border-bottom:1.5px dashed #d9d0bd}
+.strip::-webkit-scrollbar{display:none}
+.strip-in{display:flex;position:relative;padding:4px 10px 8px;width:max-content}
+.strip-in::before{content:'';position:absolute;left:35px;right:35px;top:48px;height:2px;background:var(--line)}
+.sd{position:relative;width:50px;border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center}
+.sd-ic{height:24px;font-size:18px;line-height:24px}
+.sd-city{height:14px;font-size:9.5px;line-height:14px;color:var(--mut);white-space:nowrap;font-weight:700}
+.sd-dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--line);background:var(--card);margin:3px 0 4px;position:relative;z-index:1}
+.sd-w{font-size:11px;color:var(--mut);line-height:1.3}
+.sd-d{font:800 15px/1 Nunito,sans-serif;padding:4px 6px;border-radius:9px;margin-top:2px;border:1.5px solid transparent;min-width:28px;text-align:center}
+.sd.sel .sd-d{background:var(--grn);border-color:var(--line)}
+.sd.sel .sd-dot{background:var(--grnd)}
+.sd.today .sd-w{color:var(--red);font-weight:900}
+/* 這一天的標題 */
+.dh{display:flex;align-items:flex-start;gap:8px;padding:9px 12px 8px}
+.dh-m{flex:1;min-width:0}
+.dh-n{font-weight:900;font-size:16.5px;line-height:1.35}
+.dh-n small{font-size:12px;color:var(--mut);font-weight:700;margin-left:4px}
+.dh-n .tdy{background:var(--red);color:#fff;font-size:11px;border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:2px}
+.dh-r{font-size:12.5px;color:var(--mut);line-height:1.45;margin-top:2px}
+.nav{display:flex;gap:6px;flex:none;padding-top:2px}
+.nav button{width:34px;height:34px;border-radius:11px;border:1.5px solid var(--line);background:#fff;font-size:15px;font-weight:900}
+.nav button:disabled{opacity:.3}
+/* 單日：左邊整天時間尺（不捲）＋右邊卡片（捲） */
+.body{height:var(--bodyH);display:grid;grid-template-columns:52px 1fr;border-top:1.5px solid var(--rule)}
+.ruler{position:relative;border-right:1.5px dashed #ddd4c1;background:#fcf9f1;cursor:pointer;overflow:hidden}
+.rl{position:absolute;left:3px;font:800 10px/1 Nunito,sans-serif;color:var(--mut);transform:translateY(-50%)}
+.rl.end{color:var(--ink)}
+.rax{position:absolute;left:38px;width:1.5px;background:#cfc6b2}
+.rt{position:absolute;left:36px;width:6px;border-radius:3px;min-height:3px}
+.rind{position:absolute;left:31px;width:16px;height:16px;border-radius:50%;background:#fff;border:2.5px solid var(--line);transform:translateY(-50%);transition:top .25s;z-index:2}
+.rnow{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:3}
+.rnow span{position:absolute;left:1px;top:-8px;background:var(--red);color:#fff;font:900 10px/16px Nunito,sans-serif;padding:0 4px;border-radius:5px}
+.list{overflow-y:auto;position:relative;padding:10px 11px 70px 10px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.cc{position:relative;background:#fff;border:2px solid var(--line);border-left:7px solid var(--c);border-radius:15px;padding:8px 11px 9px;margin-bottom:9px;cursor:pointer}
+.cc.mv{background:#fbfdf8;border-width:1.5px;border-left-width:7px;padding:6px 11px 7px}
+.cc.sel{box-shadow:0 0 0 3px var(--bgc),0 0 0 4.5px var(--c)}
+.cc.cur{background:#fff7d1}
+.cc.done{opacity:.62}
+.cc-top{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:2px}
+.pill{background:var(--bgc);color:#3a3328;font-size:11px;font-weight:700;padding:0 8px;border-radius:7px;line-height:18px}
+.must{background:var(--red);color:#fff;font-size:10.5px;font-weight:700;padding:0 6px;border-radius:7px;line-height:18px}
+.lock{font-size:11px;color:var(--mut);font-weight:700}
+.xd{font-size:10.5px;color:#8a4fb6;font-weight:900}
+.st{font-size:10.5px;font-weight:900;color:#fff;background:var(--red);border-radius:6px;padding:0 6px;line-height:18px}
+.st.nx{background:#3a7bd5}
+.cc-h{font-weight:900;font-size:15.5px;line-height:1.35}
+.cc.mv .cc-h{font-size:14px}
+.cc.star .cc-h{color:#bf3527}
+.cc-t{font:800 12.5px/1.4 Nunito,'Noto Sans TC',sans-serif;color:var(--mut);margin-top:1px}
+.cc-x{font-size:13px;color:#4a453c;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cc-w{font-size:12.5px;color:var(--red);margin-top:3px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.cc.open .cc-x,.cc.open .cc-w{display:block;-webkit-line-clamp:unset}
+.tgs{margin-top:2px}
+.tg{display:inline-block;font-size:11px;background:#f4efe3;border-radius:6px;padding:0 6px;margin:3px 4px 0 0;line-height:18px}
+.cc-full{display:none}
+.cc.open .cc-full{display:block}
+.cc-more{font-size:11.5px;color:var(--mut);margin-top:4px}
+.cc.open .cc-more{display:none}
+.chip{font-size:12.5px;background:#eef6ea;border-radius:9px;padding:4px 8px;margin-top:6px}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pbtn{font-size:12.5px;font-weight:700;border:1.5px solid var(--line);border-radius:10px;padding:5px 9px;background:#fff;color:var(--ink);text-decoration:none;line-height:1.3}
+.pbtn.alt{background:var(--blue)}
+details.sub{margin-top:8px;border:1.5px dashed #d6ccb8;border-radius:10px;padding:6px 9px;font-size:13px;cursor:auto}
+details.sub summary{font-weight:700;cursor:pointer}
+details.sub p{margin:6px 0}
+.opt{margin-top:6px;padding-top:6px;border-top:1px dotted #ddd3bf}
+.opt b{font-size:13.5px}
+.nowbar{display:flex;align-items:center;gap:6px;color:var(--red);font:900 12px Nunito,'Noto Sans TC',sans-serif;margin:0 0 9px}
+.nowbar::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--red);flex:none}
+.nowbar::after{content:'';flex:1;height:2px;background:var(--red)}
+.legend{border-top:1.5px solid var(--rule);padding:8px 12px 10px;font-size:11px;color:var(--mut);display:flex;flex-wrap:wrap;gap:3px 10px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px;vertical-align:0}
+.legend .w{flex-basis:100%}
+/* 週行事曆 */
+.wk{height:var(--bodyH);overflow:auto;position:relative;border-top:1.5px solid var(--rule);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.wk-in{display:grid;width:max-content}
+.wk-hd{position:sticky;top:0;z-index:3;background:var(--card);border-bottom:1.5px solid var(--rule);text-align:center;padding:4px 0 5px;font-size:11px;color:var(--mut);line-height:1.2;cursor:pointer}
+.wk-hd b{display:inline-block;font:800 14px/1.1 Nunito,sans-serif;color:var(--ink);padding:2px 6px;border-radius:8px;border:1.5px solid transparent;margin-top:2px}
+.wk-hd.sel b{background:var(--grn);border-color:var(--line)}
+.wk-hd.today{color:var(--red);font-weight:900}
+.wk-hd i{display:block;font-style:normal;font-size:9.5px;font-weight:700}
+.wk-corner{position:sticky;left:0;top:0;z-index:5;background:var(--card);border-bottom:1.5px solid var(--rule);border-right:1.5px solid var(--rule)}
+.wk-hours{position:sticky;left:0;z-index:4;background:var(--card);border-right:1.5px solid var(--rule)}
+.wk-hours span{position:absolute;left:4px;font:800 10px Nunito,sans-serif;color:var(--mut);transform:translateY(-50%)}
+.wk-col{position:relative;border-right:1px solid #eee6d6}
+.wk-col.sel{background-color:#f6fbf2}
+.wb{position:absolute;left:3px;right:3px;background:var(--bgc);border-left:3px solid var(--c);border-radius:6px;padding:1px 4px;font-size:10.5px;line-height:1.25;overflow:hidden;cursor:pointer}
+.wb small{font:800 9.5px Nunito,sans-serif;color:#6c6457;display:block}
+.wb b{font-weight:700;display:block}
+.wb.mv{background:#f7f9f4;font-size:9.5px;color:#6a7a64;padding-top:0}
+.wb.star b{color:#bf3527}
+.wnow{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:2}
+/* 地圖卡 */
+.mc .box-h{background:var(--blue)}
+.mc .box-h .s{color:#2e5a73}
+.mc-btn{margin-left:auto;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font-size:12.5px;font-weight:700;flex:none}
+.mc-sel{padding:8px 12px;font-size:13px;line-height:1.45;min-height:38px}
+.mc-sel b{font-size:14px}
+#map{height:300px;border-top:1.5px solid var(--rule);border-bottom:1.5px solid var(--rule);background:#e8e3d6}
+.mk{width:26px;height:26px;border-radius:50%;background:var(--c);border:2px solid #222;color:#222;font:900 12px/22px Nunito,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.mk.on{transform:scale(1.35);background:#222;color:#fff}
+.mc-list{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 12px}
+.mc-list button{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:3px 8px 3px 4px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px}
+.mc-list button i{font-style:normal;width:18px;height:18px;border-radius:50%;background:var(--c);font:900 10.5px/18px Nunito,sans-serif;text-align:center;border:1px solid #222}
+.mc-list button.on{background:#222;color:#fff}
+.mc-note{font-size:11.5px;color:var(--mut);padding:0 12px 10px}
+/* 其他 */
+.big{display:block;width:100%;border:2.5px solid var(--line);background:var(--yel);border-radius:16px;padding:12px;font-weight:900;font-size:15px;text-align:center;text-decoration:none;color:var(--ink);margin-bottom:10px}
+.big.w{background:#fff}
+.foot{font-size:12px;color:var(--mut);line-height:1.6;margin-top:8px}
+.prog{height:12px;border:2px solid var(--line);border-radius:999px;margin:10px 12px 4px;overflow:hidden;background:#fff}
+.prog i{display:block;height:100%;background:var(--grn);transition:width .3s}
+.rv-h{font-weight:900;font-size:13px;padding:10px 12px 2px;color:var(--mut)}
+.rv{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-top:1px dashed #e3dbc9;cursor:pointer}
+.rv input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--grnd);flex:none}
+.rv b{display:block;font-size:14.5px}
+.rv span{font-size:12.5px;color:var(--mut)}
+.rv.ok b{text-decoration:line-through;color:var(--mut)}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+.ig a{border:2px solid var(--line);border-radius:14px;padding:12px 10px;text-decoration:none;color:var(--ink);font-weight:700;font-size:14px;background:#fff}
+.ig a small{display:block;font-weight:400;color:var(--mut);font-size:11.5px;margin-top:2px}
+.leaflet-popup-content{font:13px/1.45 'Noto Sans TC',sans-serif;margin:9px 12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hd">
+    <div class="hd-l">
+      <div class="kick" id="kick"></div>
+      <h1 id="ttl"></h1>
+      <div class="cities" id="cities"></div>
+    </div>
+    <div class="hd-art" aria-hidden="true">✈️🏛️🍕</div>
+  </header>
+  <div class="stats" id="stats"></div>
+
+  <nav class="tabs">
+    <button data-tab="plan" class="on">行程規劃</button>
+    <button data-tab="rsv">要先訂的</button>
+    <button data-tab="info">出發前資訊</button>
+  </nav>
+
+  <div class="tab on" id="tab-plan">
+    <section class="box" id="cal">
+      <div class="box-h">
+        <div><span class="t">行事曆</span><span class="s" id="calSub"></span></div>
+        <div class="seg"><button data-v="week">週行事曆</button><button data-v="day">單日時間軸</button></div>
+      </div>
+      <div class="strip" id="strip"><div class="strip-in" id="stripIn"></div></div>
+      <div class="dh">
+        <div class="dh-m"><div class="dh-n" id="dhN"></div><div class="dh-r" id="dhR"></div></div>
+        <div class="nav"><button id="prev" aria-label="前一天">‹</button><button id="next" aria-label="後一天">›</button></div>
+      </div>
+      <div class="body" id="dayView"><div class="ruler" id="ruler"></div><div class="list" id="list"></div></div>
+      <div class="wk" id="weekView" hidden></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="box mc">
+      <div class="box-h">
+        <div><span class="s">EXPLORE THE ROUTE</span><span class="t" id="mcT"></span></div>
+        <button class="mc-btn" id="fit">整天路線</button>
+      </div>
+      <div class="mc-sel" id="mcSel">點上面的卡片，地圖會跳到那個地方</div>
+      <div id="map"></div>
+      <div class="mc-list" id="mcList"></div>
+      <div class="mc-note">數字＝這天去的順序，虛線連起來是走的方向。左上角 📍 按了會顯示你在哪。</div>
+    </section>
+
+    <button class="big" id="ics"></button>
+    <a class="big w" id="bookLink" target="_blank" rel="noopener">📖 打開原本那本完整旅遊書</a>
+    <div class="foot">試作版：每天的照片、天氣、「行程有變？調整時間」還沒搬過來，要用的話先開原本那本。</div>
+  </div>
+
+  <div class="tab" id="tab-rsv">
+    <section class="box">
+      <div class="box-h"><div><span class="t">要先訂的</span><span class="s" id="rvSub"></span></div></div>
+      <div class="prog"><i id="rvBar"></i></div>
+      <div id="rvList"></div>
+    </section>
+    <div class="foot">勾選只存在這支手機上。</div>
+  </div>
+
+  <div class="tab" id="tab-info">
+    <section class="box">
+      <div class="box-h"><div><span class="t">出發前資訊</span><span class="s">打開原本那本的那一章</span></div></div>
+      <div class="ig" id="infoGrid"></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var D={"title": "義大利＋巴塞隆納", "kicker": "ITALY · SPAIN · 12 DAYS · 4 CITIES", "cities": "羅馬・拿波里・佛羅倫斯・巴塞隆納", "start": "2026-12-26", "tz": "+01:00", "tzlabel": "當地時間", "book": "https://leo308078.github.io/italy-barcelona-2026/", "npins": 93, "days": [{"id": "d1", "n": 1, "date": "2026-12-26", "label": "12/26 (六)", "route": "桃園 ➜ 杜拜 ➜ 羅馬", "focus": "12/25 晚上出發 → 杜拜轉機 → 12:40 落地羅馬 → 飯店放行李 → 傍晚許願池、萬神殿、納沃納廣場聖誕市集 → 晚餐。今天是義大利國定假日（聖斯德望日）。", "city": "羅馬", "tips": ["第一天時差很大（台灣半夜），不要排太滿，累了晚餐後直接回飯店", "12/26 是義大利國定假日，梵蒂岡博物館休館；街上店多半有開", "許願池、納沃納、萬神殿走路都 10 分鐘內", "☔ 雨備：今天都在戶外，下雨就許願池看一下、直接去吃飯"], "items": [{"t": "20:00", "m": 1200, "d": "2026-12-25", "tz": "+08:00", "cat": "flight", "h": "（12/25 週五晚上）桃園機場 T2 報到", "star": false, "fixed": false, "tags": [], "chip": "🧳 阿聯酋航空櫃台，起飛前 3 小時", "tx": "托運行李掛到羅馬，杜拜不用領。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null}, {"t": "23:00", "m": 1380, "d": "2026-12-25", "tz": "+08:00", "cat": "flight", "h": "起飛 EK367 → 杜拜", "star": false, "fixed": true, "tags": [], "chip": "✈️ 9 小時 45 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null}, {"t": "04:45", "m": 285, "d": "", "tz": "+04:00", "cat": "flight", "h": "抵達杜拜 T3（轉機 4 小時）", "star": false, "fixed": true, "tags": [], "chip": "⏱ 跟著「Connections」走，不用出關", "tx": "杜拜時間比台灣慢 4 小時。可以在登機口附近休息區睡一下。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 535}, {"t": "08:55", "m": 535, "d": "", "tz": "+04:00", "cat": "flight", "h": "起飛 EK097 → 羅馬", "star": false, "fixed": true, "tags": [], "chip": "✈️ 6 小時 45 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 760}, {"t": "12:40", "m": 760, "d": "", "tz": "", "cat": "flight", "h": "抵達羅馬 Fiumicino 機場 T3", "star": false, "fixed": true, "tags": [], "chip": "🛂 入境排隊抓 30–60 分", "tx": "第一次進歐盟要在機器按指紋、拍照（EES）。入境後領行李。", "warn": "", "pins": [{"label": "羅馬菲烏米奇諾機場", "name": "FCO 機場", "lat": 41.794505, "lng": 12.250139, "href": "https://maps.google.com/?cid=7265957735721731287"}], "mode": "", "alts": null, "more": null, "e": 840}, {"t": "14:00", "m": 840, "d": "", "tz": "", "cat": "move", "h": "計程車進市區", "star": false, "fixed": false, "tags": [], "chip": "🚕 固定價 €55／車（含行李，約 45 分）", "tx": "只坐<b>入境大廳外排班的白色計程車</b>，上車先說「fifty-five, fixed」。不想坐計程車：機場快線 Leonardo Express 到 Termini €14／人、32 分，再走 10 分到飯店。", "warn": "大廳裡主動問「Taxi?」的人不要跟（多半沒執照、亂開價）", "pins": [], "mode": "", "alts": null, "more": null, "e": 900}, {"t": "15:00", "m": 900, "d": "", "tz": "", "cat": "hotel", "h": "Hotel Viminale check-in", "star": false, "fixed": false, "tags": ["建議，還沒訂"], "chip": "🏨 Via Cesare Balbo 31（Termini 走 10 分）", "tx": "放行李、洗把臉，休息 1 小時。住宿稅每人每晚另付（四星 €7.5）。", "warn": "", "pins": [{"label": "Hotel Viminale", "name": "飯店", "lat": 41.898301, "lng": 12.495099, "href": "https://maps.google.com/?cid=15622906212994451215"}], "mode": "taxi", "alts": null, "more": null, "e": 975}, {"t": "16:15", "m": 975, "d": "", "tz": "", "cat": "move", "h": "計程車到許願池", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€10–12）", "tx": "走路也行（20 分），第一天先省點腳力。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 990}, {"t": "16:30", "m": 990, "d": "", "tz": "", "cat": "spot", "h": "許願池", "star": true, "fixed": false, "tags": [], "chip": "🪙 池邊收費區 €2／人（只收卡）", "tx": "天黑後打燈最漂亮（日落 16:44）。站在廣場外圍看免費；要走到水池邊丟硬幣才要買 €2 的票。", "warn": "人超多、扒手熱點，手機包包抓好", "pins": [{"label": "許願池", "name": "許願池", "lat": 41.900933, "lng": 12.483313, "href": "https://maps.google.com/?cid=17759648132674796470"}], "mode": "taxi", "alts": null, "more": null, "e": 1035}, {"t": "17:15", "m": 1035, "d": "", "tz": "", "cat": "spot", "h": "萬神殿（外觀）", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 8 分", "tx": "今天 17:00 有彌撒，16:00 起就停止售票，只看外觀＋前面廣場的噴泉。<b>裡面排在 12/28</b>。", "warn": "", "pins": [{"label": "萬神殿", "name": "萬神殿", "lat": 41.898611, "lng": 12.476873, "href": "https://maps.google.com/?cid=14614574390750662188"}], "mode": "walk", "alts": null, "more": null, "e": 1060}, {"t": "17:40", "m": 1060, "d": "", "tz": "", "cat": "spot", "h": "納沃納廣場聖誕市集", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 5 分", "tx": "整個廣場擺滿攤位：聖誕裝飾、糖果、旋轉木馬，晚上燈很美。中間是貝尼尼的四河噴泉。", "warn": "2026 年的市集檔期市府還沒公布（往年 12/1–1/6）", "pins": [{"label": "納沃納廣場", "name": "納沃納廣場", "lat": 41.899163, "lng": 12.473074, "href": "https://maps.google.com/?cid=11769916103722152778"}], "mode": "walk", "alts": null, "more": null, "e": 1140}, {"t": "19:00", "m": 1140, "d": "", "tz": "", "cat": "food", "h": "晚餐：Roscioli（羅馬菜）", "star": false, "fixed": false, "tags": ["📞 要先訂位"], "chip": "🚶 走 10 分（鮮花廣場旁）", "tx": "熟食店兼餐廳（Google 6,700 則評論），招牌是培根蛋麵（carbonara）、黑胡椒起司麵（cacio e pepe）。官網線上訂位。", "warn": "", "pins": [{"label": "Roscioli Salumeria", "name": "Roscioli", "lat": 41.894256, "lng": 12.474242, "href": "https://maps.google.com/?cid=2742538736156126537"}], "mode": "walk", "alts": {"title": "🍴 沒訂到的備案（2 家，都在納沃納旁）", "opts": [{"h": "Da Francesco", "tx": "小廣場上的披薩＋羅馬菜（3,400 則評論），每天 12:00–16:00、19:00–23:30。", "pins": [{"label": "Da Francesco", "name": "Da Francesco", "lat": 41.899335, "lng": 12.470392, "href": "https://maps.google.com/?cid=3641109134559551683"}]}, {"h": "Cul de Sac", "tx": "老牌酒館（2,700 則評論），羅馬菜、起司火腿拼盤，每天 12:00–23:30 不休息。", "pins": [{"label": "Cul de Sac", "name": "Cul de Sac", "lat": 41.897723, "lng": 12.472081, "href": "https://maps.google.com/?cid=10369332145528899714"}]}]}, "more": null, "e": 1260}, {"t": "21:00", "m": 1260, "d": "", "tz": "", "cat": "move", "h": "計程車回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15 分（€12–15）", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1290}]}, {"id": "d2", "n": 2, "date": "2026-12-27", "label": "12/27 (日)", "route": "競技場 ➜ 古羅馬廣場 ➜ 真理之口 ➜ 越台伯河", "focus": "競技場 → 古羅馬廣場＋帕拉提諾山（同一張票）→ Monti 區午餐 → 真理之口 → 橘子花園看夕陽 → 越台伯河區晚餐。", "city": "羅馬", "tips": ["競技場 12/27 的票 11/27 才開賣，那天一早就買", "今天走很多石頭路，穿最好走的鞋；中午吃完可以回飯店休息一下再出門", "越台伯河很多名店週日公休（Da Enzo、Da Teo），所以排 Tonnarello", "☔ 雨備：競技場照常；下午改去萬神殿（裡面不會淋到雨，雨從頂上的洞落下來很特別）"], "items": [{"t": "08:30", "m": 510, "d": "", "tz": "", "cat": "move", "h": "走到競技場", "star": false, "fixed": false, "tags": [], "chip": "🚶 Via Cavour 走 15 分（或地鐵 B 線 Cavour → Colosseo 1 站）", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 540}, {"t": "09:00", "m": 540, "d": "", "tz": "", "cat": "spot", "h": "羅馬競技場", "star": true, "fixed": true, "tags": ["🎫 11/27 開賣"], "chip": "🎫 24h 標準票 €18（含古羅馬廣場＋帕拉提諾山）", "tx": "票上選 9:00 的時段，進去可以待 75 分鐘。想下到地下室和競技場地面要買 Full Experience（€24）。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "12/27 的票 <b>11/27 才開賣</b>（參觀日前 30 天），聖誕假期很快賣完", "pins": [{"label": "競技場", "name": "競技場", "lat": 41.89021, "lng": 12.492231, "href": "https://maps.google.com/?cid=2950359333223072708"}], "mode": "walk", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p>只在官網 <a href=\"https://ticketing.colosseo.it/\" target=\"_blank\">ticketing.colosseo.it</a> 買（線上可能另收約 €2 手續費）。票記名，帶護照。冬季 8:30–16:30、最後入場 15:30。</p>"}, "e": 630}, {"t": "10:30", "m": 630, "d": "", "tz": "", "cat": "spot", "h": "古羅馬廣場＋帕拉提諾山", "star": true, "fixed": false, "tags": [], "chip": "🚶 競技場旁邊，同一張票", "tx": "先上帕拉提諾山（皇帝住的地方），從山上往下看整個廣場最壯觀，再下來走廣場。約 2 小時，石頭路很多。", "warn": "", "pins": [{"label": "帕拉提諾山", "name": "帕拉提諾山", "lat": 41.888656, "lng": 12.487548, "href": "https://maps.google.com/?cid=5875129900000633134"}, {"label": "古羅馬廣場", "name": "古羅馬廣場", "lat": 41.892091, "lng": 12.486438, "href": "https://maps.google.com/?cid=18055282783150702054"}], "mode": "walk", "alts": null, "more": null, "e": 765}, {"t": "12:45", "m": 765, "d": "", "tz": "", "cat": "food", "h": "午餐：La Taverna dei Fori Imperiali", "star": false, "fixed": false, "tags": ["📞 建議訂位"], "chip": "🚶 廣場出口走 10 分（Monti 區）", "tx": "四代經營的家族餐館（2,900 則評論），週日中午 12:30–15:00。羅馬四大麵都有：培根蛋麵、阿瑪翠斯辣番茄培根麵、gricia、黑胡椒起司麵。", "warn": "", "pins": [{"label": "La Taverna dei Fori Imperiali", "name": "La Taverna", "lat": 41.894061, "lng": 12.488478, "href": "https://maps.google.com/?cid=8046209661515586741"}], "mode": "walk", "alts": null, "more": null, "e": 855}, {"t": "14:15", "m": 855, "d": "", "tz": "", "cat": "spot", "h": "維托里亞諾頂樓看全景", "star": false, "fixed": false, "tags": ["選配"], "chip": "🚶 走 10 分　🎫 VIVE 聯票 €18（含全景電梯）", "tx": "白色大理石的「結婚蛋糕」，搭電梯上頂樓，360 度看競技場、古羅馬廣場。不想花錢就在旁邊卡比托利歐廣場後面的平台看古羅馬廣場（免費）。", "warn": "", "pins": [{"label": "維托里亞諾", "name": "維托里亞諾", "lat": 41.894891, "lng": 12.482954, "href": "https://maps.google.com/?cid=14480631325614800565"}], "mode": "walk", "alts": null, "more": null, "e": 920}, {"t": "15:20", "m": 920, "d": "", "tz": "", "cat": "spot", "h": "真理之口", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 5 分 或 走 15 分", "tx": "《羅馬假期》裡奧黛麗赫本把手伸進去的那個石面具。開放 9:30–13:00、14:00–17:50，排隊拍照。", "warn": "", "pins": [{"label": "真理之口", "name": "真理之口", "lat": 41.888238, "lng": 12.481444, "href": "https://maps.google.com/?cid=9396440243381514727"}], "mode": "taxi", "alts": null, "more": null, "e": 975}, {"t": "16:15", "m": 975, "d": "", "tz": "", "cat": "spot", "h": "橘子花園看夕陽＋鑰匙孔", "star": true, "fixed": false, "tags": [], "chip": "🚶 上坡走 10 分", "tx": "阿文提諾山上的小公園，平台可以看整個羅馬屋頂和聖彼得圓頂，日落 16:45。走 2 分到馬爾他騎士團的大門，從<b>鑰匙孔</b>看出去剛好框住聖彼得圓頂（要排一下）。", "warn": "", "pins": [{"label": "橘子花園", "name": "橘子花園", "lat": 41.885134, "lng": 12.48039, "href": "https://maps.google.com/?cid=268412999884687609"}, {"label": "馬爾他騎士團鑰匙孔", "name": "鑰匙孔", "lat": 41.882983, "lng": 12.478475, "href": "https://maps.google.com/?cid=403937764128554616"}], "mode": "walk", "alts": null, "more": null, "e": 1035}, {"t": "17:15", "m": 1035, "d": "", "tz": "", "cat": "move", "h": "計程車到越台伯河區", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€10）", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1050}, {"t": "17:30", "m": 1050, "d": "", "tz": "", "cat": "spot", "h": "越台伯河區散步", "star": false, "fixed": false, "tags": [], "chip": "", "tx": "石板小巷、藤蔓、小酒館，聖誕燈很美。越台伯河聖母教堂前的廣場是中心，教堂裡的金色馬賽克免費看。", "warn": "", "pins": [{"label": "越台伯河聖母教堂", "name": "越台伯河聖母教堂", "lat": 41.889493, "lng": 12.469836, "href": "https://maps.google.com/?cid=3920193208311365666"}], "mode": "taxi", "alts": null, "more": null, "e": 1120}, {"t": "18:40", "m": 1120, "d": "", "tz": "", "cat": "food", "h": "晚餐：Tonnarello", "star": false, "fixed": false, "tags": ["不收訂位"], "chip": "🚶 走 2 分", "tx": "越台伯河區排隊名店，每天 11:30–23:00、週日照開。<b>19:00 前到</b>等最短。點培根蛋麵、黑胡椒起司麵、羅馬薄餅 pinsa。", "warn": "", "pins": [{"label": "Tonnarello", "name": "Tonnarello", "lat": 41.889804, "lng": 12.4693, "href": "https://maps.google.com/?cid=4669838674805706072"}], "mode": "walk", "alts": {"title": "🍴 排太久的備案（1 家）", "opts": [{"h": "Pianostrada（越台伯河店）", "tx": "女主廚團隊的現代羅馬菜，走 8 分。", "pins": [{"label": "Pianostrada Trastevere", "name": "Pianostrada", "lat": 41.888789, "lng": 12.475272, "href": "https://maps.google.com/?cid=3769140885675967576"}]}]}, "more": null, "e": 1230}, {"t": "20:30", "m": 1230, "d": "", "tz": "", "cat": "cafe", "h": "冰淇淋：Fatamorgana", "star": false, "fixed": false, "tags": ["選配"], "chip": "🚶 走 5 分", "tx": "手工冰淇淋，口味很多。", "warn": "", "pins": [{"label": "Fatamorgana Trastevere", "name": "Fatamorgana", "lat": 41.886506, "lng": 12.469171, "href": "https://maps.google.com/?cid=1826992299718996015"}], "mode": "walk", "alts": null, "more": null, "e": 1260}, {"t": "21:00", "m": 1260, "d": "", "tz": "", "cat": "move", "h": "計程車回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15–20 分（€15）", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1290}]}, {"id": "d3", "n": 3, "date": "2026-12-28", "label": "12/28 (一)", "route": "梵蒂岡 ➜ 聖彼得 ➜ 萬神殿 ➜ 西班牙階梯", "focus": "梵蒂岡博物館＋西斯汀 → 切片披薩 → 聖彼得大教堂 → 聖天使橋 → 萬神殿（進去）→ 西班牙階梯、Via Condotti → 提拉米蘇 → 晚餐。", "city": "羅馬", "tips": ["梵蒂岡、聖彼得都要遮肩膀膝蓋，冬天外套脫掉時注意裡面那件", "今天走路最多，中午吃完可以坐一下再去聖彼得", "聖天使堡週一休館，只看外觀就好", "☔ 雨備：今天大部分在室內；西班牙階梯改成 Via Condotti 逛街"], "items": [{"t": "07:35", "m": 455, "d": "", "tz": "", "cat": "move", "h": "計程車到梵蒂岡博物館", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 20 分（€15–18）", "tx": "地鐵也可以：A 線 Termini → Ottaviano（15 分）再走 10 分。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 480}, {"t": "08:00", "m": 480, "d": "", "tz": "", "cat": "spot", "h": "梵蒂岡博物館＋西斯汀禮拜堂", "star": true, "fixed": true, "tags": ["🎫 現在就買"], "chip": "🎫 €25（線上預約含免排隊費）", "tx": "買 8:00 第一個時段，人最少。全程約 2.5–3 小時，最後才到西斯汀禮拜堂。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "肩膀、膝蓋要遮，不能戴帽子；大背包要寄物。西斯汀裡面不能拍照", "pins": [{"label": "梵蒂岡博物館", "name": "梵蒂岡博物館", "lat": 41.906488, "lng": 12.453641, "href": "https://maps.google.com/?cid=14979232533955483318"}], "mode": "taxi", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p>只在官網 <a href=\"https://tickets.museivaticani.va\" target=\"_blank\">tickets.museivaticani.va</a> 買（很多網域很像的假網站）。12/26 休館、12/27 最後一個週日免費會爆滿，所以排 12/28。</p>"}, "e": 675}, {"t": "11:15", "m": 675, "d": "", "tz": "", "cat": "food", "h": "午餐：Bonci Pizzarium（切片披薩）", "star": false, "fixed": false, "tags": [], "chip": "🚶 博物館出口走 7 分", "tx": "秤重賣的羅馬切片披薩名店（14,600 則評論），每天 11:15 開。指給店員看要哪幾片、要多大，站著吃或外帶。", "warn": "", "pins": [{"label": "Bonci Pizzarium", "name": "Pizzarium", "lat": 41.906676, "lng": 12.446671, "href": "https://maps.google.com/?cid=7964466716394952010"}], "mode": "walk", "alts": {"title": "🍴 想坐著吃（1 家）", "opts": [{"h": "Pastasciutta（Via delle Grazie 本店）", "tx": "聖彼得旁邊的現煮麵快餐（11,200 則評論），自己選麵＋醬，便宜快速，10:00–22:00。", "pins": [{"label": "Pastasciutta Via delle Grazie", "name": "Pastasciutta", "lat": 41.904672, "lng": 12.458084, "href": "https://maps.google.com/?cid=16228058529326428571"}]}]}, "more": null, "e": 735}, {"t": "12:15", "m": 735, "d": "", "tz": "", "cat": "spot", "h": "聖彼得大教堂（＋圓頂）", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 15 分　🆓 教堂免費／圓頂電梯＋320 階 €22", "tx": "一進門右手邊是米開朗基羅的《聖殤》。圓頂官網要選時段，記名、不退不改；不爬圓頂就只排安檢進教堂。", "warn": "安檢排隊可能 30–60 分；服裝跟博物館一樣", "pins": [{"label": "聖彼得大教堂", "name": "聖彼得大教堂", "lat": 41.902167, "lng": 12.453937, "href": "https://maps.google.com/?cid=8235940740917056131"}], "mode": "walk", "alts": null, "more": {"title": "ℹ️ 圓頂票", "html": "<p><a href=\"https://www.basilicasanpietro.va/en/products/the-dome\" target=\"_blank\">官方圓頂票</a>：電梯到屋頂平台再爬 320 階 €22，全程走樓梯 €17。冬季 7:30–17:00。爬上去看得到整個聖彼得廣場的鑰匙孔形狀。</p>"}, "e": 855}, {"t": "14:15", "m": 855, "d": "", "tz": "", "cat": "spot", "h": "聖天使橋＋聖天使堡（外觀）", "star": false, "fixed": false, "tags": [], "chip": "🚶 協和大道走 15 分", "tx": "橋上 10 座天使雕像是貝尼尼設計的，城堡是皇帝哈德良的陵墓。", "warn": "聖天使堡週一休館，今天只看外觀（想進去要改 12/26 或 12/27，€18）", "pins": [{"label": "聖天使堡", "name": "聖天使堡", "lat": 41.903063, "lng": 12.466276, "href": "https://maps.google.com/?cid=3921528191373361545"}], "mode": "walk", "alts": null, "more": null, "e": 900}, {"t": "15:00", "m": 900, "d": "", "tz": "", "cat": "spot", "h": "萬神殿（進去）", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 15 分（經過納沃納廣場）　🎫 €7", "tx": "抬頭看圓頂中間 9 公尺的洞，光從那裡打進來。拉斐爾葬在左邊。9:00–19:00，售票到 18:00。", "warn": "", "pins": [{"label": "萬神殿", "name": "萬神殿", "lat": 41.898611, "lng": 12.476873, "href": "https://maps.google.com/?cid=14614574390750662188"}], "mode": "walk", "alts": {"title": "🍦 旁邊的冰淇淋（1 家）", "opts": [{"h": "Giolitti", "tx": "1900 年開的老冰淇淋店（Google 近 3 萬則評論），7:30 開到半夜，走 3 分。", "pins": [{"label": "Giolitti", "name": "Giolitti", "lat": 41.901024, "lng": 12.477203, "href": "https://maps.google.com/?cid=4062539611586396423"}]}]}, "more": null, "e": 975}, {"t": "16:15", "m": 975, "d": "", "tz": "", "cat": "shop", "h": "西班牙階梯＋Via Condotti", "star": true, "fixed": false, "tags": [], "chip": "🚶 經 Via del Corso 走 15 分", "tx": "階梯頂上的教堂前看夕陽。Via Condotti 是精品一條街，聖誕燈掛滿整條街。", "warn": "<b>不能坐在階梯上</b>（罰 €250），站著拍", "pins": [{"label": "西班牙階梯", "name": "西班牙階梯", "lat": 41.90599, "lng": 12.482775, "href": "https://maps.google.com/?cid=9205591385677129999"}], "mode": "walk", "alts": null, "more": null, "e": 1080}, {"t": "18:00", "m": 1080, "d": "", "tz": "", "cat": "cafe", "h": "Pompi 提拉米蘇", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 3 分（Via della Croce）", "tx": "提拉米蘇專賣店（8,000 則評論），11:00–21:30，盒裝外帶，有經典、草莓、開心果口味。", "warn": "", "pins": [{"label": "Pompi Via della Croce", "name": "Pompi", "lat": 41.906542, "lng": 12.480855, "href": "https://maps.google.com/?cid=11291619039947018231"}], "mode": "walk", "alts": null, "more": null, "e": 1170}, {"t": "19:30", "m": 1170, "d": "", "tz": "", "cat": "food", "h": "晚餐：Il Gabriello", "star": false, "fixed": false, "tags": ["📞 電話訂位"], "chip": "🚶 走 5 分（Via Vittoria）", "tx": "西班牙階梯附近的羅馬菜（1,100 則評論），招牌是<b>黑胡椒起司麵配海螯蝦</b>。週一 19:00 開（週日休）。", "warn": "", "pins": [{"label": "Il Gabriello", "name": "Il Gabriello", "lat": 41.906853, "lng": 12.479917, "href": "https://maps.google.com/?cid=10079025664597830017"}], "mode": "walk", "alts": {"title": "🍴 沒訂到的備案（2 家）", "opts": [{"h": "Antica Enoteca", "tx": "Via della Croce 上的老酒館餐廳（7,500 則評論），走 3 分。", "pins": [{"label": "Antica Enoteca", "name": "Antica Enoteca", "lat": 41.906296, "lng": 12.479775, "href": "https://maps.google.com/?cid=12740478902571150949"}]}, {"h": "Roscioli", "tx": "第一天沒吃到的話，計程車 10 分。", "pins": [{"label": "Roscioli Salumeria", "name": "Roscioli", "lat": 41.894256, "lng": 12.474242, "href": "https://maps.google.com/?cid=2742538736156126537"}]}]}, "more": {"title": "📞 訂位", "html": "<p>打 <a href=\"tel:+390669940810\">+39 06 6994 0810</a>（19:00–23:00）。</p>"}, "e": 1275}, {"t": "21:15", "m": 1275, "d": "", "tz": "", "cat": "move", "h": "回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚇 地鐵 A 線 Spagna → Termini（10 分）或計程車", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1305}]}, {"id": "d4", "n": 4, "date": "2026-12-29", "label": "12/29 (二)", "route": "羅馬 ➜ 拿波里：舊城區 ➜ 海濱", "focus": "高鐵到拿波里 → 蒙紗基督 → 披薩 → 聖誕馬槽街 → 地下城 → 海濱看維蘇威火山 → 長廊、Toledo 地鐵站 → 晚餐。", "city": "拿波里", "tips": ["蒙紗基督一定要先預約（不退不改），聖誕週會滿", "拿波里很有活力也有點亂：過馬路看車、包包背前面、不跟搭訕的人走", "舊城的店常常中午 13:30–16:30 休息", "☔ 雨備：地下城、蒙紗基督、長廊都在室內；海濱改成從 Gambrinus 窗邊看"], "items": [{"t": "08:45", "m": 525, "d": "", "tz": "", "cat": "move", "h": "退房，走到 Termini 車站", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 10 分（或計程車 €8）", "tx": "", "warn": "", "pins": [{"label": "羅馬 Termini 車站", "name": "Termini 車站", "lat": 41.9006, "lng": 12.503004, "href": "https://maps.google.com/?cid=8121615925009822775"}], "mode": "", "alts": null, "more": null, "e": 560}, {"t": "09:20", "m": 560, "d": "", "tz": "", "cat": "move", "h": "高鐵 Frecciarossa 9505 → 拿波里", "star": false, "fixed": true, "tags": ["🎫 先買票"], "chip": "🚄 1 小時 08 分　兩人 €73.80（可改一次）", "tx": "Trenitalia 對號座，票在 App 裡，不用打票。看電子看板上的月台號碼。", "warn": "", "pins": [], "mode": "", "alts": null, "more": {"title": "🚆 其他班次", "html": "<p>上午每 15–30 分一班：08:53、09:26、09:53、10:20（最便宜，兩人 €37.80 但不能改不能退）。票價會漲，<b>早買便宜</b>。<a href=\"https://www.trenitalia.com/en.html\" target=\"_blank\">Trenitalia</a>／Italo 都有。</p>"}, "e": 628}, {"t": "10:28", "m": 628, "d": "", "tz": "", "cat": "move", "h": "抵達拿波里中央車站", "star": false, "fixed": true, "tags": [], "chip": "", "tx": "", "warn": "", "pins": [{"label": "拿波里中央車站", "name": "拿波里中央車站", "lat": 40.852164, "lng": 14.272788, "href": "https://maps.google.com/?cid=4183946364251989275"}], "mode": "train", "alts": null, "more": null, "e": 645}, {"t": "10:45", "m": 645, "d": "", "tz": "", "cat": "hotel", "h": "計程車到 Soul Art Hotel 放行李", "star": false, "fixed": false, "tags": ["建議，還沒訂"], "chip": "🚕 約 15 分（€12–15，上車先問價或要求跳表）", "tx": "飯店在 Toledo 大街的 Piazza Carità，地鐵 Toledo 站走 3 分。", "warn": "", "pins": [{"label": "Soul Art Hotel", "name": "飯店", "lat": 40.844332, "lng": 14.249611, "href": "https://maps.google.com/?cid=14178833873476801236"}], "mode": "taxi", "alts": null, "more": null, "e": 700}, {"t": "11:40", "m": 700, "d": "", "tz": "", "cat": "spot", "h": "舊城主街 Spaccanapoli", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 12 分", "tx": "一條筆直的老街把舊城切成兩半，兩旁是教堂、小店、曬衣服的陽台。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 720}, {"t": "12:00", "m": 720, "d": "", "tz": "", "cat": "spot", "h": "蒙紗基督（Sansevero 禮拜堂）", "star": true, "fixed": true, "tags": ["🎫 一定要預約"], "chip": "🎫 €12（語音導覽兩人一台 €6）", "tx": "一整塊大理石雕出透明薄紗蓋在耶穌身上。平常週二休館，<b>12/29 特別開 9:00–19:00</b>。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "票不退不改、不能拍照；聖誕週很可能滿，現在就買", "pins": [{"label": "蒙紗基督禮拜堂", "name": "Sansevero", "lat": 40.849295, "lng": 14.254884, "href": "https://maps.google.com/?cid=2301883066721243441"}], "mode": "walk", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p><a href=\"https://ticket.museosansevero.it/en/\" target=\"_blank\">官方訂票</a>，參觀日前 60 天開賣（已經能買），參觀前 2 天會再放少量票。拿著電子票直接到入口。</p>"}, "e": 770}, {"t": "12:50", "m": 770, "d": "", "tz": "", "cat": "food", "h": "午餐：Gino e Toto Sorbillo（拿坡里披薩）", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 5 分（Via dei Tribunali）", "tx": "舊城排隊名店（31,500 則評論），週二 12:00 開。<b>先到門口跟店員報名字</b>再在外面等。點瑪格麗特（Margherita），一人一片。", "warn": "", "pins": [{"label": "Gino e Toto Sorbillo", "name": "Sorbillo", "lat": 40.850425, "lng": 14.255358, "href": "https://maps.google.com/?cid=13619709253352858852"}], "mode": "walk", "alts": {"title": "🍕 排太久的備案（2 家）", "opts": [{"h": "Antica Pizzeria Di Matteo", "tx": "就在馬槽街口的老店（14,500 則評論），炸披薩（pizza fritta）也很有名，11:00 開。", "pins": [{"label": "Antica Pizzeria Di Matteo", "name": "Di Matteo", "lat": 40.851251, "lng": 14.257968, "href": "https://maps.google.com/?cid=17070588764528483247"}]}, {"h": "L'Antica Pizzeria da Michele", "tx": "只賣幾種披薩的百年老店（56,000 則評論，電影《享受吧！一個人的旅行》那家），在車站那頭，10:30 開。", "pins": [{"label": "L'Antica Pizzeria da Michele", "name": "Da Michele", "lat": 40.849756, "lng": 14.2633, "href": "https://maps.google.com/?cid=6535452230733379138"}]}]}, "more": null, "e": 840}, {"t": "14:00", "m": 840, "d": "", "tz": "", "cat": "shop", "h": "聖誕馬槽街", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 2 分", "tx": "整條街都是做馬槽小人偶的工作室：牧羊人、披薩師傅、足球員、政治人物公仔。挑一個小的當紀念品。", "warn": "很擠、扒手多，相機掛前面", "pins": [{"label": "聖誕馬槽街", "name": "聖誕馬槽街", "lat": 40.849771, "lng": 14.257671, "href": "https://maps.google.com/?cid=4290259826948747366"}], "mode": "walk", "alts": null, "more": null, "e": 900}, {"t": "15:00", "m": 900, "d": "", "tz": "", "cat": "spot", "h": "拿波里地下城（導覽）", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 2 分（San Gaetano 廣場 69 號）　🎫 €18", "tx": "走 136 階下到地下 40 公尺的古羅馬水道、二戰防空洞，有英文導覽，每整點一梯，不用預約。約 1 小時 20 分。", "warn": "有一段很窄的燭光隧道，怕窄可以在外面等 10 分鐘", "pins": [{"label": "拿波里地下城", "name": "地下城入口", "lat": 40.85113, "lng": 14.256841, "href": "https://maps.google.com/?cid=16111013976607382120"}], "mode": "walk", "alts": null, "more": null, "e": 990}, {"t": "16:30", "m": 990, "d": "", "tz": "", "cat": "spot", "h": "海濱步道＋蛋堡", "star": true, "fixed": false, "tags": [], "chip": "🚕 約 15 分（€12）", "tx": "日落 16:42，到的時候剛好是藍色時刻：海、蛋堡、對面的維蘇威火山。沿海濱往北走一段就好。", "warn": "", "pins": [{"label": "蛋堡", "name": "蛋堡", "lat": 40.828316, "lng": 14.247604, "href": "https://maps.google.com/?cid=680263724113068205"}], "mode": "taxi", "alts": null, "more": null, "e": 1050}, {"t": "17:30", "m": 1050, "d": "", "tz": "", "cat": "spot", "h": "公民投票廣場＋翁貝托一世長廊", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 12 分", "tx": "長廊裡有大聖誕樹。旁邊的 Gran Caffè Gambrinus（15,700 則評論）是 19 世紀的老咖啡館，進去喝杯咖啡、吃千層貝殼酥（sfogliatella）。", "warn": "", "pins": [{"label": "公民投票廣場", "name": "公民投票廣場", "lat": 40.835826, "lng": 14.248583, "href": "https://maps.google.com/?cid=10005048019944225812"}, {"label": "翁貝托一世長廊", "name": "翁貝托一世長廊", "lat": 40.838529, "lng": 14.249474, "href": "https://maps.google.com/?cid=16030543339599309882"}, {"label": "Gran Caffè Gambrinus", "name": "Gambrinus", "lat": 40.836795, "lng": 14.248479, "href": "https://maps.google.com/?cid=6094569833709822474"}], "mode": "walk", "alts": null, "more": null, "e": 1110}, {"t": "18:30", "m": 1110, "d": "", "tz": "", "cat": "spot", "h": "Toledo 地鐵站（藝術車站）", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 8 分　🎫 地鐵票 €1.30（可刷卡）", "tx": "常被選為歐洲最美的地鐵站：往下的長電扶梯頭上是一個藍色光井，像在海底。要刷票進站才看得到。", "warn": "", "pins": [{"label": "Toledo 地鐵站", "name": "Toledo 地鐵站", "lat": 40.842489, "lng": 14.248883, "href": "https://maps.google.com/?cid=17614904911557381530"}], "mode": "walk", "alts": null, "more": null, "e": 1185}, {"t": "19:45", "m": 1185, "d": "", "tz": "", "cat": "food", "h": "晚餐：Trattoria da Nennella", "star": false, "fixed": false, "tags": [], "chip": "🚶 就在飯店旁邊（Piazza Carità 22）", "tx": "西班牙區的熱鬧家庭食堂（25,000 則評論，週二 18:45 開），店員會唱歌跳舞。招牌是<b>馬鈴薯起司麵</b>（pasta, patate e provola）。一半座位留給現場排隊，到廣場寫名字等叫號；也能上官網訂。", "warn": "", "pins": [{"label": "Trattoria da Nennella", "name": "Nennella", "lat": 40.844643, "lng": 14.249798, "href": "https://maps.google.com/?cid=1389485119960331331"}], "mode": "walk", "alts": {"title": "🍴 其他選擇（1 家）", "opts": [{"h": "Tandem Ragù", "tx": "專做拿坡里肉醬（ragù）的小店（8,000 則評論），11:00 開到半夜，舊城區走 10 分。", "pins": [{"label": "Tandem Ragù", "name": "Tandem", "lat": 40.848236, "lng": 14.256292, "href": "https://maps.google.com/?cid=14911666790725331406"}]}]}, "more": null, "e": 1245}]}, {"id": "d5", "n": 5, "date": "2026-12-30", "label": "12/30 (三)", "route": "龐貝古城 ➜ 蘇連多（選配）", "focus": "環維蘇威火車去龐貝古城（早上進去）→ 午餐 → 同一條線到蘇連多看海灣夕陽（選配）→ 回拿波里。", "city": "拿波里", "tips": ["龐貝早上 9 點進去，下午才接得上蘇連多", "環維蘇威火車很擠很舊，扒手多，包包背前面", "蘇連多是選配：累了就回拿波里休息", "☔ 雨備：龐貝下雨很滑、沒地方躲，改去拿波里國立考古博物館（龐貝的壁畫、雕像都在這裡）"], "items": [{"t": "08:00", "m": 480, "d": "", "tz": "", "cat": "move", "h": "地鐵 1 號線 Toledo → Garibaldi", "star": false, "fixed": false, "tags": [], "chip": "🚇 4 站 10 分（€1.30，可刷卡）", "tx": "", "warn": "", "pins": [{"label": "Toledo 地鐵站", "name": "Toledo 站", "lat": 40.842489, "lng": 14.248883, "href": "https://maps.google.com/?cid=17614904911557381530"}], "mode": "", "alts": null, "more": null, "e": 510}, {"t": "08:30", "m": 510, "d": "", "tz": "", "cat": "move", "h": "環維蘇威火車 → Pompei Scavi", "star": false, "fixed": false, "tags": [], "chip": "🚆 往 Sorrento 方向，約 35 分（€3.30）", "tx": "從中央車站地下的 Napoli Garibaldi 站上車，坐到「Pompei Scavi – Villa dei Misteri」，<b>不要坐到 Pompei Santuario</b>（遠 1.7 公里）。", "warn": "這條線車上很擠、頭幾站扒手多；觀光直達車 Campania Express 2026/10 起暫停", "pins": [{"label": "拿波里 Garibaldi 環維蘇威火車站", "name": "Garibaldi 站", "lat": 40.852473, "lng": 14.272133, "href": "https://maps.google.com/?cid=9041346831738109223"}], "mode": "subway", "alts": null, "more": null, "e": 555}, {"t": "09:15", "m": 555, "d": "", "tz": "", "cat": "spot", "h": "龐貝古城", "star": true, "fixed": false, "tags": ["🎫 建議線上先買"], "chip": "🚶 下車走 1 分到 Porta Marina 入口　🎫 Pompeii Express €20", "tx": "一早進去最舒服。路線：廣場（後面是火山）→ 浴場 → 麵包店 → 劇場 → 圓形競技場，約 3 小時。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "冬天 15:30 最後入場、17:00 關；超過 30×30×15 公分的包包要寄物；票記名、出去不能再進", "pins": [{"label": "Pompei Scavi 火車站", "name": "Pompei Scavi 站", "lat": 40.748623, "lng": 14.48125, "href": "https://maps.google.com/?cid=10887273200285375330"}, {"label": "龐貝古城 Porta Marina 入口", "name": "龐貝入口", "lat": 40.748554, "lng": 14.483166, "href": "https://maps.google.com/?cid=6524284097907688737"}], "mode": "train", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p>官網 <a href=\"https://pompeii.vivaticket.it/\" target=\"_blank\">pompeii.vivaticket.it</a>。Pompeii Express €20 只有古城；Pompeii+ €25 多了秘儀別墅等郊外別墅和接駁車。全程石板路，穿好走的鞋、帶水。</p>"}, "e": 750}, {"t": "12:30", "m": 750, "d": "", "tz": "", "cat": "food", "h": "午餐（龐貝鎮上）", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 5 分 或 走 20 分", "tx": "La Bettola del Gusto：龐貝新城的在地料理（2,150 則評論），週三 12:30–15:00，電話 081 863 7811 可以訂。", "warn": "", "pins": [{"label": "La Bettola del Gusto", "name": "La Bettola del Gusto", "lat": 40.746648, "lng": 14.500835, "href": "https://maps.google.com/?cid=2862980264960579870"}], "mode": "taxi", "alts": {"title": "🍴 其他選擇（1 家）", "opts": [{"h": "Ristorante President", "tx": "龐貝鎮上的精緻餐廳，週三 12:00–15:00（評論比較少，約 290 則）。", "pins": [{"label": "Ristorante President", "name": "President", "lat": 40.747629, "lng": 14.49914, "href": "https://maps.google.com/?cid=3190867294893382383"}]}]}, "more": null, "e": 840}, {"t": "14:00", "m": 840, "d": "", "tz": "", "cat": "move", "h": "火車到蘇連多", "star": false, "fixed": false, "tags": ["選配"], "chip": "🚆 同一條線往南約 40 分", "tx": "累了就直接坐回拿波里（往北），晚上在飯店附近吃。", "warn": "", "pins": [{"label": "Pompei Scavi 火車站", "name": "Pompei Scavi 站", "lat": 40.748623, "lng": 14.48125, "href": "https://maps.google.com/?cid=10887273200285375330"}], "mode": "taxi", "alts": null, "more": null, "e": 885}, {"t": "14:45", "m": 885, "d": "", "tz": "", "cat": "spot", "h": "蘇連多：老城＋市立公園看海灣", "star": true, "fixed": false, "tags": ["選配"], "chip": "🚶 車站走 5 分到塔索廣場、再 5 分到公園", "tx": "懸崖上的小鎮。老城小巷賣檸檬酒（limoncello）、檸檬香皂；市立公園（Villa Comunale）的平台看整個拿波里灣和維蘇威火山，日落約 16:40。", "warn": "", "pins": [{"label": "蘇連多火車站", "name": "蘇連多站", "lat": 40.625845, "lng": 14.379734, "href": "https://maps.google.com/?cid=2178982782544508094"}, {"label": "蘇連多市立公園", "name": "市立公園", "lat": 40.627939, "lng": 14.372724, "href": "https://maps.google.com/?cid=10181024576327495259"}], "mode": "train", "alts": {"title": "🍴 想在蘇連多吃（1 家）", "opts": [{"h": "L'Antica Trattoria", "tx": "老城區的餐廳（3,000 則評論），12:00–17:00 不休息。", "pins": [{"label": "L'Antica Trattoria Sorrento", "name": "L'Antica Trattoria", "lat": 40.626762, "lng": 14.373122, "href": "https://maps.google.com/?cid=11840825371728098006"}]}]}, "more": null, "e": 1035}, {"t": "17:15", "m": 1035, "d": "", "tz": "", "cat": "move", "h": "火車回拿波里", "star": false, "fixed": false, "tags": [], "chip": "🚆 約 70 分（坐到終點 Garibaldi 前一站也可以）", "tx": "天黑後車上人少一點，包包抓好。", "warn": "", "pins": [{"label": "拿波里 Garibaldi 環維蘇威火車站", "name": "Garibaldi 站", "lat": 40.852473, "lng": 14.272133, "href": "https://maps.google.com/?cid=9041346831738109223"}], "mode": "train", "alts": null, "more": null, "e": 1170}, {"t": "19:30", "m": 1170, "d": "", "tz": "", "cat": "food", "h": "晚餐：50 Kalò（披薩）", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15 分（Mergellina 海邊）", "tx": "常上世界披薩排行榜的店（19,000 則評論），餅皮很軟很香，晚上 18:30 開。", "warn": "", "pins": [{"label": "50 Kalò", "name": "50 Kalò", "lat": 40.828372, "lng": 14.220258, "href": "https://maps.google.com/?cid=2519669216971214380"}], "mode": "taxi", "alts": {"title": "🍴 不想再坐車（1 家）", "opts": [{"h": "Antonio & Antonio", "tx": "海濱步道上的披薩餐廳（12,000 則評論），看得到蛋堡。", "pins": [{"label": "Antonio & Antonio", "name": "Antonio & Antonio", "lat": 40.830123, "lng": 14.245403, "href": "https://maps.google.com/?cid=8616854824370734230"}]}]}, "more": null, "e": 1275}, {"t": "21:15", "m": 1275, "d": "", "tz": "", "cat": "move", "h": "計程車回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1305}]}, {"id": "d6", "n": 6, "date": "2026-12-31", "label": "12/31 (四)", "route": "拿波里 ➜ 佛羅倫斯：大衛像 ➜ 夕陽 ➜ 跨年", "focus": "高鐵到佛羅倫斯 → 大衛像 → 大教堂、領主廣場、老橋 → 米開朗基羅廣場夕陽 → 跨年晚餐 → 聖十字廣場跨年演唱會。", "city": "佛羅倫斯", "tips": ["大衛像、跨年晚餐現在就訂", "跨年夜佛羅倫斯沒有煙火，熱鬧在廣場演唱會", "飯店在車站旁邊，1/1 去比薩、1/2 去機場都很近", "☔ 雨備：米開朗基羅廣場改成烏菲茲旁的領主廣場露天雕像廊（有屋頂）"], "items": [{"t": "08:05", "m": 485, "d": "", "tz": "", "cat": "move", "h": "退房，計程車到拿波里中央車站", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15 分（€12–15）", "tx": "", "warn": "", "pins": [{"label": "拿波里中央車站", "name": "拿波里中央車站", "lat": 40.852164, "lng": 14.272788, "href": "https://maps.google.com/?cid=4183946364251989275"}], "mode": "", "alts": null, "more": null, "e": 520}, {"t": "08:40", "m": 520, "d": "", "tz": "", "cat": "move", "h": "高鐵 Frecciarossa 9524 → 佛羅倫斯", "star": false, "fixed": true, "tags": ["🎫 先買票"], "chip": "🚄 直達 3 小時 06 分　兩人約 €110–120", "tx": "朋友行程可能會變，建議買<b>可以改一次的 Economy</b>（最便宜的 Super Economy 不能改不能退）。", "warn": "", "pins": [], "mode": "", "alts": null, "more": {"title": "🚆 其他班次", "html": "<p>直達車：07:30、07:45、08:04、08:40，之後 08:55 → 10:40 之間沒有直達。13:40 以後有很便宜的票（兩人 €59.80），但到佛羅倫斯已經 16:46，夕陽沒了。</p>"}, "e": 706}, {"t": "11:46", "m": 706, "d": "", "tz": "", "cat": "move", "h": "抵達佛羅倫斯新聖母車站", "star": false, "fixed": true, "tags": [], "chip": "", "tx": "", "warn": "", "pins": [{"label": "佛羅倫斯新聖母車站", "name": "新聖母車站", "lat": 43.776671, "lng": 11.247916, "href": "https://maps.google.com/?cid=1826464901989057321"}], "mode": "train", "alts": null, "more": null, "e": 720}, {"t": "12:00", "m": 720, "d": "", "tz": "", "cat": "hotel", "h": "c-hotels Diplomat 放行李", "star": false, "fixed": false, "tags": ["建議，還沒訂"], "chip": "🚶 車站走 3 分", "tx": "住宿稅每人每晚另付（四星 €7）。順便問櫃台：1/2 退房後行李放到中午。", "warn": "", "pins": [{"label": "c-hotels Diplomat", "name": "飯店", "lat": 43.776445, "lng": 11.246211, "href": "https://maps.google.com/?cid=5861286718056819198"}], "mode": "walk", "alts": null, "more": null, "e": 740}, {"t": "12:20", "m": 740, "d": "", "tz": "", "cat": "food", "h": "午餐：中央市場 2 樓美食區", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 8 分", "tx": "一樓是傳統市場、二樓是美食街（Google 59,000 則評論），麵、披薩、牛肚包、丁骨牛排都有，坐哪都行。9:00–23:00（12/31 特別時間查不到）。", "warn": "", "pins": [{"label": "中央市場", "name": "中央市場", "lat": 43.776468, "lng": 11.252834, "href": "https://maps.google.com/?cid=9070668327180047285"}], "mode": "walk", "alts": {"title": "🍴 想坐下好好吃（1 家）", "opts": [{"h": "Trattoria Zà Zà", "tx": "市場廣場上的托斯卡尼老館（1977 年、35,000 則評論），松露起司麵疙瘩有名，要訂位。", "pins": [{"label": "Trattoria Zà Zà", "name": "Zà Zà", "lat": 43.776355, "lng": 11.254449, "href": "https://maps.google.com/?cid=9065319688451705659"}]}]}, "more": null, "e": 810}, {"t": "13:30", "m": 810, "d": "", "tz": "", "cat": "spot", "h": "學院美術館：大衛像", "star": true, "fixed": true, "tags": ["🎫 先預約"], "chip": "🚶 走 7 分　🎫 €20＋預約費 €4", "tx": "走進長廊盡頭的圓頂大廳，大衛就站在那裡——比想像大很多。看完約 1 小時。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "沒有寄物處，大包包、大背包不能進去", "pins": [{"label": "學院美術館", "name": "學院美術館", "lat": 43.776815, "lng": 11.258642, "href": "https://maps.google.com/?cid=7875942179259130567"}], "mode": "walk", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p>只在官方 B-Ticket <a href=\"https://www.galleriaaccademiafirenze.it/en/tickets/\" target=\"_blank\">galleriaaccademiafirenze.it</a> 買。週一、1/1、12/25 休館，所以排今天。</p>"}, "e": 885}, {"t": "14:45", "m": 885, "d": "", "tz": "", "cat": "spot", "h": "聖母百花大教堂", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 7 分　🆓 教堂免費", "tx": "外面的三色大理石、銅門（天堂之門在對面的洗禮堂）。教堂裡面 10:15–15:45 免費進，排隊快就進去看圓頂內部的《最後的審判》壁畫。", "warn": "", "pins": [{"label": "聖母百花大教堂", "name": "大教堂", "lat": 43.773145, "lng": 11.25596, "href": "https://maps.google.com/?cid=6165783601337790965"}], "mode": "walk", "alts": null, "more": {"title": "🧗 想爬圓頂", "html": "<p>布魯內列斯基圓頂 463 階、沒電梯，<b>一定要預約時段</b>（Brunelleschi Pass €30，含鐘樓、洗禮堂、博物館）：<a href=\"https://tickets.duomo.firenze.it/\" target=\"_blank\">官方訂票</a>。12/31 的特別時間還沒公布，1/1 應該全關。這本沒排，想爬就訂 12/31 上午以外的時段或 1/2 早上 8:15（就要放棄烏菲茲）。</p>"}, "e": 930}, {"t": "15:30", "m": 930, "d": "", "tz": "", "cat": "spot", "h": "領主廣場＋老橋", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 7 分", "tx": "領主廣場是佛羅倫斯的客廳：舊宮、大衛複製像、露天雕像廊。往南走 5 分到老橋，橋上都是金飾店。", "warn": "", "pins": [{"label": "領主廣場", "name": "領主廣場", "lat": 43.769686, "lng": 11.255642, "href": "https://maps.google.com/?cid=11510190685880029293"}, {"label": "老橋", "name": "老橋", "lat": 43.767925, "lng": 11.253144, "href": "https://maps.google.com/?cid=4625490284655346408"}], "mode": "walk", "alts": null, "more": null, "e": 965}, {"t": "16:05", "m": 965, "d": "", "tz": "", "cat": "move", "h": "計程車到米開朗基羅廣場", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€12）", "tx": "走路要爬坡 25 分，搭計程車留體力給晚上。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 975}, {"t": "16:15", "m": 975, "d": "", "tz": "", "cat": "spot", "h": "米開朗基羅廣場看夕陽", "star": true, "fixed": false, "tags": [], "chip": "🆓 免費", "tx": "整個佛羅倫斯在腳下：大教堂圓頂、舊宮的塔、阿諾河上的老橋。日落 16:46，17:20 天全暗，城市的燈一盞盞亮起來。", "warn": "", "pins": [{"label": "米開朗基羅廣場", "name": "米開朗基羅廣場", "lat": 43.762931, "lng": 11.265056, "href": "https://maps.google.com/?cid=13040006563833401625"}], "mode": "taxi", "alts": null, "more": null, "e": 1050}, {"t": "17:30", "m": 1050, "d": "", "tz": "", "cat": "hotel", "h": "回飯店休息、換衣服", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1170}, {"t": "19:30", "m": 1170, "d": "", "tz": "", "cat": "food", "h": "跨年晚餐：Buca Mario", "star": true, "fixed": false, "tags": ["📞 現在就訂"], "chip": "🚶 飯店走 5 分", "tx": "1886 年開的地窖餐廳（2,900 則評論，平常 19:00–22:00），招牌是<b>丁骨牛排</b>（兩人分一塊）和番茄麵包湯（pappa al pomodoro）。去年跨年夜有營業。", "warn": "跨年夜很多餐廳改成固定套餐、名額有限，<b>越早訂越好</b>；今年的跨年菜單價錢還沒公布", "pins": [{"label": "Buca Mario", "name": "Buca Mario", "lat": 43.772313, "lng": 11.249197, "href": "https://maps.google.com/?cid=1873925511941774470"}], "mode": "walk", "alts": {"title": "🍴 訂不到的備案（2 家）", "opts": [{"h": "Trattoria Zà Zà", "tx": "中央市場廣場上，走 8 分。", "pins": [{"label": "Trattoria Zà Zà", "name": "Zà Zà", "lat": 43.776355, "lng": 11.254449, "href": "https://maps.google.com/?cid=9065319688451705659"}]}, {"h": "Il Latini", "tx": "大桌併桌的托斯卡尼老館（5,100 則評論），很熱鬧。電話 +39 055 210916。", "pins": [{"label": "Il Latini", "name": "Il Latini", "lat": 43.771616, "lng": 11.249334, "href": "https://maps.google.com/?cid=7850524927152205959"}]}]}, "more": null, "e": 1350}, {"t": "22:30", "m": 1350, "d": "", "tz": "", "cat": "spot", "h": "聖十字廣場跨年演唱會", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 25 分　🆓 免費", "tx": "去年 21:00–01:00 主舞台演唱會、電視直播，午夜一起倒數。另一個選擇：<b>領主廣場</b>午夜在舊宮牆面投影倒數。", "warn": "佛羅倫斯<b>沒有官方煙火</b>，市府禁止在公共場所放煙火、不能帶玻璃瓶。今年節目 12 月中下旬才公布", "pins": [{"label": "聖十字廣場", "name": "聖十字廣場", "lat": 43.768568, "lng": 11.262268, "href": "https://maps.google.com/?cid=10340961167418266197"}], "mode": "walk", "alts": null, "more": null, "e": 1410}, {"t": "00:30", "m": 30, "d": "2027-01-01", "tz": "", "cat": "move", "h": "走回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚶 約 25 分", "tx": "人很多，兩人走在一起、手機收好。電車跨年夜整晚有開。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null}]}, {"id": "d7", "n": 7, "date": "2027-01-01", "label": "1/1 (五)", "route": "比薩斜塔 ➜ 佛羅倫斯 丁骨牛排", "focus": "睡飽 → 區域火車到比薩 → 爬比薩斜塔、奇蹟廣場拍照 → 回佛羅倫斯 → 丁骨牛排。今天國定假日，佛羅倫斯的博物館都休，比薩斜塔有開。", "city": "佛羅倫斯", "tips": ["1/1 佛羅倫斯的博物館、大教堂都休，今天去比薩剛好", "區域火車照假日班表，前一天用 App 查", "比薩的店 1/1 很多不開，午餐有什麼吃什麼", "☔ 雨備：斜塔照常開（下雨階梯滑，慢慢走）；不想去比薩就睡飽、在佛羅倫斯逛老橋"], "items": [{"t": "10:15", "m": 615, "d": "", "tz": "", "cat": "move", "h": "走到新聖母車站", "star": false, "fixed": false, "tags": [], "chip": "🚶 飯店走 3 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 628}, {"t": "10:28", "m": 628, "d": "", "tz": "", "cat": "move", "h": "區域火車 → 比薩中央車站", "star": false, "fixed": false, "tags": [], "chip": "🚆 約 1 小時　€9.80／人（不用訂位）", "tx": "用 App 買的票直接上車；在車站機器買紙本票要先在月台機器打票。", "warn": "今天照假日班表，有些車次停駛，出發前一天用 Trenitalia App 查", "pins": [{"label": "佛羅倫斯新聖母車站", "name": "新聖母車站", "lat": 43.776671, "lng": 11.247916, "href": "https://maps.google.com/?cid=1826464901989057321"}], "mode": "walk", "alts": null, "more": null, "e": 688}, {"t": "11:28", "m": 688, "d": "", "tz": "", "cat": "move", "h": "抵達比薩，計程車到奇蹟廣場", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€10）或 走 25 分", "tx": "", "warn": "", "pins": [{"label": "比薩中央車站", "name": "比薩中央車站", "lat": 43.708462, "lng": 10.398468, "href": "https://maps.google.com/?cid=16710145599038355049"}], "mode": "train", "alts": null, "more": null, "e": 710}, {"t": "11:50", "m": 710, "d": "", "tz": "", "cat": "food", "h": "午餐：L'Ostellino（三明治）", "star": false, "fixed": false, "tags": [], "chip": "🚶 斜塔旁", "tx": "斜塔旁的小三明治店（7,300 則評論），現做帕尼尼，平常週五 11:00–16:30。1/1 有沒有開查不到，沒開就在廣場旁的咖啡館吃。", "warn": "", "pins": [{"label": "L'Ostellino", "name": "L'Ostellino", "lat": 43.720193, "lng": 10.397415, "href": "https://maps.google.com/?cid=12323585277638516519"}], "mode": "taxi", "alts": {"title": "🍴 其他選擇（2 家，1/1 都不確定）", "opts": [{"h": "Pizzeria Il Montino", "tx": "老城區披薩店（2,900 則評論），電話 050 598695。", "pins": [{"label": "Pizzeria Il Montino", "name": "Il Montino", "lat": 43.718123, "lng": 10.401561, "href": "https://maps.google.com/?cid=13567911839384914046"}]}, {"h": "Osteria dei Cavalieri", "tx": "托斯卡尼小館（1,400 則評論），電話 050 580858。", "pins": [{"label": "Osteria dei Cavalieri", "name": "Osteria dei Cavalieri", "lat": 43.718471, "lng": 10.399997, "href": "https://maps.google.com/?cid=17870457244304405692"}]}]}, "more": null, "e": 780}, {"t": "13:00", "m": 780, "d": "", "tz": "", "cat": "spot", "h": "爬比薩斜塔", "star": true, "fixed": true, "tags": ["🎫 先預約時段"], "chip": "🎫 €20（附大教堂免費入場）　251 階、約 30 分", "tx": "1/1 開 9:00–19:00。往上爬的時候會感覺身體被拉向一邊。", "warn": "包包都要先寄物（現場）；遲到不能進、不退費", "pins": [{"label": "比薩斜塔", "name": "比薩斜塔", "lat": 43.722952, "lng": 10.396597, "href": "https://maps.google.com/?cid=3669494377653533699"}], "mode": "walk", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p>官網 <a href=\"https://www.opapisa.it/en/tickets/buy/\" target=\"_blank\">opapisa.it</a>，參觀日前 90 天開賣（已經能買）。國定假日人多，時段要先訂。</p>"}, "e": 825}, {"t": "13:45", "m": 825, "d": "", "tz": "", "cat": "spot", "h": "奇蹟廣場拍照＋大教堂", "star": false, "fixed": false, "tags": [], "chip": "", "tx": "經典「手推斜塔」：站在草地邊的矮牆上，相機放低一點拍。大教堂用斜塔票附的免費券進去。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 920}, {"t": "15:20", "m": 920, "d": "", "tz": "", "cat": "move", "h": "計程車回比薩中央車站", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分", "tx": "", "warn": "", "pins": [{"label": "比薩中央車站", "name": "比薩中央車站", "lat": 43.708462, "lng": 10.398468, "href": "https://maps.google.com/?cid=16710145599038355049"}], "mode": "taxi", "alts": null, "more": null, "e": 954}, {"t": "15:54", "m": 954, "d": "", "tz": "", "cat": "move", "h": "區域火車回佛羅倫斯", "star": false, "fixed": false, "tags": [], "chip": "🚆 約 1 小時 14 分（17:08 到）", "tx": "其他班次：16:32、17:09、17:32。", "warn": "", "pins": [{"label": "佛羅倫斯新聖母車站", "name": "新聖母車站", "lat": 43.776671, "lng": 11.247916, "href": "https://maps.google.com/?cid=1826464901989057321"}], "mode": "train", "alts": null, "more": null, "e": 1035}, {"t": "17:15", "m": 1035, "d": "", "tz": "", "cat": "hotel", "h": "回飯店休息", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 3 分", "tx": "", "warn": "", "pins": [{"label": "c-hotels Diplomat", "name": "飯店", "lat": 43.776445, "lng": 11.246211, "href": "https://maps.google.com/?cid=5861286718056819198"}], "mode": "walk", "alts": null, "more": null, "e": 1170}, {"t": "19:30", "m": 1170, "d": "", "tz": "", "cat": "food", "h": "晚餐：丁骨牛排", "star": false, "fixed": false, "tags": ["📞 先訂"], "chip": "🚶 走 8 分", "tx": "Trattoria Zà Zà（35,000 則評論）每天 11:00–23:00，是 1/1 最可能有開的。<b>丁骨牛排按重量賣</b>（一塊 1–1.2 公斤，兩人分），只烤三分熟。", "warn": "1/1 很多餐廳休息，出發前用 Google 地圖看一次今天的營業時間", "pins": [{"label": "Trattoria Zà Zà", "name": "Zà Zà", "lat": 43.776355, "lng": 11.254449, "href": "https://maps.google.com/?cid=9065319688451705659"}], "mode": "walk", "alts": {"title": "🥩 其他牛排（2 家）", "opts": [{"h": "Regina Bistecca", "tx": "學院美術館旁的牛排餐廳（1,100 則評論），OpenTable 可訂。", "pins": [{"label": "Regina Bistecca", "name": "Regina Bistecca", "lat": 43.773788, "lng": 11.256354, "href": "https://maps.google.com/?cid=5751240366992652439"}]}, {"h": "中央市場 2 樓", "tx": "裡面有牛排專門攤，不用訂、一定有開（市場每天開）。", "pins": [{"label": "中央市場", "name": "中央市場", "lat": 43.776468, "lng": 11.252834, "href": "https://maps.google.com/?cid=9070668327180047285"}]}]}, "more": null, "e": 1260}, {"t": "21:00", "m": 1260, "d": "", "tz": "", "cat": "cafe", "h": "冰淇淋散步", "star": false, "fixed": false, "tags": ["選配"], "chip": "🚶 走 15 分", "tx": "Gelateria dei Neri：手工冰淇淋（7,000 則評論），週五開到半夜。", "warn": "", "pins": [{"label": "Gelateria dei Neri", "name": "Gelateria dei Neri", "lat": 43.767767, "lng": 11.259069, "href": "https://maps.google.com/?cid=5591840171058433842"}], "mode": "walk", "alts": null, "more": null, "e": 1320}]}, {"id": "d8", "n": 8, "date": "2027-01-02", "label": "1/2 (六)", "route": "烏菲茲 ➜ 飛巴塞隆納 ➜ 哥德區", "focus": "烏菲茲美術館（8:15 第一場）→ 買三明治 → 電車到機場 → 13:10 飛巴塞隆納 → 哥德區散步 → 魔幻噴泉（選配）→ tapas 晚餐。", "city": "巴塞隆納", "tips": ["義大利 → 巴塞隆納的機票還沒訂，建議訂這班（理由見「出發前要做的事」）", "廉航要另外買托運行李，兩週的行李一定超過免費小包", "巴塞隆納比佛羅倫斯晚吃飯：晚餐 21:00 開始很正常", "☔ 雨備：魔幻噴泉下雨通常照開；哥德區有很多拱廊可以躲"], "items": [{"t": "07:50", "m": 470, "d": "", "tz": "", "cat": "hotel", "h": "退房、行李寄放櫃台", "star": false, "fixed": false, "tags": [], "chip": "", "tx": "", "warn": "", "pins": [{"label": "c-hotels Diplomat", "name": "飯店", "lat": 43.776445, "lng": 11.246211, "href": "https://maps.google.com/?cid=5861286718056819198"}], "mode": "", "alts": null, "more": null, "e": 495}, {"t": "08:15", "m": 495, "d": "", "tz": "", "cat": "spot", "h": "烏菲茲美術館", "star": true, "fixed": true, "tags": ["🎫 先預約 8:15"], "chip": "🚕 約 8 分 或 走 15 分　🎫 事先買 €29（當天現場 €25 但要排）", "tx": "直奔 2 樓的<b>波提切利廳</b>：《維納斯的誕生》、《春》。走廊窗戶看得到老橋。看 2–2.5 小時剛好。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "", "pins": [{"label": "烏菲茲美術館", "name": "烏菲茲", "lat": 43.767786, "lng": 11.255311, "href": "https://maps.google.com/?cid=14834496294842582221"}], "mode": "taxi", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p>官網 <a href=\"https://www.uffizi.it/en/tickets\" target=\"_blank\">uffizi.it</a>，記名票。週一、1/1、12/25 休館。</p>"}, "e": 645}, {"t": "10:45", "m": 645, "d": "", "tz": "", "cat": "food", "h": "All'Antico Vinaio 買三明治", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 3 分（Via dei Neri）", "tx": "佛羅倫斯排隊名店（48,000 則評論）的大三明治（schiacciata），9:30 開，一個很大，兩人分一個帶去機場吃。", "warn": "", "pins": [{"label": "All'Antico Vinaio", "name": "All'Antico Vinaio", "lat": 43.76849, "lng": 11.257477, "href": "https://maps.google.com/?cid=6612035312286107638"}], "mode": "walk", "alts": null, "more": null, "e": 680}, {"t": "11:20", "m": 680, "d": "", "tz": "", "cat": "move", "h": "回飯店拿行李", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分", "tx": "", "warn": "", "pins": [{"label": "c-hotels Diplomat", "name": "飯店", "lat": 43.776445, "lng": 11.246211, "href": "https://maps.google.com/?cid=5861286718056819198"}], "mode": "taxi", "alts": null, "more": null, "e": 700}, {"t": "11:40", "m": 700, "d": "", "tz": "", "cat": "move", "h": "電車 T2 → 佛羅倫斯機場", "star": false, "fixed": false, "tags": [], "chip": "🚊 Unità 站上車，約 22 分（€2，可刷卡）", "tx": "Unità 站就在新聖母車站旁、飯店走 3 分。坐到終點 Peretola Aeroporto。", "warn": "", "pins": [{"label": "佛羅倫斯機場", "name": "佛羅倫斯機場", "lat": 43.809462, "lng": 11.202759, "href": "https://maps.google.com/?cid=17443255504059573938"}], "mode": "tram", "alts": null, "more": null, "e": 790}, {"t": "13:10", "m": 790, "d": "", "tz": "", "cat": "flight", "h": "伏林航空 Vueling → 巴塞隆納", "star": false, "fixed": true, "tags": ["還沒訂"], "chip": "✈️ 1 小時 45 分　每人約 NT$6,500 起", "tx": "廉航最便宜的票只含座位下小包，<b>大行李要加買托運</b>（每件約 €19–60）。歐盟境內，不用過出入境。", "warn": "佛羅倫斯機場冬天偶爾因霧或強風改降，如果延誤、取消，航空公司會改從比薩或波隆那飛", "pins": [], "mode": "", "alts": null, "more": null, "e": 895}, {"t": "14:55", "m": 895, "d": "", "tz": "", "cat": "flight", "h": "抵達巴塞隆納機場 T1", "star": false, "fixed": true, "tags": [], "chip": "", "tx": "", "warn": "", "pins": [{"label": "巴塞隆納機場 T1", "name": "BCN 第 1 航廈", "lat": 41.289133, "lng": 2.074762, "href": "https://maps.google.com/?cid=4698909309889404792"}], "mode": "flight", "alts": null, "more": null, "e": 920}, {"t": "15:20", "m": 920, "d": "", "tz": "", "cat": "move", "h": "機場巴士 A1 → 加泰隆尼亞廣場", "star": false, "fixed": false, "tags": [], "chip": "🚌 €7.75／人，約 5 分一班", "tx": "兩人帶大行李，計程車約 €31–36，直接到飯店門口。", "warn": "", "pins": [{"label": "加泰隆尼亞廣場", "name": "加泰隆尼亞廣場", "lat": 41.387015, "lng": 2.170047, "href": "https://maps.google.com/?cid=2228369972992726603"}], "mode": "bus", "alts": null, "more": null, "e": 975}, {"t": "16:15", "m": 975, "d": "", "tz": "", "cat": "hotel", "h": "Hotel Omnium check-in", "star": false, "fixed": false, "tags": ["建議，還沒訂"], "chip": "🚶 加泰隆尼亞廣場走 10 分", "tx": "住宿稅每人每晚約 €8.4（四星），check-in 時收。", "warn": "", "pins": [{"label": "Hotel Omnium", "name": "飯店", "lat": 41.391846, "lng": 2.173065, "href": "https://maps.google.com/?cid=2680084554160853629"}], "mode": "walk", "alts": null, "more": null, "e": 1050}, {"t": "17:30", "m": 1050, "d": "", "tz": "", "cat": "spot", "h": "哥德區散步：主教座堂廣場、主教橋、皇家廣場", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 10 分", "tx": "天黑後的哥德區最有味道。主教橋打燈很好拍，皇家廣場的路燈是高第設計的。", "warn": "", "pins": [{"label": "巴塞隆納主教座堂", "name": "主教座堂", "lat": 41.383962, "lng": 2.176199, "href": "https://maps.google.com/?cid=1654528761399433347"}, {"label": "主教橋", "name": "主教橋", "lat": 41.383302, "lng": 2.176423, "href": "https://maps.google.com/?cid=7076128581345844409"}, {"label": "皇家廣場", "name": "皇家廣場", "lat": 41.380082, "lng": 2.175351, "href": "https://maps.google.com/?cid=10438477560167297382"}], "mode": "walk", "alts": null, "more": null, "e": 1170}, {"t": "19:30", "m": 1170, "d": "", "tz": "", "cat": "spot", "h": "魔幻噴泉", "star": false, "fixed": false, "tags": ["選配"], "chip": "🚇 地鐵 L3 Liceu → Espanya（10 分）　🆓 免費", "tx": "冬天只有週四到週六 20:00–21:00 有音樂燈光噴泉，<b>這趟只有今晚看得到</b>。累了就跳過。", "warn": "", "pins": [{"label": "魔幻噴泉", "name": "魔幻噴泉", "lat": 41.37116, "lng": 2.15174, "href": "https://maps.google.com/?cid=2217520737938059626"}], "mode": "subway", "alts": null, "more": null, "e": 1275}, {"t": "21:15", "m": 1275, "d": "", "tz": "", "cat": "food", "h": "晚餐：Bar Cañete（tapas）", "star": false, "fixed": false, "tags": ["📞 先訂位"], "chip": "🚇 地鐵回 Liceu＋走 3 分", "tx": "利塞奧劇院旁的吧台 tapas 餐酒館，每天進的海鮮。西班牙人晚餐 21:00 開始，正是時候。", "warn": "", "pins": [{"label": "Bar Cañete", "name": "Bar Cañete", "lat": 41.379153, "lng": 2.173125, "href": "https://maps.google.com/?cid=2051304937619323747"}], "mode": "subway", "alts": {"title": "🍴 沒訂到的備案（2 家）", "opts": [{"h": "Bar La Plata", "tx": "哥德區老站吧，只賣 4 樣：炸小魚、番茄沙拉、香腸、醃鯷魚，便宜快速。", "pins": [{"label": "Bar La Plata", "name": "Bar La Plata", "lat": 41.38041, "lng": 2.180593, "href": "https://maps.google.com/?cid=4350389979485247456"}]}, {"h": "Cal Pep", "tx": "波恩區吧台海鮮 tapas，週六晚餐 19:30–23:30。", "pins": [{"label": "Cal Pep", "name": "Cal Pep", "lat": 41.383962, "lng": 2.183411, "href": "https://maps.google.com/?cid=8236058641574838967"}]}]}, "more": null, "e": 1380}, {"t": "23:00", "m": 1380, "d": "", "tz": "", "cat": "move", "h": "計程車回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1410}]}, {"id": "d9", "n": 9, "date": "2027-01-03", "label": "1/3 (日)", "route": "聖家堂 ➜ 聖保羅醫院 ➜ 感恩大道 ➜ 巴特婁之家夜場", "focus": "早午餐 → 聖家堂 → 聖保羅醫院 → 感恩大道 tapas、逛街 → 巴特婁之家冬季夜場。今天是高第日。", "city": "巴塞隆納", "tips": ["聖家堂、巴特婁之家都是線上買票指定時段，晚到可能不能進", "週日很多店休息，今天的餐廳都挑週日有開的", "聖家堂外面排隊處、地鐵聖家堂站是扒手熱點", "☔ 雨備：今天幾乎都在室內；聖保羅醫院有一段戶外，下雨就跳過"], "items": [{"t": "09:30", "m": 570, "d": "", "tz": "", "cat": "cafe", "h": "早午餐：Milk", "star": false, "fixed": false, "tags": [], "chip": "🚶 飯店走 15 分（哥德區）", "tx": "哥德區人氣早午餐，週日 9:00–16:00。週日早上可能要排一下。", "warn": "", "pins": [{"label": "Milk", "name": "Milk", "lat": 41.381317, "lng": 2.180092, "href": "https://maps.google.com/?cid=6727193181097999513"}], "mode": "walk", "alts": {"title": "☕ 排太久的備案（1 家）", "opts": [{"h": "Federal Café Gòtic", "tx": "澳洲風早午餐，週日 9:00–16:30，走 3 分。", "pins": [{"label": "Federal Café Gòtic", "name": "Federal", "lat": 41.378002, "lng": 2.177724, "href": "https://maps.google.com/?cid=10771510355735037372"}]}]}, "more": null, "e": 640}, {"t": "10:40", "m": 640, "d": "", "tz": "", "cat": "move", "h": "計程車到聖家堂", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€10–13）", "tx": "跟司機說「Sagrada Família, Plaça de Gaudí」。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 660}, {"t": "11:00", "m": 660, "d": "", "tz": "", "cat": "spot", "h": "聖家堂", "star": true, "fixed": true, "tags": ["🎫 只賣線上票"], "chip": "🎫 基本票 €26（含語音導覽 App）／含登塔 €36", "tx": "週日彌撒後 10:30 才開，買 11:00 時段最順。看完約 1.5–2 小時。<a href=\"https://leo308078.github.io/italy-barcelona-2026/#guide\" target=\"_blank\">先讀看懂 ↓</a>", "warn": "入口安檢；褲裙要到大腿中段、不能戴帽子進去。登塔一定要買票時就選，大雨強風會取消", "pins": [{"label": "聖家堂", "name": "聖家堂", "lat": 41.40363, "lng": 2.174356, "href": "https://maps.google.com/?cid=11229913421514525008"}], "mode": "taxi", "alts": null, "more": {"title": "ℹ️ 登塔、語音導覽", "html": "<p>登塔：電梯上去、窄螺旋樓梯走下來，怕高或膝蓋不好就不要選。語音導覽在官方 App，<b>帶耳機</b>。官網只賣線上票，現場不賣：<a href=\"https://sagradafamilia.org/en/tickets-individuals\" target=\"_blank\">官方訂票</a>（小心山寨網站）。</p>"}, "e": 780}, {"t": "13:00", "m": 780, "d": "", "tz": "", "cat": "spot", "h": "聖保羅醫院（現代主義建築群）", "star": false, "fixed": false, "tags": ["選配"], "chip": "🚶 沿高第大道走 10 分　🎫 €18（14:00 後 €17）", "tx": "全世界最美的醫院，紅磚、彩色磁磚屋頂，現場買票就好。累了就跳過，直接去吃飯。", "warn": "", "pins": [{"label": "聖保羅醫院", "name": "聖保羅醫院", "lat": 41.411707, "lng": 2.174339, "href": "https://maps.google.com/?cid=142643090380976527"}], "mode": "walk", "alts": null, "more": null, "e": 870}, {"t": "14:30", "m": 870, "d": "", "tz": "", "cat": "food", "h": "午餐：Cervecería Catalana（tapas）", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€10）", "tx": "擴展區最紅的 tapas 店（Google 25,000 則評論），吧台點、坐桌子都可以。點：炸花枝圈、蒜味蝦、番茄麵包 pan con tomate、伊比利火腿。", "warn": "常常要排，14:30 已經過尖峰；排超過 30 分鐘就去備案", "pins": [{"label": "Cervecería Catalana", "name": "Cervecería Catalana", "lat": 41.392325, "lng": 2.160852, "href": "https://maps.google.com/?cid=7860387390770853690"}], "mode": "taxi", "alts": {"title": "🍴 排太久的備案（2 家）", "opts": [{"h": "El Nacional", "tx": "感恩大道上的美食大廳，裡面好幾個吧台（tapas、海鮮、肉），週日 12:00–24:00，不太用排。", "pins": [{"label": "El Nacional", "name": "El Nacional", "lat": 41.390583, "lng": 2.168391, "href": "https://maps.google.com/?cid=787139403907623797"}]}, {"h": "Bar Mut", "tx": "精緻小酒館，週日 13:00–24:00。", "pins": [{"label": "Bar Mut", "name": "Bar Mut", "lat": 41.397335, "lng": 2.161263, "href": "https://maps.google.com/?cid=6933862842988185666"}]}]}, "more": null, "e": 960}, {"t": "16:00", "m": 960, "d": "", "tz": "", "cat": "shop", "h": "感恩大道：米拉之家外觀＋逛街", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 5 分", "tx": "米拉之家（La Pedrera）外牆是波浪狀的石頭，從對面人行道拍最好。這條大道是精品＋Zara 旗艦，週日很多店有開。", "warn": "", "pins": [{"label": "米拉之家", "name": "米拉之家", "lat": 41.395215, "lng": 2.161902, "href": "https://maps.google.com/?cid=14168222595362004586"}], "mode": "walk", "alts": null, "more": null, "e": 1110}, {"t": "18:30", "m": 1110, "d": "", "tz": "", "cat": "spot", "h": "巴特婁之家「A Winter Night」夜場", "star": true, "fixed": true, "tags": ["🎫 先上網買"], "chip": "🚶 走 5 分　🎫 €39 起（現場買貴 €4–15）", "tx": "冬天限定（只到 1/10），燈光投影＋語音導覽，約 1 小時 15 分。白天票 €29 起也可以，晚上比較有氣氛。", "warn": "", "pins": [{"label": "巴特婁之家", "name": "巴特婁之家", "lat": 41.3917, "lng": 2.164918, "href": "https://maps.google.com/?cid=4670927909449256463"}], "mode": "walk", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p><a href=\"https://www.casabatllo.es/en/online-tickets/\" target=\"_blank\">官方訂票</a>。價錢依日期時段浮動，越早買越便宜。米拉之家也有夜場（€39.50），兩間都想進的話一間白天一間晚上。</p>"}, "e": 1200}, {"t": "20:00", "m": 1200, "d": "", "tz": "", "cat": "food", "h": "晚餐：El Nacional", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 3 分（Passeig de Gràcia 24 bis）", "tx": "老車庫改的美食大廳，四個吧台各賣海鮮、肉、tapas、啤酒，可以分開點。西班牙人 21:00 才開始吃晚餐，這時間不太用等。", "warn": "", "pins": [{"label": "El Nacional", "name": "El Nacional", "lat": 41.390583, "lng": 2.168391, "href": "https://maps.google.com/?cid=787139403907623797"}], "mode": "walk", "alts": {"title": "🍴 其他選擇（1 家）", "opts": [{"h": "Cervecería Catalana", "tx": "中午沒吃到的話晚上再來，開到半夜 1 點。", "pins": [{"label": "Cervecería Catalana", "name": "Cervecería Catalana", "lat": 41.392325, "lng": 2.160852, "href": "https://maps.google.com/?cid=7860387390770853690"}]}]}, "more": null, "e": 1290}, {"t": "21:30", "m": 1290, "d": "", "tz": "", "cat": "move", "h": "回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 12 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1320}]}, {"id": "d10", "n": 10, "date": "2027-01-04", "label": "1/4 (一)", "route": "奎爾公園 ➜ 格拉西亞 ➜ 地堡 ➜ 波恩區", "focus": "奎爾公園 → 格拉西亞區午餐、散步 → 地堡看全城（17:30 關）→ 海上聖母聖殿 → El Xampanyet 老酒館。", "city": "巴塞隆納", "tips": ["奎爾公園、地堡都在山上，上山都搭計程車，下山再走路", "地堡 17:30 就清場，要看夕陽色就 16:00 前到", "El Xampanyet 不收訂位，19:00 開門前排", "☔ 雨備：奎爾公園照常開（戶外，帶傘）；地堡改去 米拉之家屋頂（室內＋屋頂，€29），或 Granja Dulcinea 喝熱巧克力"], "items": [{"t": "10:00", "m": 600, "d": "", "tz": "", "cat": "move", "h": "計程車到奎爾公園", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 15 分（€12–15）", "tx": "公園在山坡上，搭地鐵還要爬坡加電扶梯，計程車直接到入口最省力。跟司機說「Park Güell, Carretera del Carmel」。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 630}, {"t": "10:30", "m": 630, "d": "", "tz": "", "cat": "spot", "h": "奎爾公園（紀念區）", "star": true, "fixed": true, "tags": ["🎫 先上網買"], "chip": "🎫 €18　⏱ 票上時段開始 30 分鐘內要進場", "tx": "糖果屋、馬賽克蜥蜴、彎彎的長椅看海。進去後待多久都可以，出來就不能再進。", "warn": "晚到超過 30 分鐘就不能進，票也不退", "pins": [{"label": "奎爾公園", "name": "奎爾公園", "lat": 41.414495, "lng": 2.152694, "href": "https://maps.google.com/?cid=9915250311879642712"}], "mode": "taxi", "alts": null, "more": {"title": "ℹ️ 買票", "html": "<p><a href=\"https://parkguell.barcelona/en/buy-tickets\" target=\"_blank\">官方訂票</a>，手機 QR 就能進。冬天下午光線暗得早，上午的時段拍照最好。</p>"}, "e": 735}, {"t": "12:15", "m": 735, "d": "", "tz": "", "cat": "spot", "h": "格拉西亞區＋文森之家（外觀）", "star": false, "fixed": false, "tags": [], "chip": "🚶 下坡走 20 分", "tx": "格拉西亞是在地人住的區，小廣場、小店多。文森之家是高第第一棟房子，外牆綠白磁磚很好拍。", "warn": "", "pins": [{"label": "文森之家", "name": "文森之家", "lat": 41.403498, "lng": 2.150645, "href": "https://maps.google.com/?cid=14911989149547758151"}], "mode": "walk", "alts": null, "more": null, "e": 780}, {"t": "13:00", "m": 780, "d": "", "tz": "", "cat": "food", "h": "午餐：Bar Bodega Quimet", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 5 分", "tx": "格拉西亞的老酒館，牆上掛滿酒瓶，週一 10:00–16:00。點 tapas 配一杯 vermut（苦艾甜酒，當地人中午喝的）。Google 1,400 則評論。", "warn": "", "pins": [{"label": "Bar Bodega Quimet", "name": "Bodega Quimet", "lat": 41.399147, "lng": 2.154717, "href": "https://maps.google.com/?cid=16632948794727878644"}], "mode": "walk", "alts": null, "more": null, "e": 945}, {"t": "15:45", "m": 945, "d": "", "tz": "", "cat": "move", "h": "計程車到地堡", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 10 分（€10）＋ 上坡走 5 分", "tx": "跟司機說「Bunkers del Carmel, Carrer de Marià Labèrnia」，下車還要爬一小段坡。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 960}, {"t": "16:00", "m": 960, "d": "", "tz": "", "cat": "spot", "h": "地堡（Bunkers del Carmel）看全城", "star": true, "fixed": false, "tags": [], "chip": "🆓 免費", "tx": "360 度看巴塞隆納，聖家堂在正中間、後面是海。16:00–17:15 是日落前最暖的光，帶相機。", "warn": "冬天 17:30 關門清場，看不到真正的日落（日落 17:34）；晚上封山", "pins": [{"label": "地堡", "name": "地堡", "lat": 41.419236, "lng": 2.161779, "href": "https://maps.google.com/?cid=8714113821680467939"}], "mode": "taxi", "alts": null, "more": null, "e": 1035}, {"t": "17:15", "m": 1035, "d": "", "tz": "", "cat": "move", "h": "計程車到波恩區", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 20 分（€15–18）", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1065}, {"t": "17:45", "m": 1065, "d": "", "tz": "", "cat": "spot", "h": "海上聖母聖殿", "star": false, "fixed": false, "tags": [], "chip": "🆓 18:00 後免費進（付費參觀 €8 到 18:00）", "tx": "巴塞隆納最美的哥德式教堂，漁民和碼頭工人自己出錢出力蓋的。傍晚彩繪玻璃很漂亮。", "warn": "", "pins": [{"label": "海上聖母聖殿", "name": "海上聖母聖殿", "lat": 41.383887, "lng": 2.182071, "href": "https://maps.google.com/?cid=13023447345839268192"}], "mode": "taxi", "alts": null, "more": null, "e": 1130}, {"t": "18:50", "m": 1130, "d": "", "tz": "", "cat": "food", "h": "晚餐：El Xampanyet（老酒館）", "star": false, "fixed": false, "tags": ["不收訂位"], "chip": "🚶 走 3 分（Carrer de Montcada）", "tx": "1929 年開到現在，週一 19:00 開門，<b>提早 10 分鐘去排</b>。點自家氣泡酒 xampanyet、火腿、起司、罐頭海鮮。", "warn": "醃鯷魚 anchoas 是生的，不吃生魚就跳過", "pins": [{"label": "El Xampanyet", "name": "El Xampanyet", "lat": 41.384539, "lng": 2.181679, "href": "https://maps.google.com/?cid=8937116140485914040"}], "mode": "walk", "alts": {"title": "🍴 排不到的備案（1 家）", "opts": [{"h": "Cal Pep", "tx": "波恩區吧台海鮮 tapas，週一 19:30 開。吧台不用訂要排，裡面小餐廳可以先打 +34 933 10 79 61。", "pins": [{"label": "Cal Pep", "name": "Cal Pep", "lat": 41.383962, "lng": 2.183411, "href": "https://maps.google.com/?cid=8236058641574838967"}]}]}, "more": null, "e": 1260}, {"t": "21:00", "m": 1260, "d": "", "tz": "", "cat": "move", "h": "回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 15 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1290}]}, {"id": "d11", "n": 11, "date": "2027-01-05", "label": "1/5 (二)", "route": "波格利亞市場 ➜ 主教座堂 ➜ 海鮮燉飯 ➜ 三王節遊行", "focus": "市場早餐 → 主教座堂屋頂 → 熱巧克力 → 買三王節蛋糕 → 海邊海鮮燉飯 → 16:30 三王坐船上岸、18:35 遊行。", "city": "巴塞隆納", "tips": ["三王節蛋糕今天就要買，明天很多店不開", "遊行 2027 路線還沒公布；如果改了，跟著人潮走就對了", "遊行人超多，手機、錢包放前面，走散了約在 7 Portes 門口", "☔ 雨備：遊行下雨通常照常；海灘散步改去海上聖母聖殿（付費參觀 €8）"], "items": [{"t": "09:00", "m": 540, "d": "", "tz": "", "cat": "food", "h": "早餐：波格利亞市場＋El Quim", "star": false, "fixed": false, "tags": [], "chip": "🚶 飯店走 18 分（蘭布拉大道）", "tx": "坐在市場吧台吃現做的早餐（煎蛋配小卷 huevos con chipirones 是招牌），週二 9:00–16:00。逛水果攤、火腿攤。", "warn": "市場裡扒手很多，包包背前面", "pins": [{"label": "波格利亞市場", "name": "波格利亞市場", "lat": 41.38174, "lng": 2.171585, "href": "https://maps.google.com/?cid=9658750418627571157"}, {"label": "El Quim de la Boqueria", "name": "El Quim", "lat": 41.381612, "lng": 2.171909, "href": "https://maps.google.com/?cid=15402209829030990271"}], "mode": "walk", "alts": null, "more": null, "e": 615}, {"t": "10:15", "m": 615, "d": "", "tz": "", "cat": "spot", "h": "巴塞隆納主教座堂＋屋頂", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 8 分　🎫 €16（含電梯上屋頂）", "tx": "哥德式大教堂，搭電梯上屋頂看哥德區全景，迴廊裡養了 13 隻白鵝。旁邊就是主教橋。", "warn": "今天是三王節前一天，可能提早關（16:30 最後入場），所以排上午", "pins": [{"label": "巴塞隆納主教座堂", "name": "主教座堂", "lat": 41.383962, "lng": 2.176199, "href": "https://maps.google.com/?cid=1654528761399433347"}, {"label": "主教橋", "name": "主教橋", "lat": 41.383302, "lng": 2.176423, "href": "https://maps.google.com/?cid=7076128581345844409"}], "mode": "walk", "alts": null, "more": null, "e": 690}, {"t": "11:30", "m": 690, "d": "", "tz": "", "cat": "cafe", "h": "熱巧克力＋吉拿棒：Granja Dulcinea", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 5 分（Petritxol 巧克力小街）", "tx": "濃到湯匙可以立起來的西班牙熱巧克力，沾吉拿棒（xurros）吃。每天 9:00–13:00、16:30–20:30，Google 3,900 則評論。", "warn": "", "pins": [{"label": "Granja Dulcinea", "name": "Granja Dulcinea", "lat": 41.382488, "lng": 2.173433, "href": "https://maps.google.com/?cid=6628890337161079894"}], "mode": "walk", "alts": {"title": "☕ 同一條街的另一家", "opts": [{"h": "Granja La Pallaresa", "tx": "同樣是老字號，走 1 分。", "pins": [{"label": "Granja La Pallaresa", "name": "La Pallaresa", "lat": 41.382919, "lng": 2.172771, "href": "https://maps.google.com/?cid=7144673290823494896"}]}]}, "more": null, "e": 750}, {"t": "12:30", "m": 750, "d": "", "tz": "", "cat": "shop", "h": "Bubó：買明天早上的三王節蛋糕", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 12 分（波恩區）", "tx": "1/6 早上吃三王節蛋糕（加泰隆尼亞叫 tortell de Reis）是習俗，<b>1/5 就要先買</b>，糕餅店會排隊。也可以打電話預訂 +34 932 687 224。", "warn": "", "pins": [{"label": "Bubó Born", "name": "Bubó", "lat": 41.38314, "lng": 2.181833, "href": "https://maps.google.com/?cid=10948936232862578037"}], "mode": "walk", "alts": {"title": "🥐 其他糕餅店（2 家）", "opts": [{"h": "Pastisseria Hofmann（波恩店）", "tx": "料理學校開的糕餅店，可頌很有名。", "pins": [{"label": "Hofmann Born", "name": "Hofmann", "lat": 41.385079, "lng": 2.182704, "href": "https://maps.google.com/?cid=14952980735517401426"}]}, {"h": "Baluard Barceloneta", "tx": "海灘區的人氣麵包店，就在燉飯餐廳旁邊。", "pins": [{"label": "Baluard Barceloneta", "name": "Baluard", "lat": 41.380013, "lng": 2.188908, "href": "https://maps.google.com/?cid=17060550848760550828"}]}]}, "more": null, "e": 810}, {"t": "13:30", "m": 810, "d": "", "tz": "", "cat": "food", "h": "午餐：Can Solé（海鮮燉飯）", "star": false, "fixed": false, "tags": ["📞 先訂位"], "chip": "🚕 約 8 分（€8）或走 20 分", "tx": "1903 年開的海灘區老店，招牌是海鮮燉飯（paella de marisco）和墨魚燉飯（arròs negre）。燉飯通常 2 人份起點、要等 20–30 分。", "warn": "", "pins": [{"label": "Can Solé", "name": "Can Solé", "lat": 41.378877, "lng": 2.188398, "href": "https://maps.google.com/?cid=14459287205783924694"}], "mode": "taxi", "alts": {"title": "🍴 訂不到的備案（2 家）", "opts": [{"h": "Can Majó", "tx": "就在海灘邊，週二 13:00–16:30。電話 93 221 54 55。", "pins": [{"label": "Can Majó", "name": "Can Majó", "lat": 41.377674, "lng": 2.190728, "href": "https://maps.google.com/?cid=2131350605712434443"}]}, {"h": "7 Portes", "tx": "港邊老餐廳，每天 13:00–24:00（晚上也排了這家，二選一）。", "pins": [{"label": "7 Portes", "name": "7 Portes", "lat": 41.382305, "lng": 2.18339, "href": "https://maps.google.com/?cid=11316796753651107510"}]}]}, "more": {"title": "📞 訂位", "html": "<p>官網線上訂、或打 <a href=\"tel:+34932215012\">93 221 50 12</a>、寫信 reserves@restaurantcansole.com。週二午餐 13:00–15:45。</p>"}, "e": 915}, {"t": "15:15", "m": 915, "d": "", "tz": "", "cat": "spot", "h": "巴塞隆納海灘散步", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 3 分", "tx": "冬天的海灘很空，沿著海邊步道走，看得到 W 飯店帆船造型的大樓。", "warn": "包包不要放在沙灘上，這裡是被偷最多的地方", "pins": [{"label": "巴塞隆納海灘", "name": "巴塞隆納海灘", "lat": 41.378371, "lng": 2.192468, "href": "https://maps.google.com/?cid=2201713585473283579"}], "mode": "walk", "alts": null, "more": null, "e": 975}, {"t": "16:15", "m": 975, "d": "", "tz": "", "cat": "spot", "h": "三王坐船上岸（哥倫布紀念碑前）", "star": true, "fixed": false, "tags": [], "chip": "🚶 沿港邊走 20 分", "tx": "2026 年是 16:30 三王坐船到 Portal de la Pau（和平門廣場），市長交「魔法鑰匙」給他們。", "warn": "2027 年的時間、路線還沒公布（上面是 <a href=\"https://naciodigital.cat/societat/cavalcada-de-reis-de-barcelona-2026-horari-recorregut-i-novetats.html\" target=\"_blank\">2026 年的</a>），出發前一週看 <a href=\"https://www.escapadaambnens.com/festival/71/cavalcada-de-reis-barcelona-2027-horaris-recorregut-i-carrers-tallats/\" target=\"_blank\">2027 路線頁</a>", "pins": [{"label": "哥倫布紀念碑", "name": "哥倫布紀念碑", "lat": 41.375809, "lng": 2.177761, "href": "https://maps.google.com/?cid=3088355323810639031"}], "mode": "walk", "alts": null, "more": null, "e": 1050}, {"t": "17:30", "m": 1050, "d": "", "tz": "", "cat": "spot", "h": "卡位看遊行（港邊大道 Passeig de Colom）", "star": true, "fixed": false, "tags": [], "chip": "🚶 走 8 分", "tx": "2026 年遊行 18:00 從城堡公園出發，約 18:35 經過 Passeig de Colom 靠 Via Laietana 那段——<b>提早一小時卡位</b>。花車會撒糖果，小孩很多，很熱鬧。", "warn": "人擠的時候手放包包上", "pins": [{"label": "7 Portes", "name": "港邊大道（7 Portes 前）", "lat": 41.382305, "lng": 2.18339, "href": "https://maps.google.com/?cid=11316796753651107510"}], "mode": "walk", "alts": null, "more": null, "e": 1155}, {"t": "19:15", "m": 1155, "d": "", "tz": "", "cat": "food", "h": "晚餐：7 Portes", "star": false, "fixed": false, "tags": ["📞 先訂 19:30"], "chip": "🚶 就在遊行路線旁", "tx": "1836 年開的老餐廳，就在剛剛看遊行的路口。點墨魚燉飯、海鮮燉飯、加泰隆尼亞焦糖布丁（crema catalana）。", "warn": "", "pins": [{"label": "7 Portes", "name": "7 Portes", "lat": 41.382305, "lng": 2.18339, "href": "https://maps.google.com/?cid=11316796753651107510"}], "mode": "walk", "alts": null, "more": {"title": "📞 訂位", "html": "<p>官網訂、或打 <a href=\"tel:+34933193033\">+34 93 319 30 33</a>。中午吃過燉飯的話，晚上改點烤魚、海鮮。</p>"}, "e": 1260}, {"t": "21:00", "m": 1260, "d": "", "tz": "", "cat": "move", "h": "回飯店", "star": false, "fixed": false, "tags": [], "chip": "🚕 約 8 分 或 走 20 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 1290}]}, {"id": "d12", "n": 12, "date": "2027-01-06", "label": "1/6 (三)", "route": "三王節早晨 ➜ 城堡公園 ➜ 機場 ➜ 杜拜 ➜ 桃園", "focus": "三王節蛋糕早餐 → 凱旋門、城堡公園散步 → 退房 → 11:20 機場巴士 → 15:05 起飛 → 1/7 15:35 回到桃園。", "city": "巴塞隆納", "tips": ["1/6 是西班牙國定假日（三王節），大部分店都關，早上就輕鬆散步", "11:20 前出發去機場（原本想 12:00，太趕：杜拜不是申根區要過出境查驗）", "退稅一定在這裡辦（最後離開歐盟的地方），杜拜不能辦", "☔ 雨備：城堡公園跳過，在飯店大廳待到出發"], "items": [{"t": "09:00", "m": 540, "d": "", "tz": "", "cat": "cafe", "h": "早餐：三王節蛋糕", "star": false, "fixed": false, "tags": [], "chip": "", "tx": "昨天買的 tortell 在飯店吃。<b>蛋糕裡藏了一個小國王和一顆蠶豆</b>：吃到國王的人今天是國王（戴紙皇冠），吃到蠶豆的人明年要買蛋糕。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 585}, {"t": "09:45", "m": 585, "d": "", "tz": "", "cat": "spot", "h": "凱旋門＋城堡公園散步", "star": false, "fixed": false, "tags": [], "chip": "🚶 飯店走 12 分", "tx": "紅磚凱旋門（1888 年萬國博覽會的大門），往南走進城堡公園，有大瀑布噴泉、湖。今天國定假日，早上很安靜。", "warn": "", "pins": [{"label": "凱旋門", "name": "凱旋門", "lat": 41.391052, "lng": 2.180645, "href": "https://maps.google.com/?cid=12249276071227659697"}, {"label": "城堡公園", "name": "城堡公園", "lat": 41.388123, "lng": 2.186015, "href": "https://maps.google.com/?cid=4771670564770823536"}], "mode": "walk", "alts": null, "more": null, "e": 660}, {"t": "11:00", "m": 660, "d": "", "tz": "", "cat": "hotel", "h": "回飯店退房", "star": false, "fixed": false, "tags": [], "chip": "🚶 走 15 分", "tx": "", "warn": "", "pins": [{"label": "Hotel Omnium", "name": "飯店", "lat": 41.391846, "lng": 2.173065, "href": "https://maps.google.com/?cid=2680084554160853629"}], "mode": "walk", "alts": null, "more": null, "e": 680}, {"t": "11:20", "m": 680, "d": "", "tz": "", "cat": "move", "h": "機場巴士 A1 → 第 1 航廈", "star": false, "fixed": false, "tags": [], "chip": "🚌 加泰隆尼亞廣場上車　€7.75／人（約 35 分）", "tx": "<b>要搭 A1</b>（A2 是去第 2 航廈）。兩個人帶大行李，計程車約 €31–36、門口上車比較輕鬆。", "warn": "", "pins": [{"label": "加泰隆尼亞廣場", "name": "機場巴士站", "lat": 41.387015, "lng": 2.170047, "href": "https://maps.google.com/?cid=2228369972992726603"}], "mode": "walk", "alts": null, "more": null, "e": 720}, {"t": "12:00", "m": 720, "d": "", "tz": "", "cat": "flight", "h": "巴塞隆納機場 T1：退稅＋報到", "star": false, "fixed": false, "tags": ["🧾 要退稅的先去"], "chip": "✈️ 起飛前 3 小時到", "tx": "要退稅的：<b>先去退稅（海關／DIVA 機器）再托運</b>，東西可能要給海關看。義大利買的單子也在這裡處理。", "warn": "", "pins": [{"label": "巴塞隆納機場 T1", "name": "BCN 第 1 航廈", "lat": 41.289133, "lng": 2.074762, "href": "https://maps.google.com/?cid=4698909309889404792"}], "mode": "bus", "alts": null, "more": null, "e": 905}, {"t": "15:05", "m": 905, "d": "", "tz": "", "cat": "flight", "h": "起飛 EK256 → 杜拜", "star": false, "fixed": true, "tags": [], "chip": "✈️ 阿聯酋（6 小時 25 分）", "tx": "杜拜不是申根區，要過出境護照查驗，留時間。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null, "e": 935}, {"t": "00:30", "m": 30, "d": "2027-01-07", "tz": "+04:00", "cat": "flight", "h": "抵達杜拜 T3（轉機）", "star": false, "fixed": true, "tags": [], "chip": "⏱ 轉機 3 小時 10 分", "tx": "跟著「Connections」指標走，不用出關、行李直掛台北。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null}, {"t": "03:40", "m": 220, "d": "2027-01-07", "tz": "+04:00", "cat": "flight", "h": "起飛 EK366 → 桃園", "star": false, "fixed": true, "tags": [], "chip": "✈️ 7 小時 55 分", "tx": "", "warn": "", "pins": [], "mode": "", "alts": null, "more": null}, {"t": "15:35", "m": 935, "d": "2027-01-07", "tz": "+08:00", "cat": "move", "h": "抵達桃園 T2 🏠", "star": false, "fixed": true, "tags": [], "chip": "", "tx": "1/7（四）下午到家。", "warn": "", "pins": [], "mode": "", "alts": null, "more": null}]}], "rsv": [{"day": 1, "date": "12/26 (六)", "h": "晚餐：Roscioli（羅馬菜）", "tag": "📞 要先訂位", "t": "19:00"}, {"day": 2, "date": "12/27 (日)", "h": "羅馬競技場", "tag": "🎫 11/27 開賣", "t": "09:00"}, {"day": 2, "date": "12/27 (日)", "h": "午餐：La Taverna dei Fori Imperiali", "tag": "📞 建議訂位", "t": "12:45"}, {"day": 3, "date": "12/28 (一)", "h": "梵蒂岡博物館＋西斯汀禮拜堂", "tag": "🎫 現在就買", "t": "08:00"}, {"day": 3, "date": "12/28 (一)", "h": "晚餐：Il Gabriello", "tag": "📞 電話訂位", "t": "19:30"}, {"day": 4, "date": "12/29 (二)", "h": "高鐵 Frecciarossa 9505 → 拿波里", "tag": "🎫 先買票", "t": "09:20"}, {"day": 4, "date": "12/29 (二)", "h": "蒙紗基督（Sansevero 禮拜堂）", "tag": "🎫 一定要預約", "t": "12:00"}, {"day": 5, "date": "12/30 (三)", "h": "龐貝古城", "tag": "🎫 建議線上先買", "t": "09:15"}, {"day": 6, "date": "12/31 (四)", "h": "高鐵 Frecciarossa 9524 → 佛羅倫斯", "tag": "🎫 先買票", "t": "08:40"}, {"day": 6, "date": "12/31 (四)", "h": "學院美術館：大衛像", "tag": "🎫 先預約", "t": "13:30"}, {"day": 6, "date": "12/31 (四)", "h": "跨年晚餐：Buca Mario", "tag": "📞 現在就訂", "t": "19:30"}, {"day": 7, "date": "1/1 (五)", "h": "爬比薩斜塔", "tag": "🎫 先預約時段", "t": "13:00"}, {"day": 7, "date": "1/1 (五)", "h": "晚餐：丁骨牛排", "tag": "📞 先訂", "t": "19:30"}, {"day": 8, "date": "1/2 (六)", "h": "烏菲茲美術館", "tag": "🎫 先預約 8:15", "t": "08:15"}, {"day": 8, "date": "1/2 (六)", "h": "晚餐：Bar Cañete（tapas）", "tag": "📞 先訂位", "t": "21:15"}, {"day": 9, "date": "1/3 (日)", "h": "聖家堂", "tag": "🎫 只賣線上票", "t": "11:00"}, {"day": 9, "date": "1/3 (日)", "h": "巴特婁之家「A Winter Night」夜場", "tag": "🎫 先上網買", "t": "18:30"}, {"day": 10, "date": "1/4 (一)", "h": "奎爾公園（紀念區）", "tag": "🎫 先上網買", "t": "10:30"}, {"day": 11, "date": "1/5 (二)", "h": "午餐：Can Solé（海鮮燉飯）", "tag": "📞 先訂位", "t": "13:30"}, {"day": 11, "date": "1/5 (二)", "h": "晚餐：7 Portes", "tag": "📞 先訂 19:30", "t": "19:15"}, {"day": 12, "date": "1/6 (三)", "h": "巴塞隆納機場 T1：退稅＋報到", "tag": "🧾 要退稅的先去", "t": "12:00"}]};
+var CAT={spot:{n:'景點',c:'#e9b52c',bg:'#fdf0c4'},food:{n:'餐飲',c:'#e06a5c',bg:'#fbd9d3'},cafe:{n:'咖啡',c:'#b98245',bg:'#f1e1cc'},
+  shop:{n:'購物',c:'#9b74d1',bg:'#e8dcf6'},hotel:{n:'住宿',c:'#5b9fd8',bg:'#d6e8f8'},move:{n:'交通',c:'#6db562',bg:'#dcefd5'},flight:{n:'航班',c:'#c56cb6',bg:'#f3d8ef'}};
+var CITY_IC={'羅馬':'🏛️','拿波里':'🍕','佛羅倫斯':'🎨','巴塞隆納':'⛪'};
+var TZN={'+08:00':'台灣時間','+04:00':'杜拜時間'};
+var WK=['日','一','二','三','四','五','六'];
+var INFO=[['info','✈️ 航班與住宿','每晚住哪、班機'],['booking','📋 出發前要做的事','要先買的票、證件'],['weather','🌤️ 天氣','四個城市各一顆'],
+  ['xmas','🎄 聖誕・跨年・三王節','這趟的主題'],['guide','🏛️ 五分鐘看懂','到現場前先讀'],['food','🍝 吃什麼・怎麼點','菜名、點法'],
+  ['shop','🛍️ 購物・退稅','退稅流程'],['tips','💡 實用資訊','交通票、治安'],['map','🗺️ 全程地圖','整趟看距離'],['emerg','🆘 緊急聯絡','電話、大使館']];
+
+function $(s,el){return (el||document).querySelector(s)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+        set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+var NOW=(function(){var q=new URLSearchParams(location.search).get('now');var d=q?new Date(q):new Date();return isNaN(d)?new Date():d})().getTime();
+function hm(m){m=((m%1440)+1440)%1440;return ('0'+Math.floor(m/60)).slice(-2)+':'+('0'+m%60).slice(-2)}
+function dur(n){if(n<60)return n+' 分';var h=Math.floor(n/60),r=n%60;return h+' 小時'+(r?' '+r+' 分':'')}
+function wk(iso){return WK[new Date(iso+'T12:00:00Z').getUTCDay()]}
+function md(iso){var p=iso.split('-');return (+p[1])+'/'+(+p[2])}
+function offMin(tz){var s=tz[0]==='-'?-1:1;return s*(parseInt(tz.slice(1,3),10)*60+parseInt(tz.slice(4,6),10))}
+function localMin(t,tz){var d=new Date(t+offMin(tz)*60000);return d.getUTCHours()*60+d.getUTCMinutes()}
+function absOf(day,it){if(it.m==null)return null;return Date.parse((it.d||day.date)+'T'+hm(it.m)+':00'+(it.tz||D.tz))}
+function gmap(p){return p.href||('https://www.google.com/maps/search/?api=1&query='+p.lat+'%2C'+p.lng)}
+
+/* 先算好每一站的絕對時間 */
+D.days.forEach(function(day){
+  day.items.forEach(function(it,i){
+    it.i=i; it.a=absOf(day,it);
+    it.ae=it.a==null?null:it.a+((it.e!=null&&!it.d)?(it.e-it.m):30)*60000;
+  });
+  day.main=day.items.filter(function(x){return !x.d&&x.m!=null});
+  /* 結束＝下一站開始的「絕對時間」：跨時區的航班（杜拜 08:55 → 羅馬 12:40）才不會算成 3 小時 45 分 */
+  day.main.forEach(function(x,k){var nx=day.main[k+1];if(nx&&nx.a>x.a)x.ae=nx.a});
+  var as=day.items.filter(function(x){return x.a!=null});
+  day.r0=Math.min.apply(null,as.map(function(x){return x.a}))-3*3600e3;
+  day.r1=Math.max.apply(null,as.map(function(x){return x.ae}))+3600e3;
+});
+var TODAY=null;D.days.forEach(function(d){if(!TODAY&&NOW>=d.r0&&NOW<=d.r1)TODAY=d});
+
+var S={day:TODAY?TODAY.n:LS.get('pit-day',1),view:LS.get('pit-view','day'),sel:null};
+if(!(S.day>=1&&S.day<=D.days.length))S.day=1;
+if(S.view!=='week')S.view='day';
+function curDay(){return D.days[S.day-1]}
+
+/* 頁首 */
+$('#kick').textContent=D.kicker; $('#ttl').textContent=D.title; $('#cities').textContent=D.cities;
+document.title=D.title+'｜行事曆版';
+(function(){
+  var first=D.days[0].items.filter(function(x){return x.a!=null})[0].a;
+  var last=D.days[D.days.length-1].r1;
+  var cd;
+  if(NOW<first){var n=Math.ceil((first-NOW)/864e5);cd='<b>'+n+'</b><span>天後出發</span>'}
+  else if(NOW<=last){cd='<b>D'+(TODAY?TODAY.n:'–')+'</b><span>旅行中</span>'}
+  else cd='<b>✓</b><span>玩完了</span>';
+  $('#stats').innerHTML='<div class="stat"><b>'+D.days.length+'</b><span>天</span></div><div class="stat"><b>'+D.npins+
+    '</b><span>個已排地點</span></div><div class="stat"><b>'+D.rsv.length+'</b><span>個要先訂</span></div><div class="stat cd">'+cd+'</div>';
+})();
+$('#bookLink').href=D.book;
+
+/* 分頁 */
+document.querySelectorAll('.tabs button').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('on',t.id==='tab-'+b.dataset.tab)});
+    if(b.dataset.tab==='plan'&&MAP){setTimeout(function(){MAP.invalidateSize();fitDay()},50)}
+  };
+});
+
+/* 圖例 */
+$('#legend').innerHTML=Object.keys(CAT).map(function(k){return '<span><i style="background:'+CAT[k].c+'"></i>'+CAT[k].n+'</span>'}).join('')+
+  '<span class="w">🔒 時間固定（車票、門票、訂位）・點卡片看細節，地圖跟著跳</span>';
+
+/* 日期列 */
+(function(){
+  var prevCity='',h='';
+  D.days.forEach(function(d,i){
+    var ic='',city='';
+    if(i===0){ic='✈️';city=d.city}
+    else if(d.city!==prevCity){ic=CITY_IC[d.city]||'🏨';city=d.city}
+    prevCity=d.city;
+    var num=(i===0||d.date.slice(8)==='01')?md(d.date):(+d.date.slice(8));
+    h+='<button class="sd'+(TODAY&&TODAY.n===d.n?' today':'')+'" data-n="'+d.n+'"><span class="sd-ic">'+ic+'</span><span class="sd-city">'+esc(city)+
+       '</span><span class="sd-dot"></span><span class="sd-w">週'+wk(d.date)+'</span><span class="sd-d">'+num+'</span></button>';
+  });
+  $('#stripIn').innerHTML=h;
+  $('#stripIn').onclick=function(e){var b=e.target.closest('.sd');if(b)setDay(+b.dataset.n)};
+})();
+function centerStrip(smooth){
+  var nav=$('#strip'),b=nav.querySelector('.sd.sel');if(!b)return;
+  var to=b.offsetLeft-(nav.clientWidth-b.offsetWidth)/2;
+  to=Math.max(0,Math.min(to,nav.scrollWidth-nav.clientWidth));
+  nav.scrollTo({left:to,behavior:smooth?'smooth':'auto'});
+}
+
+$('#prev').onclick=function(){if(S.day>1)setDay(S.day-1)};
+$('#next').onclick=function(){if(S.day<D.days.length)setDay(S.day+1)};
+document.querySelectorAll('.seg button').forEach(function(b){b.onclick=function(){setView(b.dataset.v)}});
+
+function setDay(n,keepSel){
+  S.day=n;if(!keepSel)S.sel=null;LS.set('pit-day',n);render();
+}
+function setView(v){S.view=v;LS.set('pit-view',v);render()}
+
+/* 這一天現在進行到哪 */
+function status(day){
+  if(!(NOW>=day.r0&&NOW<=day.r1))return null;
+  var as=day.items.filter(function(x){return x.a!=null}).slice().sort(function(p,q){return p.a-q.a});
+  var cur=null,nxt=null;
+  for(var k=0;k<as.length;k++){if(as[k].a<=NOW)cur=as[k];else{nxt=as[k];break}}
+  var tz=(nxt&&nxt.tz)||(cur&&cur.tz)||D.tz;
+  return {cur:cur,nxt:nxt,label:'現在 '+hm(localMin(NOW,tz))+'・'+(TZN[tz]||D.tzlabel)};
+}
+
+/* ── 單日 ── */
+var T0=0,T1=1;
+function yOf(m){var f=(m-T0)/(T1-T0);f=Math.max(0,Math.min(1,f));return 'calc(16px + '+f.toFixed(4)+' * (100% - 32px))'}
+function cardHTML(it,st){
+  var c=CAT[it.cat]||CAT.spot,mv=it.cat==='move';
+  var cls='cc'+(mv?' mv':'')+(it.star?' star':'');
+  var badge='';
+  if(st){
+    if(st.cur===it&&st.nxt){cls+=' cur';badge='<span class="st">進行中</span>'}
+    else if(st.cur===it&&!st.nxt&&NOW<it.ae){cls+=' cur';badge='<span class="st">進行中</span>'}
+    if(st.nxt===it)badge='<span class="st nx">下一站・還有 '+dur(Math.max(1,Math.round((it.a-NOW)/60000)))+'</span>';
+    if(it.ae!=null&&it.ae<NOW&&st.cur!==it)cls+=' done';
+  }
+  var time;
+  if(it.m==null)time=esc(it.t);
+  else if(it.d)time=hm(it.m);
+  else time=hm(it.m)+(it.e!=null?'–'+hm(it.e)+' · '+dur(Math.round((it.ae-it.a)/60000)):'');
+  var xd=it.d?'<span class="xd">'+md(it.d)+'（'+wk(it.d)+'）'+(TZN[it.tz]||'')+'</span>':(it.tz&&it.tz!==D.tz?'<span class="xd">'+(TZN[it.tz]||it.tz)+'</span>':'');
+  var top='<div class="cc-top"><span class="pill">'+c.n+'</span>'+(it.star?'<span class="must">必去</span>':'')+
+    (it.fixed?'<span class="lock">🔒 時間固定</span>':'')+xd+badge+'</div>';
+  var body='<div class="cc-h">'+esc(it.h)+'</div><div class="cc-t">'+time+'</div>';
+  if(mv){ if(it.chip)body+='<div class="cc-x">'+it.chip+'</div>'; }
+  else if(it.tx)body+='<div class="cc-x">'+it.tx+'</div>';
+  if(it.warn)body+='<div class="cc-w">⚠️ '+it.warn+'</div>';
+  if(it.tags&&it.tags.length)body+='<div class="tgs">'+it.tags.map(function(t){return '<span class="tg">'+esc(t)+'</span>'}).join('')+'</div>';
+  var full='';
+  if(!mv&&it.chip)full+='<div class="chip">'+it.chip+'</div>';
+  if(mv&&it.tx)full+='<div class="cc-x">'+it.tx+'</div>';
+  if(it.alts){full+='<details class="sub"><summary>'+esc(it.alts.title)+'</summary>'+it.alts.opts.map(function(o){
+      return '<div class="opt"><b>'+esc(o.h)+'</b><div>'+o.tx+'</div>'+(o.pins.length?'<div class="btns">'+o.pins.map(function(p){
+        return '<a class="pbtn" href="'+esc(gmap(p))+'" target="_blank" rel="noopener">📍 '+esc(p.name)+'</a>'}).join('')+'</div>':'')+'</div>'}).join('')+'</details>'}
+  if(it.more)full+='<details class="sub"><summary>'+esc(it.more.title)+'</summary>'+it.more.html+'</details>';
+  if(it.pins.length)full+='<div class="btns">'+it.pins.map(function(p){return '<a class="pbtn" href="'+esc(gmap(p))+'" target="_blank" rel="noopener">📍 '+esc(p.name)+'</a>'}).join('')+
+    '<button class="pbtn alt" data-gomap="1">🗺️ 下面地圖</button></div>';
+  var hint=(it.alts||it.more||(!mv&&it.chip)||it.pins.length)?'<div class="cc-more">點開：'+[(!mv&&it.chip)?'交通':'',it.pins.length?'地圖':'',it.alts?'備案':'',it.more?'說明':''].filter(Boolean).join('・')+' ▾</div>':'';
+  return '<div class="'+cls+'" data-i="'+it.i+'" style="--c:'+c.c+';--bgc:'+c.bg+'">'+top+body+hint+'<div class="cc-full">'+full+'</div></div>';
+}
+function renderDay(){
+  var day=curDay(),st=status(day),list=$('#list'),ruler=$('#ruler');
+  var main=day.main;
+  T0=main.length?main[0].m:0; T1=0;
+  main.forEach(function(x){T0=Math.min(T0,x.m);T1=Math.max(T1,x.e!=null?x.e:x.m+30)});
+  if(T1<=T0)T1=T0+60;
+  /* 卡片 */
+  var h='';
+  day.items.forEach(function(it){
+    if(st&&st.nxt===it)h+='<div class="nowbar">'+st.label+'</div>';
+    h+=cardHTML(it,st);
+  });
+  list.innerHTML=h;
+  /* 時間尺 */
+  var r='<div class="rax" style="top:'+yOf(T0)+';bottom:16px"></div>';
+  var span=(T1-T0)/60,step=span>13?2:1;
+  r+='<span class="rl end" style="top:'+yOf(T0)+'">'+hm(T0)+'</span><span class="rl end" style="top:'+yOf(T1)+'">'+hm(T1)+'</span>';
+  for(var hh=Math.ceil(T0/60);hh*60<T1;hh+=1){
+    var m=hh*60; if(hh%step)continue; if(m-T0<span*4.5||T1-m<span*4.5)continue;
+    r+='<span class="rl" style="top:'+yOf(m)+'">'+hm(m)+'</span>';
+  }
+  main.forEach(function(x){
+    var c=CAT[x.cat]||CAT.spot,e=x.e!=null?x.e:x.m+30;
+    r+='<i class="rt" data-i="'+x.i+'" style="background:'+c.c+';top:'+yOf(x.m)+';height:calc('+((e-x.m)/(T1-T0)).toFixed(4)+' * (100% - 32px) - 1px)"></i>';
+  });
+  r+='<div class="rind" id="rind" style="top:'+yOf(T0)+'"></div>';
+  if(st){
+    var yy=null,cur=st.cur,nxt=st.nxt;
+    var isMain=function(x){return x&&!x.d&&x.m!=null};
+    if(isMain(cur)&&isMain(nxt))yy=cur.m+(nxt.m-cur.m)*(NOW-cur.a)/(nxt.a-cur.a);
+    else if(isMain(cur))yy=cur.m+(NOW-cur.a)/60000;
+    else if(isMain(nxt))yy=nxt.m-(nxt.a-NOW)/60000;
+    if(yy!=null&&yy>=T0-30&&yy<=T1+30)r+='<div class="rnow" style="top:'+yOf(yy)+'"><span>'+hm(localMin(NOW,(nxt&&nxt.tz)||(cur&&cur.tz)||D.tz))+'</span></div>';
+  }
+  ruler.innerHTML=r;
+  /* 捲到現在／最上面 */
+  var nb=list.querySelector('.nowbar'),cu=list.querySelector('.cc.cur');
+  list.scrollTop=cu?Math.max(0,cu.offsetTop-10):nb?Math.max(0,nb.offsetTop-90):0;
+  if(S.sel!=null){var el=list.querySelector('.cc[data-i="'+S.sel+'"]');if(el){el.classList.add('sel','open');list.scrollTop=Math.max(0,el.offsetTop-10)}}
+  syncInd();
+}
+var indRaf=0;
+function syncInd(){
+  var list=$('#list'),ind=$('#rind');if(!ind)return;
+  var cards=list.querySelectorAll('.cc'),day=curDay(),pick=null;
+  for(var k=0;k<cards.length;k++){var c=cards[k];if(c.offsetTop+c.offsetHeight>list.scrollTop+24){pick=day.items[+c.dataset.i];break}}
+  if(S.sel!=null)pick=day.items[S.sel]||pick;
+  if(pick&&!pick.d&&pick.m!=null){ind.style.display='';ind.style.top=yOf(pick.m)}
+  else ind.style.display='none';
+}
+$('#list').addEventListener('scroll',function(){if(S.sel!=null)return;cancelAnimationFrame(indRaf);indRaf=requestAnimationFrame(syncInd)},{passive:true});
+$('#list').addEventListener('click',function(e){
+  if(e.target.closest('[data-gomap]')){var c0=e.target.closest('.cc');selectItem(+c0.dataset.i,{});
+    document.querySelector('.mc').scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(e.target.closest('a,summary,details'))return;
+  var c=e.target.closest('.cc');if(!c)return;
+  var i=+c.dataset.i;
+  if(S.sel===i&&c.classList.contains('open')){c.classList.remove('open','sel');S.sel=null;syncInd();mapSel(null);return}
+  selectItem(i,{open:true});
+});
+$('#ruler').addEventListener('click',function(e){
+  var rc=this.getBoundingClientRect(),f=(e.clientY-rc.top-16)/(rc.height-32),m=T0+f*(T1-T0);
+  var best=null;curDay().main.forEach(function(x){var e2=x.e!=null?x.e:x.m+30;if(m>=x.m&&m<e2)best=x});
+  if(!best)curDay().main.forEach(function(x){if(!best||Math.abs(x.m-m)<Math.abs(best.m-m))best=x});
+  if(best)selectItem(best.i,{open:true,scroll:true});
+});
+function selectItem(i,o){
+  S.sel=i;var list=$('#list');
+  list.querySelectorAll('.cc').forEach(function(c){var me=+c.dataset.i===i;c.classList.toggle('sel',me);if(o.open)c.classList.toggle('open',me)});
+  var el=list.querySelector('.cc[data-i="'+i+'"]');
+  if(o.scroll&&el)list.scrollTo({top:Math.max(0,el.offsetTop-10),behavior:'smooth'});
+  syncInd();mapSel(curDay().items[i]);
+}
+
+/* ── 週行事曆 ── */
+var PX=0.9;
+function renderWeek(){
+  var h0=1440,h1=0;
+  D.days.forEach(function(d){d.main.forEach(function(x){h0=Math.min(h0,x.m);h1=Math.max(h1,x.e!=null?x.e:x.m+30)})});
+  h0=Math.floor(h0/60)*60;h1=Math.min(Math.ceil(h1/60)*60,1560);
+  var H=(h1-h0)*PX,n=D.days.length;
+  var g='<div class="wk-in" style="grid-template-columns:40px repeat('+n+',104px);grid-template-rows:auto '+H+'px"><div class="wk-corner"></div>';
+  D.days.forEach(function(d){g+='<div class="wk-hd'+(d.n===S.day?' sel':'')+(TODAY&&TODAY.n===d.n?' today':'')+'" data-n="'+d.n+'">週'+wk(d.date)+'<br><b>'+md(d.date)+'</b><i>'+esc(d.city)+'</i></div>'});
+  g+='<div class="wk-hours" style="grid-row:2;grid-column:1;position:sticky">';
+  for(var m=h0+60;m<h1;m+=60)g+='<span style="top:'+((m-h0)*PX)+'px">'+hm(m)+'</span>';
+  g+='</div>';
+  var lines='background-image:repeating-linear-gradient(to bottom,#ece4d3 0 1px,transparent 1px '+(60*PX)+'px)';
+  D.days.forEach(function(d,ci){
+    g+='<div class="wk-col'+(d.n===S.day?' sel':'')+'" style="grid-row:2;grid-column:'+(ci+2)+';'+lines+'">';
+    d.main.forEach(function(x){
+      var c=CAT[x.cat]||CAT.spot,e=x.e!=null?x.e:x.m+30,top=(x.m-h0)*PX,ht=Math.max((e-x.m)*PX-2,12),mv=x.cat==='move';
+      g+='<div class="wb'+(mv?' mv':'')+(x.star?' star':'')+'" data-n="'+d.n+'" data-i="'+x.i+'" style="--c:'+c.c+';--bgc:'+c.bg+';top:'+top+'px;height:'+ht+'px">'+
+        (mv?esc(x.h):'<small>'+hm(x.m)+(x.fixed?' 🔒':'')+'</small><b>'+esc(x.h)+'</b>')+'</div>';
+    });
+    if(TODAY&&TODAY.n===d.n){var nm=localMin(NOW,D.tz);if(nm>=h0&&nm<=h1)g+='<div class="wnow" style="top:'+((nm-h0)*PX)+'px"></div>'}
+    g+='</div>';
+  });
+  g+='</div>';
+  var wv=$('#weekView');wv.innerHTML=g;
+  var day=curDay(),col=wv.querySelectorAll('.wk-col')[S.day-1];
+  wv.scrollLeft=Math.max(0,col.offsetLeft-44);
+  wv.scrollTop=Math.max(0,((day.main[0]?day.main[0].m:h0)-h0)*PX-10);
+}
+$('#weekView').addEventListener('click',function(e){
+  var b=e.target.closest('.wb');
+  if(b){S.day=+b.dataset.n;LS.set('pit-day',S.day);S.sel=+b.dataset.i;S.view='day';LS.set('pit-view','day');render();return}
+  var hd=e.target.closest('.wk-hd');if(hd){S.day=+hd.dataset.n;LS.set('pit-day',S.day);S.sel=null;S.view='day';LS.set('pit-view','day');render()}
+});
+
+/* ── 地圖 ── */
+var MAP=null,LAYER=null,MK={},DAYPTS=[];
+function initMap(){
+  if(!window.L)return;
+  MAP=L.map('map',{zoomSnap:0.25,scrollWheelZoom:false});
+  var fails=0,osm=false;
+  var esri=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:18,attribution:'Tiles © Esri'}).addTo(MAP);
+  esri.on('tileerror',function(){if(++fails>=4&&!osm){osm=true;MAP.removeLayer(esri);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(MAP)}});
+  LAYER=L.layerGroup().addTo(MAP);
+  $('#fit').onclick=function(){fitDay()};
+}
+function mkIcon(n,c,on){return L.divIcon({className:'',html:'<div class="mk'+(on?' on':'')+'" style="--c:'+c+'">'+n+'</div>',iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-12]})}
+function mapDay(){
+  var day=curDay();
+  $('#mcT').textContent='Day '+day.n+'・'+md(day.date)+'（'+wk(day.date)+'）地圖';
+  if(!MAP)return;
+  LAYER.clearLayers();MK={};DAYPTS=[];
+  var order=[],seq=[];
+  day.items.forEach(function(it){
+    it.pins.forEach(function(p,k){
+      if(!MK[p.label]){
+        var n=order.length+1,c=(CAT[it.cat]||CAT.spot).c;
+        order.push({p:p,n:n,c:c,it:it});
+        var m=L.marker([p.lat,p.lng],{icon:mkIcon(n,c,false)}).addTo(LAYER);
+        m.bindPopup('<b>'+n+'. '+esc(p.name)+'</b><br>'+hm(it.m==null?0:it.m)+' '+esc(it.h)+'<br><a href="'+esc(gmap(p))+'" target="_blank" rel="noopener">開 Google 地圖 ↗</a>');
+        m.on('click',function(){selectItem(it.i,{open:true,scroll:true})});
+        MK[p.label]={m:m,n:n,c:c};
+      }
+      if(k===0){var last=seq[seq.length-1];if(!last||last[0]!==p.lat||last[1]!==p.lng)seq.push([p.lat,p.lng])}
+    });
+  });
+  if(seq.length>1)L.polyline(seq,{color:'#262421',weight:2.5,opacity:.55,dashArray:'6 7'}).addTo(LAYER);
+  DAYPTS=order.map(function(o){return [o.p.lat,o.p.lng]});
+  $('#mcList').innerHTML=order.map(function(o){return '<button data-l="'+esc(o.p.label)+'" data-i="'+o.it.i+'" style="--c:'+o.c+'"><i>'+o.n+'</i>'+esc(o.p.name)+'</button>'}).join('')||'<span class="mc-note" style="padding:0">這天沒有地圖上的點</span>';
+  fitDay();
+}
+function fitDay(){
+  if(!MAP||!DAYPTS.length)return;
+  /* 只框這一天主要的區域：離中位數 40 公里以外的（機場、外地）照畫但不算進範圍 */
+  var num=function(x,y){return x-y},la=DAYPTS.map(function(p){return p[0]}).sort(num),ln=DAYPTS.map(function(p){return p[1]}).sort(num);
+  var c=L.latLng(la[la.length>>1],ln[ln.length>>1]);
+  var pts=DAYPTS.filter(function(p){return c.distanceTo(p)<40000});if(!pts.length)pts=DAYPTS;
+  if(pts.length===1)MAP.setView(pts[0],15);else MAP.fitBounds(pts,{padding:[26,26],maxZoom:16});
+}
+$('#mcList').addEventListener('click',function(e){var b=e.target.closest('button[data-i]');if(b)selectItem(+b.dataset.i,{open:true,scroll:true})});
+var SELMK=null;
+function mapSel(it){
+  if(SELMK&&MK[SELMK]){var o=MK[SELMK];o.m.setIcon(mkIcon(o.n,o.c,false));o.m.setZIndexOffset(0)}
+  SELMK=null;
+  document.querySelectorAll('#mcList button').forEach(function(b){b.classList.toggle('on',it&&+b.dataset.i===it.i)});
+  if(!it){$('#mcSel').innerHTML='點上面的卡片，地圖會跳到那個地方';return}
+  var p=it.pins[0];
+  if(!p){$('#mcSel').innerHTML='<b>'+esc(it.h)+'</b>：這一站沒有地圖上的點';return}
+  $('#mcSel').innerHTML=(it.m!=null?hm(it.m)+' ':'')+'<b>'+esc(it.h)+'</b>　<a href="'+esc(gmap(p))+'" target="_blank" rel="noopener">在 Google 地圖開啟 ↗</a>';
+  if(!MAP)return;
+  var o2=MK[p.label];
+  if(o2){o2.m.setIcon(mkIcon(o2.n,o2.c,true));o2.m.setZIndexOffset(1000);SELMK=p.label}
+  MAP.flyTo([p.lat,p.lng],Math.max(MAP.getZoom(),15.5),{duration:.6});
+}
+
+/* ── 全部重畫 ── */
+function render(){
+  var day=curDay();
+  document.querySelectorAll('.sd').forEach(function(b){b.classList.toggle('sel',+b.dataset.n===S.day)});
+  centerStrip(true);
+  document.querySelectorAll('.seg button').forEach(function(b){b.classList.toggle('on',b.dataset.v===S.view)});
+  $('#calSub').textContent=day.date.slice(0,4)+' 年 '+(+day.date.slice(5,7))+' 月';
+  $('#dhN').innerHTML='第 '+day.n+' 天・'+md(day.date)+'（'+wk(day.date)+'）<small>'+esc(day.city)+'</small>'+(TODAY&&TODAY.n===day.n?'<span class="tdy">今天</span>':'');
+  $('#dhR').textContent=day.route;
+  $('#prev').disabled=S.day<=1;$('#next').disabled=S.day>=D.days.length;
+  var wv=S.view==='week';
+  $('#dayView').hidden=wv;$('#weekView').hidden=!wv;
+  $('#dayView').style.display=wv?'none':'';
+  if(wv)renderWeek();else renderDay();
+  mapDay();
+  if(!wv&&S.sel!=null)mapSel(day.items[S.sel]);else mapSel(null);
+}
+
+/* ── 要先訂的 ── */
+function renderRsv(){
+  var done=LS.get('pit-rsv',{}),h='',lastDay=0,ok=0;
+  D.rsv.forEach(function(r){
+    var k=r.day+'|'+r.h+'|'+r.tag;if(done[k])ok++;
+    if(r.day!==lastDay){var d=D.days[r.day-1];h+='<div class="rv-h">第 '+r.day+' 天・'+md(d.date)+'（'+wk(d.date)+'）'+esc(d.city)+'</div>';lastDay=r.day}
+    h+='<label class="rv'+(done[k]?' ok':'')+'"><input type="checkbox" data-k="'+esc(k)+'"'+(done[k]?' checked':'')+'><div><b>'+esc(r.h)+'</b><span>'+esc(r.t)+'・'+esc(r.tag)+'</span></div></label>';
+  });
+  $('#rvList').innerHTML=h;
+  $('#rvSub').textContent='已處理 '+ok+' / '+D.rsv.length;
+  $('#rvBar').style.width=(D.rsv.length?ok/D.rsv.length*100:0)+'%';
+}
+$('#rvList').addEventListener('change',function(e){
+  var c=e.target;if(!c.dataset.k)return;var done=LS.get('pit-rsv',{});
+  if(c.checked)done[c.dataset.k]=1;else delete done[c.dataset.k];LS.set('pit-rsv',done);renderRsv();
+});
+
+/* ── 出發前資訊 ── */
+$('#infoGrid').innerHTML=INFO.map(function(x){return '<a href="'+D.book+'#'+x[0]+'" target="_blank" rel="noopener">'+x[1]+'<small>'+x[2]+'</small></a>'}).join('');
+
+/* ── 匯出到手機行事曆 ── */
+function strip(h){var d=document.createElement('div');d.innerHTML=h||'';return (d.textContent||'').trim()}
+function icsEsc(s){return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
+function utc(t){return new Date(t).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'')}
+function fold(line){var out=[];while(line.length>70){out.push(line.slice(0,70));line=' '+line.slice(70)}out.push(line);return out.join('\r\n')}
+var NEV=0;D.days.forEach(function(d){d.items.forEach(function(x){if(x.a!=null)NEV++})});
+$('#ics').textContent='📅 加到 iPhone 行事曆（'+NEV+' 個行程）';
+$('#ics').onclick=function(){
+  var L2=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//travel-book//proto//ZH','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+icsEsc(D.title)],stamp=utc(Date.now());
+  D.days.forEach(function(d){d.items.forEach(function(x){
+    if(x.a==null)return;
+    var desc=[strip(x.chip),strip(x.tx),x.warn?'⚠️ '+strip(x.warn):''].filter(Boolean).join('\n');
+    var p=x.pins[0];
+    L2.push('BEGIN:VEVENT','UID:'+d.id+'-'+x.i+'@travel-book-proto','DTSTAMP:'+stamp,'DTSTART:'+utc(x.a),'DTEND:'+utc(x.ae),
+      fold('SUMMARY:'+icsEsc((x.star?'⭐ ':'')+x.h)));
+    if(desc)L2.push(fold('DESCRIPTION:'+icsEsc(desc)));
+    if(p)L2.push(fold('LOCATION:'+icsEsc(p.name)),fold('URL:'+gmap(p)));
+    L2.push('END:VEVENT');
+  })});
+  L2.push('END:VCALENDAR');
+  var blob=new Blob([L2.join('\r\n')],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='italy-barcelona.ics';document.body.appendChild(a);a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);
+};
+
+initMap();renderRsv();render();
+setTimeout(function(){centerStrip(false)},60);
+if(!new URLSearchParams(location.search).get('now'))setInterval(function(){
+  NOW=Date.now();var d=curDay();
+  if(S.view==='day'&&NOW>=d.r0-36e5&&NOW<=d.r1){var l=$('#list'),st=l.scrollTop;renderDay();l.scrollTop=st;syncInd()}
+},60000);
+})();
+</script>
+</body>
+</html>
