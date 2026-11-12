@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta name="v2-version" content="ae4e40b5a2" data-file="new-version.txt">
+<meta name="v2-version" content="4562f51d1e" data-file="new-version.txt">
 <meta name="robots" content="noindex, nofollow">
 <meta name="book-version" content="f5ba4a9d69">
 <meta charset="utf-8">
@@ -370,6 +370,10 @@ details.ib[open]>summary{border-bottom:1.5px solid var(--rule);background:#fff7d
 .wxd .tp{font:800 14px Nunito,sans-serif}
 .wxd .rn{margin-left:auto;font-size:12.5px;color:var(--mut)}
 .wxd .rn.hi{color:var(--red);font-weight:700}
+/* 地圖每一段的交通圖示＋往下一站的箭頭（照 v1） */
+.mvi{position:relative;width:24px;height:24px}
+.mvi .pill{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:12.5px;line-height:1;box-shadow:0 1px 5px rgba(0,0,0,.35)}
+.mvi .arw{position:absolute;left:3px;top:3px;width:18px;height:18px;font-size:15px;line-height:18px;text-align:center;font-weight:700;pointer-events:none;text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff,0 0 3px #fff}
 /* 編號圓圈（跟地圖標記同一套顏色） */
 .pn{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:999px;color:#fff;font:800 12px/1 Nunito,sans-serif;vertical-align:2px;margin:0 3px 0 0;cursor:pointer;background:#7a8190}
 .k-park{background:#2f6db3}.k-expo,.k-food{background:#c8553d}.k-sight{background:#5b4b8a}.k-shop{background:#8a73a8}.k-cafe{background:#b8894f}.k-drink{background:#1f8a70}.k-night{background:#d0577f}.k-alt{background:#7a8190}.k-stage{background:#b8860b}
@@ -449,7 +453,6 @@ details.ib[open]>summary{border-bottom:1.5px solid var(--rule);background:#fff7d
       <div class="mc-note" id="mcNote"></div>
     </section>
 
-    <button class="big" id="ics"></button>
     <div class="foot" id="foot">「行程有變？」調過的時間和「要先訂的」打勾只存在這支手機上。網址版會自動更新。</div>
   </div>
 
@@ -924,7 +927,25 @@ function tilesTo(map){
 }
 var KCOL={park:'#2f6db3',expo:'#c8553d',food:'#c8553d',sight:'#5b4b8a',shop:'#8a73a8',cafe:'#b8894f',drink:'#1f8a70',night:'#d0577f',alt:'#7a8190',stage:'#b8860b'};
 function kColor(k){return KCOL[k]||'#7a8190'}
-function pkey(p){return p.n?'n:'+p.n:p.label}   /* 有編號用編號去重複（兩個編號同一個座標也都要畫） */
+function pkey(p){return p.n?'n:'+p.n:p.label}
+var MOVE={walk:{c:'#3f5f45',d:'3,7',e:'🚶',n:'走路'},car:{c:'#3a3a3a',d:null,e:'🚗',n:'開車'},taxi:{c:'#e8954a',d:null,e:'🚕',n:'計程車'},
+  subway:{c:'#5b6fa3',d:null,e:'🚇',n:'地鐵'},bus:{c:'#3f7a55',d:null,e:'🚌',n:'巴士'},train:{c:'#c0453f',d:null,e:'🚆',n:'電車'},
+  tram:{c:'#2f7f8f',d:null,e:'🚊',n:'輕軌'},ferry:{c:'#2f6fa8',d:'6,6',e:'⛴️',n:'船'},flight:{c:'#5b6fa3',d:'2,8',e:'✈️',n:'飛機'},torokko:{c:'#8a5a32',d:null,e:'🚂',n:'小火車'}};
+function legAng(A,B){var a=L.CRS.EPSG3857.latLngToPoint(L.latLng(A),15),b=L.CRS.EPSG3857.latLngToPoint(L.latLng(B),15);return Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI}
+function moveIcon(m,ang){return L.divIcon({className:'',html:'<div class="mvi"><div class="pill" style="border-color:'+m.c+'">'+m.e+'</div>'+(ang==null?'':'<div class="arw" style="color:'+m.c+';transform:rotate('+ang.toFixed(1)+'deg) translateX(20px)">➤</div>')+'</div>',iconSize:[24,24],iconAnchor:[12,12]})}
+/* 一段一段畫：線＝交通方式，中間圖示＋➤；兩點太近（40 公尺內）只畫線不放圖示 */
+function drawLegs(layer,seq){
+  var used={};
+  for(var k=1;k<seq.length;k++){
+    var A=seq[k-1].ll,B=seq[k].ll,m=MOVE[seq[k].mode];
+    if(!m){L.polyline([A,B],{color:'#555',weight:2.5,opacity:.55,dashArray:'6 7'}).addTo(layer);continue}
+    used[seq[k].mode]=1;
+    L.polyline([A,B],{color:m.c,weight:4,opacity:.85,dashArray:m.d,lineCap:'round'}).addTo(layer);
+    if(L.latLng(A).distanceTo(B)>40)L.marker([(A[0]+B[0])/2,(A[1]+B[1])/2],{interactive:false,keyboard:false,zIndexOffset:500,icon:moveIcon(m,legAng(A,B))}).addTo(layer);
+  }
+  return Object.keys(used);
+}
+function modesNote(used){return '➤ 往下一站'+(used.length?'　線＝交通：'+used.map(function(k){return '<span style="color:'+MOVE[k].c+';font-weight:700">'+MOVE[k].e+' '+MOVE[k].n+'</span>'}).join('　'):'')}   /* 有編號用編號去重複（兩個編號同一個座標也都要畫） */
 $$('.mseg button').forEach(function(b){b.onclick=function(){setMapMode(b.dataset.m)}});
 function setMapMode(m){S.map=m;$$('.mseg button').forEach(function(b){b.classList.toggle('on',b.dataset.m===m)});if(m==='all')mapAll();else{mapDay();if(S.sel!=null)mapSel(curDay().items[S.sel])}}
 function mkIcon(n,c,on,fg){return L.divIcon({className:'',html:'<div class="mk'+(on?' on':'')+'" style="--c:'+c+(fg?';color:'+fg:'')+'">'+esc(n)+'</div>',iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-12]})}
@@ -944,7 +965,6 @@ function mapDay(){
   var pp=$('#mcParts');pp.hidden=!parts;
   pp.innerHTML=parts?day.maps.map(function(m,k){return '<button data-part="'+k+'" class="'+(k===S.part?'on':'')+'">'+esc(m.t)+'</button>'}).join(''):'';
   $('#mcT').textContent=(ONE?'':day.tab?day.tab+' 版・':'Day '+day.n+'・')+md(day.date)+'（'+wk(day.date)+'）地圖';
-  $('#mcNote').textContent='數字＝這天去的順序，虛線連起來是走的方向（跳過的站不畫）。左上角 📍 按了會顯示你在哪。';
   if(S.map!=='day')return;
   if(!MAP)return;
   LAYER.clearLayers();MK={};SELMK=null;
@@ -962,10 +982,11 @@ function mapDay(){
         m.on('click',function(){selectItem(it.i,{open:true,scroll:true})});
         MK[pkey(p)]={m:m,n:n,c:c,fg:fg};
       }
-      if(k===0&&!it.sk){var last=seq[seq.length-1];if(!last||last[0]!==p.lat||last[1]!==p.lng)seq.push([p.lat,p.lng])}
+      if(k===0&&!it.sk){var last=seq[seq.length-1];if(!last||last.ll[0]!==p.lat||last.ll[1]!==p.lng)seq.push({ll:[p.lat,p.lng],mode:it.mode})}
     });
   });
-  if(seq.length>1)L.polyline(seq,{color:'#262421',weight:2.5,opacity:.55,dashArray:'6 7'}).addTo(LAYER);
+  var used=drawLegs(LAYER,seq);
+  $('#mcNote').innerHTML=modesNote(used)+'<br>左上角 📍 按了會顯示你在哪。';
   PTS=order.map(function(o){return [o.p.lat,o.p.lng]});
   /* 畫面只框「去玩、去吃」的點：交通站（車站、機場）照畫但不算進範圍，不然一頭一尾會把市區縮成一團；
      只有一張圖但有時間範圍（例：第一天不含機場）→ 範圍外的點也不算 */
@@ -990,7 +1011,7 @@ function mapAll(){
     var a=byName[r[0]],b=byName[r[1]];if(!a||!b)return;
     var main=r[3]==='main';
     L.polyline([[a.lat,a.lng],[b.lat,b.lng]],{color:main?'#262421':'#2e5a73',weight:main?3:2.5,opacity:.75,dashArray:main?null:'5 7'}).addTo(LAYER);
-    if(main)L.marker([(a.lat+b.lat)/2,(a.lng+b.lng)/2],{interactive:false,icon:L.divIcon({className:'',html:'<div class="ovm">'+(MODE_IC[r[2]]||'➜')+'</div>',iconSize:[24,22],iconAnchor:[12,11]})}).addTo(LAYER);
+    if(main){var mm=MOVE[r[2]]||{c:'#262421',e:MODE_IC[r[2]]||'➜'};L.marker([(a.lat+b.lat)/2,(a.lng+b.lng)/2],{interactive:false,icon:moveIcon(mm,legAng([a.lat,a.lng],[b.lat,b.lng]))}).addTo(LAYER)}
   });
   $('#mcList').innerHTML=D.ov.map(function(o){return '<button data-ov="'+esc(o.name)+'" style="--c:#fff"><i style="border:0;background:none">'+o.icon+'</i>'+esc(o.name)+'</button>'}).join('');
   PTS=D.ov.map(function(o){return [o.lat,o.lng]});
@@ -1206,28 +1227,6 @@ $('#rvList').addEventListener('change',function(e){
   done[c.dataset.k]=c.checked?1:0;LS.set(NS+'rsv',done);renderRsv();
 });
 
-/* ── 匯出到手機行事曆（用調整後的時間，跳過的不匯） ── */
-function stripTags(h){var d=document.createElement('div');d.innerHTML=h||'';return (d.textContent||'').trim()}
-function icsEsc(s){return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
-function utc(t){return new Date(t).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'')}
-function fold(line){var out=[];while(line.length>70){out.push(line.slice(0,70));line=' '+line.slice(70)}out.push(line);return out.join('\r\n')}
-function nEvents(){var n=0;D.days.forEach(function(d){d.items.forEach(function(x){if(x.a!=null&&!x.sk)n++})});return n}
-$('#ics').onclick=function(){
-  var L2=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//travel-book//v2//ZH','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:'+icsEsc(D.title)],stamp=utc(Date.now());
-  D.days.forEach(function(d){d.items.forEach(function(x){
-    if(x.a==null||x.sk)return;
-    var desc=[stripTags(x.chip),stripTags(x.tx),x.warn?'⚠️ '+stripTags(x.warn):''].filter(Boolean).join('\n'),p=x.pins[0];
-    L2.push('BEGIN:VEVENT','UID:'+d.id+'-'+x.i+'@travel-book-v2','DTSTAMP:'+stamp,'DTSTART:'+utc(x.a),'DTEND:'+utc(x.ae),fold('SUMMARY:'+icsEsc((x.star?'⭐ ':'')+x.h)));
-    if(desc)L2.push(fold('DESCRIPTION:'+icsEsc(desc)));
-    if(p)L2.push(fold('LOCATION:'+icsEsc(p.name)),fold('URL:'+gmap(p)));
-    L2.push('END:VEVENT');
-  })});
-  L2.push('END:VCALENDAR');
-  var blob=new Blob([L2.join('\r\n')],{type:'text/calendar;charset=utf-8'}),a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='trip.ics';document.body.appendChild(a);a.click();
-  setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000);
-};
-
 /* ── 全部重畫 ── */
 function markStrip(){
   $$('.sd').forEach(function(b){var d=D.days[+b.dataset.n-1];b.classList.toggle('sel',d.n===S.day);b.classList.toggle('today',!!TODAY&&TODAY.n===d.n);b.classList.toggle('adj',isAdj(d))});
@@ -1250,7 +1249,6 @@ function render(){
   renderChips();
   if(wv)renderWeek();else renderDay();
   if(S.map==='day'){mapDay();if(!wv&&S.sel!=null)mapSel(day.items[S.sel]);else mapSel(null)}
-  $('#ics').textContent='📅 加到 iPhone 行事曆（'+nEvents()+' 個行程）';
 }
 function tick(){
   if(PREVIEW)return;
