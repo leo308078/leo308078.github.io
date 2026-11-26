@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta name="v2-version" content="cb6677ea75" data-file="new-version.txt">
+<meta name="v2-version" content="8c539ca172" data-file="new-version.txt">
 <meta name="robots" content="noindex, nofollow">
 <meta name="book-version" content="f5ba4a9d69">
 <meta charset="utf-8">
@@ -142,7 +142,7 @@
 </script>
 <style>
 :root{color-scheme:light;--bg:#fbf7ee;--ink:#262421;--mut:#857f73;--line:#262421;--card:#fffdf8;--yel:#f2c862;--blue:#acd5ec;--grn:#a6d590;--grnd:#4f8f3c;--red:#e04436;--rule:#e6dfcf;
-  --bodyH:clamp(380px,calc(100svh - 300px),600px)}
+  --bodyH:clamp(380px,calc(100svh - 92px),900px)}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 'Noto Sans TC',system-ui,-apple-system,'PingFang TC','Microsoft JhengHei',sans-serif;-webkit-text-size-adjust:100%}
 button{font-family:inherit;color:inherit;cursor:pointer}
@@ -250,7 +250,7 @@ h1{font:900 clamp(22px,6.6vw,29px)/1.15 'Noto Sans TC',sans-serif;margin:4px 0 3
 .rind{position:absolute;left:31px;width:16px;height:16px;border-radius:50%;background:#fff;border:2.5px solid var(--line);transform:translateY(-50%);transition:top .25s;z-index:2}
 .rnow{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:3}
 .rnow span{position:absolute;left:1px;top:-8px;background:var(--red);color:#fff;font:900 10px/16px Nunito,sans-serif;padding:0 4px;border-radius:5px}
-.list{overflow-y:auto;position:relative;padding:10px 11px 70px 10px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.list{overflow-y:auto;position:relative;padding:10px 11px 24px 10px;-webkit-overflow-scrolling:touch}
 .cc{position:relative;background:#fff;border:2px solid var(--line);border-left:7px solid var(--c);border-radius:15px;padding:8px 11px 9px;margin-bottom:9px;cursor:pointer}
 .cc.mv{background:#fbfdf8;border-width:1.5px;border-left-width:7px;padding:6px 11px 7px}
 .cc.sel{box-shadow:0 0 0 3px var(--bgc),0 0 0 4.5px var(--c)}
@@ -303,6 +303,13 @@ details.sub p{margin:6px 0}
 .legend{border-top:1.5px solid var(--rule);padding:8px 12px 10px;font-size:11px;color:var(--mut);display:flex;flex-wrap:wrap;gap:3px 10px}
 .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px;vertical-align:0}
 .legend .w{flex-basis:100%}
+/* 單日「行程｜地圖」兩個分頁（Leo 2026-11-26：滑動會滑到地圖、行程太小 → 地圖改成同一格切換，框撐滿螢幕） */
+.dtabs{display:flex;gap:8px;padding:2px 12px 10px;scroll-margin-top:6px}
+.dtabs[hidden]{display:none}
+.dtabs button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 0;font-weight:900;font-size:14.5px}
+.dtabs button.on{background:var(--grn)}
+.dtabs button[data-dt="map"].on{background:var(--blue)}
+.list .legend.lg-in{border-top:1.5px dashed var(--rule);padding:10px 2px 0;margin-top:4px}
 /* 週行事曆 */
 .wk{height:var(--bodyH);overflow:auto;position:relative;border-top:1.5px solid var(--rule);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .wk-in{display:grid;width:max-content}
@@ -325,9 +332,18 @@ details.sub p{margin:6px 0}
 .wb.sm .wl{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}
 .wb.sk{opacity:.35;text-decoration:line-through}
 .wnow{position:absolute;left:0;right:0;height:2px;background:var(--red);z-index:2}
-/* 地圖卡 */
-.mc .box-h{background:var(--blue)}
-.mc .box-h .s{color:#2e5a73}
+/* 地圖（單日的「地圖」分頁）：地圖佔一半，下面分段交通在框裡捲 */
+#mapcard{height:var(--bodyH);display:flex;flex-direction:column;border-top:1.5px solid var(--rule);overflow:hidden}
+#mapcard[hidden]{display:none}
+.dm-h{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#eef6fb;border-bottom:1.5px solid var(--rule);flex:none}
+.dm-h b{font-size:14px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mapcard .mparts{flex:none;padding:6px 12px 0}
+#mapcard .mc-sel{flex:none;padding:6px 12px;min-height:0}
+#mapcard .mc-sel .tol{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:2px 8px;font-size:12px;font-weight:800;margin-left:4px}
+#mapcard .mc-sum{flex:none;padding:6px 12px 2px}
+#mapcard .mc-list{flex:1 1 auto;min-height:70px;overflow:auto;-webkit-overflow-scrolling:touch;align-content:flex-start}
+#mapcard .mc-list.legs{max-height:none}
+#mapcard .mc-note{flex:none;padding:5px 12px 7px;border-top:1.5px solid var(--rule)}
 .mseg{margin-left:auto;display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;flex:none;background:#fff}
 .mseg button{border:0;background:none;padding:6px 10px;font-size:12.5px;font-weight:700}
 .mseg button.on{background:#2e5a73;color:#fff}
@@ -337,7 +353,7 @@ details.sub p{margin:6px 0}
 .mparts button.on{background:#2e5a73;color:#fff;border-color:#2e5a73}
 .mc-sel{padding:8px 12px;font-size:13px;line-height:1.45;min-height:38px}
 .mc-sel b{font-size:14px}
-#map{height:300px;border-top:1.5px solid var(--rule);border-bottom:1.5px solid var(--rule);background:#e8e3d6}
+#map{flex:0 0 50%;min-height:210px;border-top:1.5px solid var(--rule);border-bottom:1.5px solid var(--rule);background:#e8e3d6}
 .mk{min-width:26px;width:auto;padding:0 4px;height:26px;border-radius:999px;background:var(--c);border:2px solid #222;color:#222;font:900 12px/22px Nunito,sans-serif;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
 .mk.on{transform:scale(1.35);background:#222;color:#fff}
 .ovk{font-size:22px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
@@ -463,22 +479,19 @@ details.ib[open]>summary{border-bottom:1.5px solid var(--rule);background:#fff7d
       </div>
       <div class="chips" id="chips"></div>
       <div class="panel" id="panel" hidden></div>
+      <div class="dtabs" id="dtabs"><button data-dt="list" class="on">📋 行程</button><button data-dt="map">🗺️ 地圖</button></div>
       <div class="body" id="dayView"><div class="ruler" id="ruler"></div><div class="list" id="list"></div></div>
       <div class="wk" id="weekView" hidden></div>
-      <div class="legend" id="legend"></div>
-    </section>
-
-    <section class="box mc" id="mapcard">
-      <div class="box-h">
-        <div><span class="s">EXPLORE THE ROUTE</span><span class="t" id="mcT"></span></div>
-        <div class="mseg"><button data-m="day" class="on">這天</button><button data-m="all">整趟</button></div>
+      <div class="dmap" id="mapcard" hidden>
+        <div class="dm-h"><b id="mcT"></b><div class="mseg"><button data-m="day" class="on">這天</button><button data-m="all">整趟</button></div></div>
+        <div class="mparts" id="mcParts" hidden></div>
+        <div class="mc-sel" id="mcSel"></div>
+        <div id="map"></div>
+        <div class="mc-sum" id="mcSum" hidden></div>
+        <div class="mc-list" id="mcList"></div>
+        <div class="mc-note" id="mcNote"></div>
       </div>
-      <div class="mparts" id="mcParts" hidden></div>
-      <div class="mc-sel" id="mcSel"></div>
-      <div id="map"></div>
-      <div class="mc-sum" id="mcSum" hidden></div>
-      <div class="mc-list" id="mcList"></div>
-      <div class="mc-note" id="mcNote"></div>
+      <div class="legend" id="legend"></div>
     </section>
 
     <div class="foot" id="foot">「行程有變？」調過的時間和「要先訂的」打勾只存在這支手機上。網址版會自動更新。</div>
@@ -583,7 +596,7 @@ D.days.forEach(compute);
 function findToday(){var t=null;D.days.forEach(function(d){if(!t&&NOW>=d.r0&&NOW<=d.r1)t=d});return t}
 var TODAY=findToday();
 
-var S={day:TODAY?TODAY.n:LS.get(NS+'day',1),view:LS.get(NS+'view','day'),sel:null,adj:false,panel:null,map:'day'};
+var S={day:TODAY?TODAY.n:LS.get(NS+'day',1),view:LS.get(NS+'view','day'),sel:null,adj:false,panel:null,map:'day',dt:'list'};
 if(!(S.day>=1&&S.day<=D.days.length))S.day=1;
 if(S.view!=='week')S.view='day';
 function curDay(){return D.days[S.day-1]}
@@ -662,7 +675,7 @@ function renderTopBar(){var a=localOf(NOW,D.tz);$('#topBar').innerHTML='<b>'+esc
 function showTab(name){
   $$('.tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===name)});
   $$('.tab').forEach(function(t){t.classList.toggle('on',t.id==='tab-'+name)});
-  if(name==='plan'&&MAP)setTimeout(function(){MAP.invalidateSize();fitMap()},50);
+  if(name==='plan'&&MAP&&mapShown())setTimeout(function(){MAP.invalidateSize();fitMap()},50);
 }
 $$('.tabs button').forEach(function(b){b.onclick=function(){showTab(b.dataset.tab)}});
 
@@ -671,7 +684,7 @@ function goAnchor(id){
   var m=/^d(\d+)$/.exec(id);
   if(m){showTab('plan');setDay(+m[1]);$('#cal').scrollIntoView({behavior:'smooth'});return}
   if(id==='weather'){openWeather();return}
-  if(id==='map'){showTab('plan');setMapMode('all');$('#mapcard').scrollIntoView({behavior:'smooth'});return}
+  if(id==='map'){showTab('plan');if(S.view!=='day'){S.view='day';render()}setDT('map');setMapMode('all');$('#dtabs').scrollIntoView({behavior:'smooth',block:'start'});return}
   if(id==='planner'){showTab('plan');setView('week');$('#cal').scrollIntoView({behavior:'smooth'});return}
   var sec=D.info.filter(function(s){return s.id===id})[0]||D.info.filter(function(s){return s.html.indexOf('id="'+id+'"')>=0})[0];
   if(sec){openInfo(sec.id,sec.id===id?null:id);return}
@@ -684,8 +697,25 @@ function anchorClick(e){
 
 /* 圖例 */
 if(D.links&&D.links.length)$('#foot').insertAdjacentHTML('beforebegin',D.links.map(function(l){return '<a class="big w" href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+'</a>'}).join(''));
-$('#legend').innerHTML=Object.keys(CAT).map(function(k){return '<span><i style="background:'+CAT[k].c+'"></i>'+CAT[k].n+'</span>'}).join('')+
-  '<span class="w">🔒 時間固定（車票、門票、訂位）・點卡片看細節，地圖跟著跳</span>';
+var LEGEND=Object.keys(CAT).map(function(k){return '<span><i style="background:'+CAT[k].c+'"></i>'+CAT[k].n+'</span>'}).join('')+
+  '<span class="w">🔒 時間固定（車票、門票、訂位）・點卡片看細節；地圖在上面「🗺️ 地圖」</span>';
+$('#legend').innerHTML=LEGEND;
+
+/* ── 單日「行程｜地圖」切換（同一格，框撐滿螢幕；地圖藏著的時候不動它，切過去再量大小、框範圍） ── */
+function mapShown(){var m=$('#mapcard');return !!m&&!m.hidden}
+function applyDT(){
+  var wv=S.view==='week',dm=!wv&&S.dt==='map';
+  $('#dtabs').hidden=wv;
+  $$('#dtabs button').forEach(function(b){b.classList.toggle('on',b.dataset.dt===S.dt)});
+  $('#dayView').style.display=(wv||dm)?'none':'';
+  $('#mapcard').hidden=!dm;
+  $('#legend').style.display=wv?'':'none';
+}
+function setDT(v){
+  S.dt=v;applyDT();
+  if(v==='map'&&MAP){MAP.invalidateSize();if(S.map==='all')mapAll();else{mapDay();if(S.sel!=null)mapSel(curDay().items[S.sel])}}
+}
+$('#dtabs').addEventListener('click',function(e){var b=e.target.closest('[data-dt]');if(b)setDT(b.dataset.dt)});
 
 /* ── 日期列 ── */
 (function(){
@@ -819,7 +849,7 @@ function cardHTML(day,it,st){
   if(it.links)full+='<div class="btns">'+it.links.map(function(l){return '<a class="pbtn" href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+'</a>'}).join('')+'</div>';
   if(it.extra)full+=it.extra.map(function(x){return '<details class="sub"><summary>'+esc(x.title)+'</summary>'+x.html+'</details>'}).join('');
   if(it.pins.length)full+='<div class="btns">'+it.pins.map(function(p){return '<a class="pbtn" href="'+esc(gmap(p))+'" target="_blank" rel="noopener">📍 '+esc(p.name)+'</a>'}).join('')+
-    '<button class="pbtn alt" data-gomap="1">🗺️ 下面地圖</button></div>';
+    '<button class="pbtn alt" data-gomap="1">🗺️ 看地圖</button></div>';
   var hint=(it.alts||it.more||it.extra||it.links||(!mv&&it.chip)||it.pins.length)?'<div class="cc-more">點開：'+[(!mv&&it.chip)?'交通':'',it.pins.length?'地圖':'',it.alts?'備案':'',(it.more||it.extra)?'說明':''].filter(Boolean).join('・')+' ▾</div>':'';
   var adj='';
   if(S.adj&&isMain){
@@ -843,6 +873,7 @@ function renderDay(keep){
     }
     h+=cardHTML(day,it,st);
   });
+  h+='<div class="legend lg-in">'+LEGEND+'</div>';
   list.innerHTML=h;
   var r='<div class="rax" style="top:'+yOf(T0)+';bottom:16px"></div>';
   var span=(T1-T0)/60,step=span>13?2:1;
@@ -888,7 +919,7 @@ $('#list').addEventListener('click',function(e){
   var ab=e.target.closest('[data-a]');
   if(ab){var ci=+ab.closest('.cc').dataset.i,v=ab.dataset.a;
     if(v==='up'||v==='dn')adjMove(day,ci,v==='up'?-1:1);else if(v==='sk')adjSkip(day,ci);else adjShift(day,ci,+v);return}
-  if(e.target.closest('[data-gomap]')){var c0=e.target.closest('.cc');selectItem(+c0.dataset.i,{});$('#mapcard').scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(e.target.closest('[data-gomap]')){var c0=e.target.closest('.cc');S.sel=+c0.dataset.i;setDT('map');selectItem(+c0.dataset.i,{});$('#dtabs').scrollIntoView({behavior:'smooth',block:'start'});return}
   if(anchorClick(e))return;
   if(e.target.closest('a,summary,details'))return;
   var c=e.target.closest('.cc');if(!c)return;
@@ -1155,10 +1186,10 @@ function mapAll(){
   });
   $('#mcList').innerHTML=D.ov.map(function(o){return '<button data-ov="'+esc(o.name)+'" style="--c:#fff"><i style="border:0;background:none">'+o.icon+'</i>'+esc(o.name)+'</button>'}).join('');
   PTS=D.ov.map(function(o){return [o.lat,o.lng]});
-  MAP.fitBounds(PTS,{padding:[24,24]});
+  if(mapShown())MAP.fitBounds(PTS,{padding:[24,24]});
 }
 function fitMap(){
-  if(!MAP||!PTS.length)return;
+  if(!MAP||!PTS.length||!mapShown())return;
   if(S.map==='all'){MAP.fitBounds(PTS,{padding:[24,24]});return}
   var P=FITPTS||PTS;
   var num=function(a,b){return a-b},la=P.map(function(p){return p[0]}).sort(num),ln=P.map(function(p){return p[1]}).sort(num);
@@ -1174,6 +1205,7 @@ $('#mcList').addEventListener('click',function(e){
   var b=e.target.closest('button[data-i]');if(b)selectItem(+b.dataset.i,{open:true,scroll:true});
 });
 $('#mcSum').addEventListener('click',function(e){if(e.target.closest('[data-legall]'))legClear(true)});
+$('#mcSel').addEventListener('click',function(e){var b=e.target.closest('[data-tolist]');if(!b)return;var i=+b.dataset.tolist;setDT('list');selectItem(i,{open:true,scroll:true})});
 function mapSel(it){
   if(S.map!=='day')return;
   legClear(false);
@@ -1185,11 +1217,11 @@ function mapSel(it){
   if(!p){$('#mcSel').innerHTML='<b>'+esc(it.h)+'</b>：這一站沒有地圖上的點';return}
   var day=curDay();
   if((day.maps||[]).length>1&&!inPart(day,it,S.part)){var pk=partOf(day,it);if(pk>=0&&pk!==S.part){S.part=pk;mapDay()}}
-  $('#mcSel').innerHTML=(it.mm!=null?hm(it.mm)+' ':'')+'<b>'+esc(it.h)+'</b>　<a href="'+esc(gmap(p))+'" target="_blank" rel="noopener">在 Google 地圖開啟 ↗</a>';
+  $('#mcSel').innerHTML=(it.mm!=null?hm(it.mm)+' ':'')+'<b>'+esc(it.h)+'</b>　<a href="'+esc(gmap(p))+'" target="_blank" rel="noopener">Google 地圖 ↗</a><button class="tol" data-tolist="'+it.i+'">看行程 ›</button>';
   if(!MAP)return;
   var o2=MK[pkey(p)];
   if(o2){o2.m.setIcon(mkIcon(o2.n,o2.c,true,o2.fg));o2.m.setZIndexOffset(1000);SELMK=pkey(p)}
-  MAP.flyTo([p.lat,p.lng],Math.max(MAP.getZoom(),15.5),{duration:.6});
+  if(mapShown())MAP.flyTo([p.lat,p.lng],Math.max(MAP.getZoom(),15.5),{duration:.6});
 }
 
 /* ── 天氣（Open-Meteo，最多 16 天後） ── */
@@ -1349,7 +1381,7 @@ function peek(n){
 }
 $('#pkB').addEventListener('click',function(e){
   var b=e.target.closest('[data-goi]');if(!b)return;var a=b.dataset.goi.split(':');
-  hideSheet('peek');hideSheet('sheet');showTab('plan');setDay(+a[0]);selectItem(+a[1],{open:true,scroll:true});$('#cal').scrollIntoView({behavior:'smooth'});
+  hideSheet('peek');hideSheet('sheet');showTab('plan');setDay(+a[0]);setDT('list');selectItem(+a[1],{open:true,scroll:true});$('#cal').scrollIntoView({behavior:'smooth'});
 });
 renderTiles();
 
@@ -1388,7 +1420,7 @@ function render(){
   if(VER)S.view='day';
   var wv=S.view==='week';
   if(wv)S.adj=false;
-  $('#dayView').style.display=wv?'none':'';$('#weekView').hidden=!wv;
+  $('#weekView').hidden=!wv;applyDT();
   renderChips();
   if(wv)renderWeek();else renderDay();
   if(S.map==='day'){mapDay();if(!wv&&S.sel!=null)mapSel(day.items[S.sel]);else mapSel(null)}
@@ -1411,7 +1443,7 @@ function checkUpdate(){
   }).catch(function(){});
 }
 
-window.__v2={D:D,S:S,ADJ:function(){return ADJ},SEQ:function(){return SEQ},LEGS:function(){return LEGS},MAP:function(){return MAP},stName:stName};
+window.__v2={D:D,S:S,ADJ:function(){return ADJ},SEQ:function(){return SEQ},LEGS:function(){return LEGS},MAP:function(){return MAP},stName:stName,setDT:setDT};
 renderStats();renderClock();(function(){var st=null;try{st=localStorage.getItem(NS+'top')}catch(e){}setTop(st==null?topOpenDefault():st==='1',false);$('#topBar').onclick=function(){setTop(true,true)}})();initMap();renderRsv();render();
 setTimeout(function(){centerStrip(false)},60);
 setInterval(tick,30000);
